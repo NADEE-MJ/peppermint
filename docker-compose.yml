@@ -24,7 +24,6 @@ services:
       - PYTHONPATH=/home/deploy/peppermint/backend
     volumes:
       - ./:/home/deploy/peppermint
-    network_mode: host
 
 volumes:
   db-data:

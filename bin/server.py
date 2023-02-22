@@ -46,7 +46,7 @@ def attach(screen: str) -> None:
 @app.command()
 def fast() -> None:
     print("[green]FastAPI Server Start![/green]")
-    system(f"cd {PATH} && poetry run uvicorn src.main:app --reload")
+    system(f"cd {PATH} && poetry run uvicorn --host 0.0.0.0 src.main:app --reload")
 
 @app.command()
 def kit() -> None:
