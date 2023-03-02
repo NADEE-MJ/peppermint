@@ -21,7 +21,6 @@ USER $USERNAME
 RUN sudo apt-get install zsh -y && sudo usermod --shell /bin/bash deploy && echo "zsh" >> ~/.bashrc
 #* needed for zsh setup
 RUN sudo apt-get install curl vim wget git curl micro python3 python-is-python3 python3-pip cargo ripgrep dnsutils net-tools tig fzf bat exa zoxide cowsay figlet lolcat -y
-RUN pip install psutil
 RUN mkdir -p ~/.config/zsh/ && git clone --depth 1 https://github.com/NADEE-MJ/zsh.git ~/.config/zsh && ln -s ~/.config/zsh/.zshrc ~/.zshrc && ln -s ~/.config/zsh/.p10k.zsh ~/.p10k.zsh
 RUN touch ~/.config/zsh/overrides.zsh && printf "export YSU_HARDCORE=0" >> ~/.config/zsh/overrides.zsh
 
