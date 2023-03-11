@@ -3,7 +3,7 @@
 set -e
 
 cd /home/deploy
-if [ ! -d peppermint]; then
+if [ ! -d "/home/deploy/peppermint"]; then
     git clone https://github.com/NADEE-MJ/peppermint.git
 else
     echo "already cloned peppermint, restarting"
