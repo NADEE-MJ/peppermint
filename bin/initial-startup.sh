@@ -3,7 +3,9 @@
 set -e
 
 cd /home/deploy
-git clone https://github.com/NADEE-MJ/peppermint.git
+if [ ! -d peppermint] then
+    git clone https://github.com/NADEE-MJ/peppermint.git
+fi
 
 cd /home/deploy/peppermint
 
