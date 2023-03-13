@@ -22,8 +22,8 @@ services:
       - "5173:5173"
     environment:
       - PYTHONPATH=/home/deploy/peppermint/backend
-    volumes:
-      - ./:/home/deploy/peppermint
+    # volumes:
+    #   - ./:/home/deploy/peppermint
 
 volumes:
   db-data:

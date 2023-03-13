@@ -16,7 +16,7 @@ def start() -> None:
         print("Run the following: [red]sudo apt install screen -y\n[/red]")
         return None
     print("[green]FastAPI Server Start![/green]")
-    system(f"cd {PATH} && screen -S fastapi-server -dm poetry run uvicorn src.main:app --reload")
+    system(f"cd {PATH} && screen -S fastapi-server -dm poetry run uvicorn --host 0.0.0.0 src.main:app --reload")
 
     print("[green]SvelteKit Server Start![/green]")
     system(f"cd {PATH} && screen -S sveltekit-server -dm npm run dev")
@@ -34,19 +34,22 @@ def stop() -> None:
     system("screen -S sveltekit-server -X quit")
     print("[red]SvelteKit Server Stop![/red]")
 
+
 @app.command()
 def attach(screen: str) -> None:
-    if screen == 'back':
+    if screen == "back":
         print("[green]Attaching to FastAPI Screen...[/green]")
         system(f"screen -r fastapi-server")
-    elif screen == 'front':
+    elif screen == "front":
         print("[green]Attaching to SvelteKit Screen...[/green]")
         system(f"screen -r sveltekit-server")
+
 
 @app.command()
 def fast() -> None:
     print("[green]FastAPI Server Start![/green]")
     system(f"cd {PATH} && poetry run uvicorn --host 0.0.0.0 src.main:app --reload")
+
 
 @app.command()
 def kit() -> None:

@@ -2,11 +2,20 @@
 
 set -e
 
+cd /home/deploy
+if [ ! -d "/home/deploy/peppermint" ]; then
+    git clone https://github.com/NADEE-MJ/peppermint.git
+else
+    echo "already cloned peppermint, restarting"
+fi
+
+cd /home/deploy/peppermint
+
 #? poetry and fastapi setup
-cd ~/peppermint && poetry install
+poetry install
 
 #? sveltekit setup
-cd ~/peppermint && npm install
+npm install
 
 echo "Ready!"
 tail -f /dev/null
