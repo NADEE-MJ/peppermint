@@ -20,7 +20,7 @@ USER $USERNAME
 #* change default user shell
 RUN sudo apt-get install zsh -y && sudo usermod --shell /bin/bash deploy && echo "zsh" >> ~/.bashrc
 #* needed for zsh setup
-RUN sudo apt-get install git curl micro python3 python-is-python3 python3-pip ripgrep et-tools tig fzf bat exa zoxide cowsay figlet lolcat -y
+RUN sudo apt-get install git curl micro python3 python-is-python3 python3-pip ripgrep net-tools tig fzf bat exa zoxide cowsay figlet lolcat -y
 RUN mkdir -p ~/.config/zsh/ && git clone --depth 1 https://github.com/NADEE-MJ/zsh.git ~/.config/zsh && ln -s ~/.config/zsh/.zshrc ~/.zshrc && ln -s ~/.config/zsh/.p10k.zsh ~/.p10k.zsh
 RUN touch ~/.config/zsh/overrides.zsh && printf "alias bat=batcat\n" >> ~/.config/zsh/overrides.zsh
 
