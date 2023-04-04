@@ -19,10 +19,11 @@ async def main() -> None:
         last_login=datetime.now(),
     )
     session.add(user)
+    await session.commit()
 
     accounts = [
         Account(name="Wells Fargo", account_type="checking", created_at=datetime.now(), user_id=1),
-        Account(name="Wells Fargo", account_type="checking", created_at=datetime.now(), user_id=1),
+        Account(name="BOA", account_type="savings", created_at=datetime.now(), user_id=1),
     ]
 
     for account in accounts:
