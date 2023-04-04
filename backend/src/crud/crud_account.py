@@ -8,7 +8,7 @@ from src.models.account import Account, AccountCreate, AccountUpdate
 
 
 class CRUDAccount(CRUDBase[Account, AccountCreate, AccountUpdate]):
-    async def get_all_accounts_for_user(self, db: AsyncSession, *, user_id: int) -> Optional[Dict[str, Any]]:
+    async def get_all_accounts_for_user(self, db: AsyncSession, *, user_id: int) -> Optional[list[Account]]:
         result = await db.execute(select(Account).filter(Account.user_id == user_id))
         return result.scalars().all()
 
