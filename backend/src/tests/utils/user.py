@@ -18,7 +18,7 @@ async def create_test_user(db: AsyncSession) -> User:
             email=TEST_USER_EMAIL,
             password=TEST_USER_PASSWORD,
         )
-        user = await crud.user.user_create(db, obj_in=user_create)
+        user = await crud.user.create(db, obj_in=user_create)
 
     return user
 
@@ -29,9 +29,9 @@ async def create_random_user(db: AsyncSession, password: str | None = None, is_a
     if password is None:
         password = random_lower_string()
     user_create = UserCreate(full_name=full_name, email=email, password=password)
-    user = await crud.user.user_create(db=db, obj_in=user_create)
+    user = await crud.user.create(db=db, obj_in=user_create)
     if not is_active:
-        user = await crud.user.user_update(db=db, db_obj=user, obj_in={"is_active": False})
+        user = await crud.user.update(db=db, db_obj=user, obj_in={"is_active": False})
     return user
 
 
@@ -42,4 +42,4 @@ def set_test_user_cookies(client: TestClient) -> None:
     }
 
     response = client.post(f"{settings.API_VERSION_STR}/login/access-token", json=login_data)
-    client.cookies.set("fast_access_token", response.json()['access_token'])
+    client.cookies.set("fast_access_token", response.json()["access_token"])

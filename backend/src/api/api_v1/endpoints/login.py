@@ -37,9 +37,7 @@ async def login_access_token(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {
-        "access_token": access_token
-    }
+    return {"access_token": access_token}
 
 
 @router.post("/login/test-token", response_model=UserResponse)
@@ -88,5 +86,5 @@ async def reset_password(
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     user_update = UserUpdate(password=new_password)
-    await crud.user.user_update(db, db_obj=user, obj_in=user_update)
+    await crud.user.update(db, db_obj=user, obj_in=user_update)
     return {"message": "Password updated successfully"}

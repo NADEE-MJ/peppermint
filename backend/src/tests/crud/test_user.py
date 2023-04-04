@@ -14,7 +14,7 @@ async def test_create_user(db: AsyncSession) -> None:
     email = random_email()
     password = random_lower_string()
     user_create = UserCreate(full_name=full_name, email=email, password=password)
-    user = await crud.user.user_create(db, obj_in=user_create)
+    user = await crud.user.create(db, obj_in=user_create)
     await crud.user.remove(db, id=user.id)  # type: ignore
     assert hasattr(user, "password")
 
@@ -80,7 +80,7 @@ async def test_update_user(db: AsyncSession) -> None:
     user = await create_random_user(db)
     new_password = random_lower_string()
     user_create_update = UserUpdate(password=new_password)
-    user_from_db = await crud.user.user_update(db, db_obj=user, obj_in=user_create_update)
+    user_from_db = await crud.user.update(db, db_obj=user, obj_in=user_create_update)
     await crud.user.remove(db, id=user.id)  # type: ignore
     assert user_from_db
     assert user.email == user_from_db.email
