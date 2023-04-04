@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any
+from typing import Any, Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from pydantic import EmailStr
@@ -11,6 +11,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsg
 from src.models.token import Token
+from fastapi.security import OAuth2PasswordRequestForm
 from src.models.user import User, UserLogin, UserResponse, UserUpdate
 from src.utils import (
     generate_password_reset_token,
@@ -23,13 +24,13 @@ router = APIRouter()
 
 @router.post("/login/access-token", response_model=Token)
 async def login_access_token(
-    login_data: UserLogin,
+    login_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_session),
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = await crud.user.authenticate(db, email=login_data.email, password=login_data.password)
+    user = await crud.user.authenticate(db, email=login_data.username, password=login_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):

@@ -10,10 +10,25 @@ from src.models.account import Account, AccountCreate, AccountResponse, AccountU
 router = APIRouter()
 
 
-@router.get("/", response_model=list(AccountResponse))
+@router.get("/", response_model=list[AccountResponse])
 async def get_all_accounts(
     *,
     db: AsyncSession = Depends(get_session),
+    current_user: Account = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get all bank accounts for current user.
+    """
+
+    accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+
+    return accounts
+
+
+@router.get("/{account_id}", response_model=AccountResponse)
+async def get_account(
+    *,
+    account_id: AsyncSession = Depends(get_session),
     current_user: Account = Depends(deps.get_current_active_user),
 ) -> Any:
     """

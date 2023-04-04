@@ -12,7 +12,8 @@ from src.models.token import TokenPayload
 from src.models.user import User
 from fastapi.security import OAuth2PasswordBearer
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_VERSION_STR}/login/access-token")
+
 
 async def get_current_user(
     db: AsyncSession = Depends(get_session),
