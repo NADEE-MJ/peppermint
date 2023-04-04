@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.security import get_password_hash
 from src.db.db import get_session
 from src.models.user import User
+from src.models.account import Account
 
 
 async def main() -> None:
@@ -17,8 +18,10 @@ async def main() -> None:
         created_at=datetime.now(),
         last_login=datetime.now(),
     )
-
     session.add(user)
+
+    account = Account
+
     await session.commit()
 
 

@@ -5,46 +5,38 @@ from sqlmodel import Field, SQLModel
 from enum import Enum
 
 
-class types(str, Enum):
+class Types(str, Enum):
     savings = "savings"
     checking = "checking"
     credit = "credit"
 
 
 class AccountBase(SQLModel):
-    email: EmailStr
-
-
-class AccountLogin(AccountBase):
-    password: str
+    name: str
 
 
 # Properties to receive via API on creation
 class AccountCreate(AccountBase):
-    password: str
-    full_name: str | None = None
+    account_type: Types
+    user_id: int
 
 
 # Properties to receive via API on update
 class AccountUpdate(BaseModel):
-    email: EmailStr | None = None
-    password: str | None = None
-    full_name: str | None = None
-    is_active: bool | None = None
+    account_type: Types | None = None
+    name: Types | None = None
 
 
 class Account(AccountBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    user_id: int | None = Field(default=None, foreign_key="user.id")
+    id: int = Field(primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
     created_at: datetime
-    type: types
-    name: str
+    account_type: Types
 
 
 # Additional properties to return via API
 class AccountResponse(AccountBase):
     id: int
-    full_name: str
+    user_id: int
+    account_type: Types
     created_at: datetime
-    last_login: datetime | None = None
-    is_active: bool
