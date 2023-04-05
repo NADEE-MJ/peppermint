@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Any, Dict
+from typing import Any, Dict, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -12,16 +12,11 @@ class CRUDAccount(CRUDBase[Account, AccountCreate, AccountUpdate]):
         result = await db.execute(select(Account).filter(Account.user_id == user_id))
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: AccountCreate) -> Account:
-        db_obj = Account(
-            name=obj_in.name, account_type=obj_in.account_type, created_at=datetime.now(), user_id=obj_in.user_id
-        )
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
+    async def create(self, db: AsyncSession, *, obj_in: AccountCreate, user_id: int) -> Account:
+        db_obj = Account(name=obj_in.name, account_type=obj_in.account_type, created_at=datetime.now(), user_id=user_id)
+        return await super().create(db, obj_in=db_obj)
 
-    async def update(self, db: Any, *, db_obj: Account, obj_in: AccountUpdate | Dict[str, Any]) -> Account:
+    async def update(self, db: AsyncSession, *, db_obj: Account, obj_in: AccountUpdate | Dict[str, Any]) -> Account:
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:

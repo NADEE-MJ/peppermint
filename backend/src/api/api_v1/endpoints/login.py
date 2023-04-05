@@ -1,7 +1,8 @@
 from datetime import timedelta
-from typing import Any, Annotated
+from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -11,8 +12,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsg
 from src.models.token import Token
-from fastapi.security import OAuth2PasswordRequestForm
-from src.models.user import User, UserLogin, UserResponse, UserUpdate
+from src.models.user import User, UserResponse, UserUpdate
 from src.utils import (
     generate_password_reset_token,
     send_reset_password_email,

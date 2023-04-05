@@ -15,21 +15,21 @@ export const actions: Actions = {
 		const { email, password } = validatedBody.data;
 
 		const res = await fast.login(email, password);
-		const data = await res.json()
+		const data = await res.json();
 		if (data?.access_token) {
-			const token = data?.access_token
+			const token = data?.access_token;
 			cookies.set('access_token', token, {
 				path: '/',
 				httpOnly: true,
 				sameSite: true,
 				secure: true,
 				maxAge: 60 * 60 * 24 * 30 //30 days //!probably should change this
-			})
+			});
 
 			throw redirect(303, '/admin/account');
 		} else {
 			//! return value from backend
-			return fail(400, {error: "Invalid Credentials"})
+			return fail(400, { error: 'Invalid Credentials' });
 		}
 	}
 };

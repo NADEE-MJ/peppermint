@@ -1,8 +1,8 @@
 from datetime import datetime
-
-from pydantic import BaseModel, EmailStr
-from sqlmodel import Field, SQLModel
 from enum import Enum
+
+from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
 
 class Types(str, Enum):
@@ -18,7 +18,6 @@ class AccountBase(SQLModel):
 # Properties to receive via API on creation
 class AccountCreate(AccountBase):
     account_type: Types
-    user_id: int
 
 
 # Properties to receive via API on update

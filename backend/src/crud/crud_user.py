@@ -21,12 +21,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             created_at=datetime.now(),
             is_active=True,
         )
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
+        return await super().create(db, obj_in=db_obj)
 
-    async def update(self, db: Any, *, db_obj: User, obj_in: UserUpdate | Dict[str, Any]) -> User:
+    async def update(self, db: AsyncSession, *, db_obj: User, obj_in: UserUpdate | Dict[str, Any]) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
