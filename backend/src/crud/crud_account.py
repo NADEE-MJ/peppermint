@@ -12,9 +12,9 @@ class CRUDAccount(CRUDBase[Account, AccountCreate, AccountUpdate]):
         result = await db.execute(select(Account).filter(Account.user_id == user_id))
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: AccountCreate, user_id: int) -> Account:
+    async def create(self, db: AsyncSession, *, obj_in: AccountCreate, user_id: int) -> Account:  # type: ignore
         db_obj = Account(name=obj_in.name, account_type=obj_in.account_type, created_at=datetime.now(), user_id=user_id)
-        return await super().create(db, obj_in=db_obj)
+        return await super().create(db, obj_in=db_obj)  # type: ignore
 
     async def update(self, db: AsyncSession, *, db_obj: Account, obj_in: AccountUpdate | Dict[str, Any]) -> Account:
         if isinstance(obj_in, dict):

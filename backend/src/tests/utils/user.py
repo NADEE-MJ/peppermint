@@ -35,11 +35,11 @@ async def create_random_user(db: AsyncSession, password: str | None = None, is_a
     return user
 
 
-def set_test_user_cookies(client: TestClient) -> None:
+def get_auth_header(client: TestClient) -> dict:
     login_data = {
-        "email": TEST_USER_EMAIL,
+        "username": TEST_USER_EMAIL,
         "password": TEST_USER_PASSWORD,
     }
 
-    response = client.post(f"{settings.API_VERSION_STR}/login/access-token", json=login_data)
-    client.cookies.set("fast_access_token", response.json()["access_token"])
+    response = client.post(f"{settings.API_VERSION_STR}/login/access-token", data=login_data)
+    return {"Authorization": f"Bearer {response.json()['access_token']}"}

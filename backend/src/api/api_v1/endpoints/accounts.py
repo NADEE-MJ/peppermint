@@ -56,12 +56,13 @@ async def create_account(
     """
     accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
 
-    for account in accounts:
-        if account.name == account_create.name:
-            raise HTTPException(
-                status_code=400,
-                detail="An account with the name already exists in the system.",
-            )
+    if accounts is not None:
+        for account in accounts:
+            if account.name == account_create.name:
+                raise HTTPException(
+                    status_code=400,
+                    detail="An account with the name already exists in the system.",
+                )
 
     account = await crud.account.create(db, obj_in=account_create, user_id=current_user.id)
 
@@ -88,12 +89,13 @@ async def update_account(
 
     accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
 
-    for account in accounts:
-        if account.name == account_update.name:
-            raise HTTPException(
-                status_code=400,
-                detail="An account with the name already exists in the system.",
-            )
+    if accounts is not None:
+        for account in accounts:
+            if account.name == account_update.name:
+                raise HTTPException(
+                    status_code=400,
+                    detail="An account with the name already exists in the system.",
+                )
 
     account = await crud.account.update(db, db_obj=account, obj_in=account_update)
 
@@ -105,7 +107,7 @@ async def remove_account(
     account_id: int,
     db: AsyncSession = Depends(get_session),
     current_user: Account = Depends(deps.get_current_active_user),
-):
+) -> Any:
     """
     Remove an existing bank account. Must be logged in first.
     """

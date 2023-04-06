@@ -26,7 +26,7 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 * 30 //30 days //!probably should change this
 			});
 
-			throw redirect(303, '/admin/account');
+			throw redirect(303, '/client/account');
 		} else {
 			//! return value from backend
 			return fail(400, { error: 'Invalid Credentials' });

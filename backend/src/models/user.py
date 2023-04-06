@@ -8,10 +8,6 @@ class UserBase(SQLModel):
     email: EmailStr
 
 
-class UserLogin(UserBase):
-    password: str
-
-
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     password: str

@@ -21,7 +21,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             created_at=datetime.now(),
             is_active=True,
         )
-        return await super().create(db, obj_in=db_obj)
+        return await super().create(db, obj_in=db_obj)  # type: ignore
 
     async def update(self, db: AsyncSession, *, db_obj: User, obj_in: UserUpdate | Dict[str, Any]) -> User:
         if isinstance(obj_in, dict):
@@ -31,7 +31,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "password" in update_data and update_data["password"] is not None:
             hashed_password = get_password_hash(update_data["password"])
             update_data["password"] = hashed_password
-        else:
+        elif "password" in update_data:
             del update_data["password"]
         return await super().update(db, db_obj=db_obj, obj_in=update_data)
 

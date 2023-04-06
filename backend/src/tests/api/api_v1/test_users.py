@@ -4,14 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.core.config import settings
 from src.models.user import User
-from src.tests.utils.user import TEST_USER_EMAIL, set_test_user_cookies
+from src.tests.utils.user import TEST_USER_EMAIL, get_auth_header
 from src.tests.utils.utils import random_email, random_lower_string, random_name
 
 
 @pytest.mark.asyncio
 async def test_get_users_me(db: AsyncSession, client: TestClient, test_user: User) -> None:
-    set_test_user_cookies(client)
-    response = client.get(f"{settings.API_VERSION_STR}/users/me")
+    headers = get_auth_header(client)
+    response = client.get(f"{settings.API_VERSION_STR}/users/me", headers=headers)
     current_user = response.json()
     await crud.user.remove(db, id=test_user.id)  # type: ignore
     assert current_user
@@ -20,11 +20,12 @@ async def test_get_users_me(db: AsyncSession, client: TestClient, test_user: Use
 
 @pytest.mark.asyncio
 async def test_update_user_me(db: AsyncSession, client: TestClient, test_user: User) -> None:
-    set_test_user_cookies(client)
+    headers = get_auth_header(client)
     user_update = {"password": "testpass"}
     response = client.put(
         f"{settings.API_VERSION_STR}/users/me",
         json=user_update,
+        headers=headers,
     )
     current_user = response.json()
     await crud.user.remove(db, id=test_user.id)  # type: ignore
@@ -35,7 +36,7 @@ async def test_update_user_me(db: AsyncSession, client: TestClient, test_user: U
 
 @pytest.mark.asyncio
 async def test_create_user_new_email(db: AsyncSession, client: TestClient, test_user: User) -> None:
-    set_test_user_cookies(client)
+    headers = get_auth_header(client)
     full_name = random_name()
     email = random_email()
     password = random_lower_string()
@@ -43,6 +44,7 @@ async def test_create_user_new_email(db: AsyncSession, client: TestClient, test_
     response = client.post(
         f"{settings.API_VERSION_STR}/users/",
         json=data,
+        headers=headers,
     )
     assert 200 <= response.status_code < 300
     user = await crud.user.get_by_email(db, email=email)
@@ -53,7 +55,7 @@ async def test_create_user_new_email(db: AsyncSession, client: TestClient, test_
 
 @pytest.mark.asyncio
 async def test_create_user_existing_email(db: AsyncSession, client: TestClient, test_user: User) -> None:
-    set_test_user_cookies(client)
+    headers = get_auth_header(client)
     full_name = random_name()
     email = TEST_USER_EMAIL
     password = random_lower_string()
@@ -61,6 +63,7 @@ async def test_create_user_existing_email(db: AsyncSession, client: TestClient, 
     response = client.post(
         f"{settings.API_VERSION_STR}/users/",
         json=data,
+        headers=headers,
     )
     created_user = response.json()
     await crud.user.remove(db, id=test_user.id)  # type: ignore
@@ -70,7 +73,7 @@ async def test_create_user_existing_email(db: AsyncSession, client: TestClient, 
 
 @pytest.mark.asyncio
 async def test_create_user_open_registration(db: AsyncSession, client: TestClient, test_user: User) -> None:
-    set_test_user_cookies(client)
+    headers = get_auth_header(client)
     full_name = random_name()
     email = random_email()
     password = random_lower_string()
@@ -78,6 +81,7 @@ async def test_create_user_open_registration(db: AsyncSession, client: TestClien
     response = client.post(
         f"{settings.API_VERSION_STR}/users/open",
         json=data,
+        headers=headers,
     )
     await crud.user.remove(db, id=test_user.id)  # type: ignore
     assert response.status_code == 200

@@ -9,8 +9,8 @@
 	<svelte:fragment slot="sidebarLeft">
 		<nav class="list-nav">
 			<ul>
-				<li><a href="/admin/account">Account</a></li>
-				<li><a href="/admin/skelly">Skelly</a></li>
+				<li><a href="/client/account">Account</a></li>
+				<li><a href="/client/skelly">Skelly</a></li>
 			</ul>
 		</nav>
 	</svelte:fragment>
