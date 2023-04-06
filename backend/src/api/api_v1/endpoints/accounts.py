@@ -6,6 +6,7 @@ from src import crud
 from src.api import deps
 from src.db.db import get_session
 from src.models.account import Account, AccountCreate, AccountResponse, AccountUpdate
+from src.models.user import User
 
 router = APIRouter()
 
@@ -14,12 +15,11 @@ router = APIRouter()
 async def get_all_accounts(
     *,
     db: AsyncSession = Depends(get_session),
-    current_user: Account = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get all bank accounts for current user.
     """
-
     accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
 
     return accounts
@@ -29,7 +29,7 @@ async def get_all_accounts(
 async def get_account(
     account_id: int,
     db: AsyncSession = Depends(get_session),
-    current_user: Account = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get specific bank account info for current user.
@@ -40,7 +40,6 @@ async def get_account(
 
     if account.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to access this bank account")
-
     return account
 
 
@@ -49,7 +48,7 @@ async def create_account(
     *,
     db: AsyncSession = Depends(get_session),
     account_create: AccountCreate,
-    current_user: Account = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new bank account. Must Be logged in first.
@@ -74,7 +73,7 @@ async def update_account(
     account_id: int,
     account_update: AccountUpdate,
     db: AsyncSession = Depends(get_session),
-    current_user: Account = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update an existing bank account. Must be logged in first.
@@ -106,7 +105,7 @@ async def update_account(
 async def remove_account(
     account_id: int,
     db: AsyncSession = Depends(get_session),
-    current_user: Account = Depends(deps.get_current_active_user),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Remove an existing bank account. Must be logged in first.
