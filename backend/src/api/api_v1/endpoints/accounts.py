@@ -80,6 +80,9 @@ async def update_account(
     """
     account = await crud.account.get(db, id=account_id)
 
+    if account is None:
+        raise HTTPException(status_code=404, detail="That account does not exist.")
+
     if account.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this bank account")
 
@@ -107,6 +110,9 @@ async def remove_account(
     Remove an existing bank account. Must be logged in first.
     """
     account = await crud.account.get(db, id=account_id)
+
+    if account is None:
+        raise HTTPException(status_code=404, detail="That account does not exist.")
 
     if account.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to remove this bank account")
