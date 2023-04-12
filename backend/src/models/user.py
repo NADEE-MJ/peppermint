@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class UserBase(SQLModel):
@@ -29,9 +29,9 @@ class User(UserBase, table=True):
     created_at: datetime
     last_login: datetime | None = None
     is_active: bool
-    #! do not use this to access the list of accounts for user, since this is lazy loaded
-    #! it causes problems when you try to access this attribute anywhere that you should
-    #! not access it.
+    # ! do not use this to access the list of accounts for user, since this is lazy loaded
+    # ! it causes problems when you try to access this attribute anywhere that you should
+    # ! not access it.
     accounts: list["Account"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"cascade": "all,delete,delete-orphan"}
     )

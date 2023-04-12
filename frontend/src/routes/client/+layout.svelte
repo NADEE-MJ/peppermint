@@ -20,7 +20,7 @@
 				<strong class="text-xl uppercase">peppermint</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a class="btn btn-sm btn-ghost-surface" href="https://github.com/NADEE-MJ" target="_blank" rel="noreferrer">GitHub</a>
+				<a class="btn btn-sm btn-ghost-surface" href="https://github.com/NADEE-MJ/peppermint" target="_blank" rel="noreferrer">GitHub</a>
 				<form action="/logout" method="POST">
 					<button class="btn btn-filled-secondary btn-sm">Logout</button>
 				</form>

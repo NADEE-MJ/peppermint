@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.api import deps
 from src.db.db import get_session
-from src.models.account import Account, AccountCreate, AccountResponse, AccountUpdate
+from src.models.account import AccountCreate, AccountResponse, AccountUpdate
 from src.models.user import User
 
 router = APIRouter()

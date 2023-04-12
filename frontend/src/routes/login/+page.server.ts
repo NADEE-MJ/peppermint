@@ -21,7 +21,7 @@ export const actions: Actions = {
 			cookies.set('access_token', token, {
 				path: '/',
 				httpOnly: true,
-				sameSite: true,
+				sameSite: false,
 				secure: true,
 				maxAge: 60 * 60 * 24 * 30 //30 days //!probably should change this
 			});
