@@ -15,15 +15,15 @@ export const actions: Actions = {
 		const { email, password, full_name } = validatedBody.data;
 
 		const res = await fast.signup( email, password, full_name);
-		const data = await res.json();
+		let data = await res.json();
 
 		if (data?.full_name) {
 
 			const temp = await fast.login(email, password);
-			const datata = await res.json();
+			data = await temp.json();
 
-			if (datata?.access_token) {
-				const token = datata?.access_token;
+			if (data?.access_token) {
+				const token = data?.access_token;
 				cookies.set('access_token', token, {
 					path: '/',
 					httpOnly: true,
@@ -31,17 +31,18 @@ export const actions: Actions = {
 					secure: true,
 					maxAge: 60 * 60 * 24 * 30 //30 days //!probably should change this
 				});
-	
+
 				throw redirect(303, '/client/account');
+
 			} else {
 				//! return value from backend
-				return fail(400, { error: 'Very Wrong' });
+				return fail(400, { error: 'Unable to Sign In' });
 			}
 
 		}
 
 		else {
-			return fail(400, {error: "Wrong"});
+			return fail(400, {error: "Unable to create new user"});
 		}
 	}
 };

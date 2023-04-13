@@ -47,7 +47,7 @@
 					<Textfield name="full_name" type="full_name" placeholder="Full Name" errorMessages={validationErrors?.name} />
 					<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
 					<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
-					<Textfield name="passwordConfirm" type="passwordConfirm" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
+					<Textfield name="passwordConfirm" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
 				</div>
 				<div class="flex justify-center p-2">
 					<button type="submit" class="btn btn-filled-primary btn-xl">Signup</button>
