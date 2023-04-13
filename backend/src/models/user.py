@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class UserBase(SQLModel):

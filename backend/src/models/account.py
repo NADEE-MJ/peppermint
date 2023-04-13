@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel
-from sqlmodel import Field, Relationship, SQLModel
-from src.models.user import User
+from sqlmodel import Field, SQLModel
 
 
 class Types(str, Enum):

@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.security import get_password_hash
 from src.db.db import get_session
 from src.models.account import Account
-from src.models.user import User
 from src.models.budget import Budget
+from src.models.user import User
 
 
 async def main() -> None:

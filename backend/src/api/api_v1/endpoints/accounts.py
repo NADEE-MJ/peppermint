@@ -80,12 +80,12 @@ async def update_account(
     """
     Update an existing bank account. Must be logged in first.
     """
-    account = await crud.account.get(db, id=account_id)
+    account_from_db = await crud.account.get(db, id=account_id)
 
-    if account is None:
+    if account_from_db is None:
         raise HTTPException(status_code=404, detail="That account does not exist.")
 
-    if account.user_id != current_user.id:
+    if account_from_db.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this bank account")
 
     accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
@@ -98,7 +98,7 @@ async def update_account(
                     detail="An account with the name already exists in the system.",
                 )
 
-    account = await crud.account.update(db, db_obj=account, obj_in=account_update)
+    account = await crud.account.update(db, db_obj=account_from_db, obj_in=account_update)
 
     return account
 
