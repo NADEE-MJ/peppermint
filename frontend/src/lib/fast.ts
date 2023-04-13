@@ -37,6 +37,13 @@ export class fast {
 		return response;
 	}
 
+	static async signup(email: string, password: string, full_name: string): Promise<Response> {
+		const body = JSON.stringify({ email, password, full_name });
+		const headers = { 'Content-Type': 'application/json' };
+		const response = await fetch(`${fast.fastURL}/open`, { body, method: 'POST', headers });
+		return response;
+	}
+
 	static async getCurrentUser(token: string): Promise<Response> {
 		const response = await fast.get('users/me', token);
 		return response;
