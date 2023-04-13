@@ -25,7 +25,6 @@ class Budget(BudgetBase, table=True):
     created_at: datetime
     amount: float
     user_id: int = Field(foreign_key="user.id")
-    user: User = Relationship(back_populates="budgets")
 
 
 # Additional properties to return via API

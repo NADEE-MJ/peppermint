@@ -32,7 +32,6 @@ class Account(AccountBase, table=True):
     created_at: datetime
     account_type: Types
     user_id: int = Field(foreign_key="user.id")
-    user: User = Relationship(back_populates="accounts")
 
 
 # Additional properties to return via API
