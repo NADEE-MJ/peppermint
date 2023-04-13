@@ -20,9 +20,10 @@ async def get_all_accounts(
     """
     Get all bank accounts for current user.
     """
-    accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+    if current_user.id is not None:
+        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
 
-    return accounts
+        return accounts
 
 
 @router.get("/{account_id}", response_model=AccountResponse)
@@ -53,19 +54,20 @@ async def create_account(
     """
     Create new bank account. Must Be logged in first.
     """
-    accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+    if current_user.id is not None:
+        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
 
-    if accounts is not None:
-        for account in accounts:
-            if account.name == account_create.name:
-                raise HTTPException(
-                    status_code=400,
-                    detail="An account with the name already exists in the system.",
-                )
+        if accounts is not None:
+            for account in accounts:
+                if account.name == account_create.name:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="An account with the name already exists in the system.",
+                    )
 
-    account = await crud.account.create(db, obj_in=account_create, user_id=current_user.id)
+        account = await crud.account.create(db, obj_in=account_create, user_id=current_user.id)
 
-    return account
+        return account
 
 
 @router.put("/{account_id}", response_model=AccountResponse)

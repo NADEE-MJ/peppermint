@@ -32,7 +32,7 @@ class User(UserBase, table=True):
     # ! do not use this to access the list of accounts for user, since this is lazy loaded
     # ! it causes problems when you try to access this attribute anywhere that you should
     # ! not access it.
-    accounts: list["Account"] = Relationship(
+    accounts: list["Account"] = Relationship(  # type: ignore # noqa: F821
         back_populates="user", sa_relationship_kwargs={"cascade": "all,delete,delete-orphan"}
     )
 
