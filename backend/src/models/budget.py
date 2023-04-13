@@ -1,41 +1,34 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
 
-class Types(str, Enum):
-    savings = "savings"
-    checking = "checking"
-    credit = "credit"
-
-
-class AccountBase(SQLModel):
+class BudgetBase(SQLModel):
     name: str
 
 
 # Properties to receive via API on creation
-class AccountCreate(AccountBase):
-    account_type: Types
+class BudgetCreate(BudgetBase):
+    amount: float
 
 
 # Properties to receive via API on update
-class AccountUpdate(BaseModel):
-    account_type: Types | None = None
+class BudgetUpdate(BaseModel):
+    amount: float | None = None
     name: str | None = None
 
 
-class Account(AccountBase, table=True):
+class Budget(BudgetBase, table=True):
     id: int = Field(primary_key=True)
     created_at: datetime
-    account_type: Types
+    amount: float
     user_id: int = Field(foreign_key="user.id")
 
 
 # Additional properties to return via API
-class AccountResponse(AccountBase):
+class BudgetResponse(BudgetBase):
     id: int
     user_id: int
-    account_type: Types
+    amount: float
     created_at: datetime

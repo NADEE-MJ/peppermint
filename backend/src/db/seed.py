@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.security import get_password_hash
 from src.db.db import get_session
 from src.models.account import Account
+from src.models.budget import Budget
 from src.models.user import User
 
 
@@ -28,6 +29,12 @@ async def main() -> None:
     ]
 
     session.add_all(accounts)
+
+    await session.commit()
+
+    budget = Budget(name="my budget", amount=4000, created_at=datetime.now(), user_id=1)
+
+    session.add(budget)
 
     await session.commit()
 

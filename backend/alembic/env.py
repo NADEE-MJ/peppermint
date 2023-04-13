@@ -10,6 +10,7 @@ from src.core.config import settings
 # ! IMPORT SQLMODELS HERE FOR MIGRATION GENERATION
 from src.models.user import User
 from src.models.account import Account
+from src.models.budget import Budget
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
