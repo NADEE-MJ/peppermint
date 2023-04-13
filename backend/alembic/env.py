@@ -6,8 +6,10 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
 from src.core.config import settings
+
 # ! IMPORT SQLMODELS HERE FOR MIGRATION GENERATION
 from src.models.user import User
+from src.models.account import Account
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,11 +1,11 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const token = event.cookies.get('access_token')
+	const token = event.cookies.get('access_token');
 
-	if (event.url.pathname.startsWith('/login') && token) {
-		throw redirect(303, '/admin/account');
-	}
+	// if (event.url.pathname.startsWith('/login') && token) {
+	// 	throw redirect(303, '/client/account');
+	// }
 
 	if (event.url.pathname.startsWith('/client') || event.url.pathname.startsWith('/admin')) {
 		// protect client and admin routes

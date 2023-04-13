@@ -9,8 +9,8 @@
 	<svelte:fragment slot="sidebarLeft">
 		<nav class="list-nav">
 			<ul>
-				<li><a href="/admin/account">Account</a></li>
-				<li><a href="/admin/skelly">Skelly</a></li>
+				<li><a href="/client/account">Account</a></li>
+				<li><a href="/client/skelly">Skelly</a></li>
 			</ul>
 		</nav>
 	</svelte:fragment>
@@ -20,7 +20,7 @@
 				<strong class="text-xl uppercase">peppermint</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a class="btn btn-sm btn-ghost-surface" href="https://github.com/NADEE-MJ" target="_blank" rel="noreferrer">GitHub</a>
+				<a class="btn btn-sm btn-ghost-surface" href="https://github.com/NADEE-MJ/peppermint" target="_blank" rel="noreferrer">GitHub</a>
 				<form action="/logout" method="POST">
 					<button class="btn btn-filled-secondary btn-sm">Logout</button>
 				</form>

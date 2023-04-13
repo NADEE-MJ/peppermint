@@ -24,7 +24,7 @@ def stop() -> None:
 @app.command()
 def attach() -> None:
     print("[green]Attaching to peppermint app container...[/green]")
-    system("docker exec -it peppermint-app /bin/bash")
+    system("docker exec -it -w /home/deploy/peppermint peppermint-app /bin/bash")
 
 
 app()

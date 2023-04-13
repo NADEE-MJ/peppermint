@@ -28,7 +28,7 @@ async def create_user(
             status_code=400,
             detail="A user with this username already exists in the system.",
         )
-    user = await crud.user.user_create(db, obj_in=user_create)
+    user = await crud.user.create(db, obj_in=user_create)
     if settings.EMAILS_ENABLED:
         send_new_account_email(
             email=user_create.email,
@@ -47,7 +47,7 @@ async def update_user_me(
     """
     Update own user.
     """
-    user = await crud.user.user_update(db, db_obj=current_user, obj_in=user_update)
+    user = await crud.user.update(db, db_obj=current_user, obj_in=user_update)
     return user
 
 
@@ -77,7 +77,7 @@ async def create_user_open(*, db: AsyncSession = Depends(get_session), user_crea
             status_code=400,
             detail="The user with this username already exists in the system",
         )
-    user = await crud.user.user_create(db, obj_in=user_create)
+    user = await crud.user.create(db, obj_in=user_create)
     if settings.EMAILS_ENABLED:
         send_new_account_email(
             email=user_create.email,

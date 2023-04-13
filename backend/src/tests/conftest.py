@@ -13,7 +13,7 @@ from src.tests.utils.user import create_test_user
 
 @pytest_asyncio.fixture(scope="function")
 async def db() -> AsyncGenerator:
-    async_engine = create_async_engine(settings.POSTGRES_DSN, echo=True, future=True)
+    async_engine = create_async_engine(settings.POSTGRES_DSN, echo=False, future=True)
     session = sessionmaker(
         async_engine,
         class_=AsyncSession,

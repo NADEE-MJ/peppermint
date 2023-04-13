@@ -1,7 +1,8 @@
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -11,7 +12,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsg
 from src.models.token import Token
-from src.models.user import User, UserLogin, UserResponse, UserUpdate
+from src.models.user import User, UserResponse, UserUpdate
 from src.utils import (
     generate_password_reset_token,
     send_reset_password_email,
@@ -23,13 +24,13 @@ router = APIRouter()
 
 @router.post("/login/access-token", response_model=Token)
 async def login_access_token(
-    login_data: UserLogin,
+    login_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_session),
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = await crud.user.authenticate(db, email=login_data.email, password=login_data.password)
+    user = await crud.user.authenticate(db, email=login_data.username, password=login_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
@@ -37,9 +38,7 @@ async def login_access_token(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {
-        "access_token": access_token
-    }
+    return {"access_token": access_token}
 
 
 @router.post("/login/test-token", response_model=UserResponse)
@@ -88,5 +87,5 @@ async def reset_password(
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     user_update = UserUpdate(password=new_password)
-    await crud.user.user_update(db, db_obj=user, obj_in=user_update)
+    await crud.user.update(db, db_obj=user, obj_in=user_update)
     return {"message": "Password updated successfully"}

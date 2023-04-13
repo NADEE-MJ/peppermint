@@ -1,6 +1,7 @@
 import json
 
-from fastapi import Cookie, Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,9 +11,9 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.token import TokenPayload
 from src.models.user import User
-from fastapi.security import OAuth2PasswordBearer
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_VERSION_STR}/login/access-token")
+
 
 async def get_current_user(
     db: AsyncSession = Depends(get_session),
