@@ -35,6 +35,9 @@ class User(UserBase, table=True):
     accounts: list["Account"] = Relationship(  # type: ignore # noqa: F821
         back_populates="user", sa_relationship_kwargs={"cascade": "all,delete,delete-orphan"}
     )
+    budgets: list["Budget"] = Relationship(  # type: ignore # noqa: F821
+        back_populates="user", sa_relationship_kwargs={"cascade": "all,delete,delete-orphan"}
+    )
 
 
 # Additional properties to return via API
