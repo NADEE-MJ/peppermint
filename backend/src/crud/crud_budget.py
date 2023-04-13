@@ -16,12 +16,5 @@ class CRUDBudget(CRUDBase[Budget, BudgetCreate, BudgetUpdate]):
         db_obj = Budget(name=obj_in.name, amount=obj_in.amount, created_at=datetime.now(), user_id=user_id)
         return await super().create(db, obj_in=db_obj)  # type: ignore
 
-    async def update(self, db: AsyncSession, *, db_obj: Budget, obj_in: BudgetUpdate | Dict[str, Any]) -> Budget:
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
-        return await super().update(db, db_obj=db_obj, obj_in=update_data)
-
 
 budget = CRUDBudget(Budget)

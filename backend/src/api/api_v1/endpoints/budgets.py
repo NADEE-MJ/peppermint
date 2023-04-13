@@ -18,7 +18,7 @@ async def get_all_budgets(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Get all bank budgets for current user.
+    Get all budgets for current user.
     """
     if current_user.id is not None:
         budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
@@ -33,14 +33,14 @@ async def get_budget(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Get specific bank budget info for current user.
+    Get specific budget info for current user.
     """
     budget = await crud.budget.get(db, id=budget_id)
     if budget is None:
         raise HTTPException(status_code=404, detail="That budget does not exist.")
 
     if budget.user_id != current_user.id:
-        raise HTTPException(status_code=401, detail="You are unauthorized to access this bank budget")
+        raise HTTPException(status_code=401, detail="You are unauthorized to access this budget")
     return budget
 
 
@@ -52,7 +52,7 @@ async def create_budget(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Create new bank budget. Must Be logged in first.
+    Create new budget. Must Be logged in first.
     """
     if current_user.id is not None:
         budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
@@ -62,7 +62,7 @@ async def create_budget(
                 if budget.name == budget_create.name:
                     raise HTTPException(
                         status_code=400,
-                        detail="An budget with the name already exists in the system.",
+                        detail="A budget with the name already exists in the system.",
                     )
 
         budget = await crud.budget.create(db, obj_in=budget_create, user_id=current_user.id)
@@ -78,7 +78,7 @@ async def update_budget(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Update an existing bank budget. Must be logged in first.
+    Update an existing budget. Must be logged in first.
     """
     budget_from_db = await crud.budget.get(db, id=budget_id)
 
@@ -86,7 +86,7 @@ async def update_budget(
         raise HTTPException(status_code=404, detail="That budget does not exist.")
 
     if budget_from_db.user_id != current_user.id:
-        raise HTTPException(status_code=401, detail="You are unauthorized to update this bank budget")
+        raise HTTPException(status_code=401, detail="You are unauthorized to update this budget")
 
     budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
 
@@ -95,7 +95,7 @@ async def update_budget(
             if budget.name == budget_update.name:
                 raise HTTPException(
                     status_code=400,
-                    detail="An budget with the name already exists in the system.",
+                    detail="A budget with the name already exists in the system.",
                 )
 
     budget = await crud.budget.update(db, db_obj=budget_from_db, obj_in=budget_update)
@@ -110,7 +110,7 @@ async def remove_budget(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Remove an existing bank budget. Must be logged in first.
+    Remove an existing budget. Must be logged in first.
     """
     budget = await crud.budget.get(db, id=budget_id)
 
@@ -118,7 +118,7 @@ async def remove_budget(
         raise HTTPException(status_code=404, detail="That budget does not exist.")
 
     if budget.user_id != current_user.id:
-        raise HTTPException(status_code=401, detail="You are unauthorized to remove this bank budget")
+        raise HTTPException(status_code=401, detail="You are unauthorized to remove this budget")
 
     budget = await crud.budget.remove(db, id=budget_id)
 

@@ -32,5 +32,5 @@ class CategoryResponse(CategoryBase):
     id: int
     user_id: int
     budget_id: int
-    desc: float
+    desc: str
     created_at: datetime

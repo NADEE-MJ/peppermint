@@ -6,7 +6,7 @@ from sqlmodel import Field, SQLModel
 
 class TransactionBase(SQLModel):
     amount: float
-    date: datetime
+    date: str
     desc: str
 
 
@@ -19,12 +19,13 @@ class TransactionCreate(TransactionBase):
 class TransactionUpdate(BaseModel):
     amount: float | None = None
     desc: str | None = None
-    date: datetime | None = None
+    date: str | None = None
 
 
 class Transaction(TransactionBase, table=True):
     id: int = Field(primary_key=True)
     created_at: datetime
+    date: datetime
     user_id: int = Field(foreign_key="user.id")
     budget_id: int = Field(foreign_key="budget.id")
     category_id: int = Field(foreign_key="category.id")
@@ -37,3 +38,4 @@ class TransactionResponse(TransactionBase):
     budget_id: int
     category_id: int
     created_at: datetime
+    date: datetime
