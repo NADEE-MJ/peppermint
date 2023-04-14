@@ -52,8 +52,10 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("budget_id", sa.Integer(), nullable=False),
         sa.Column("category_id", sa.Integer(), nullable=False),
+        sa.Column("account_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(["budget_id"], ["budget.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["category_id"], ["category.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )

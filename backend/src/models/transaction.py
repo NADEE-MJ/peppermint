@@ -29,6 +29,7 @@ class Transaction(TransactionBase, table=True):
     user_id: int = Field(foreign_key="user.id")
     budget_id: int = Field(foreign_key="budget.id")
     category_id: int = Field(foreign_key="category.id")
+    account_id: int = Field(foreign_key="account.id")
 
 
 # Additional properties to return via API
@@ -37,5 +38,6 @@ class TransactionResponse(TransactionBase):
     user_id: int
     budget_id: int
     category_id: int
+    account_id: int
     created_at: datetime
     date: datetime

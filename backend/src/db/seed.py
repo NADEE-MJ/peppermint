@@ -69,10 +69,21 @@ async def main() -> None:
 
     transactions = [
         Transaction(
-            amount=14.56, date=now, desc="panda express", created_at=now, user_id=1, category_id=1, budget_id=1
+            amount=14.56,
+            date=now,
+            desc="panda express",
+            created_at=now,
+            user_id=1,
+            category_id=1,
+            budget_id=1,
+            account_id=1,
         ),
-        Transaction(amount=100.21, date=now, desc="macys", created_at=now, user_id=1, category_id=2, budget_id=1),
-        Transaction(amount=14.56, date=now, desc="regal", created_at=now, user_id=1, category_id=3, budget_id=2),
+        Transaction(
+            amount=100.21, date=now, desc="macys", created_at=now, user_id=1, category_id=2, budget_id=1, account_id=1
+        ),
+        Transaction(
+            amount=14.56, date=now, desc="regal", created_at=now, user_id=1, category_id=3, budget_id=2, account_id=2
+        ),
     ]
 
     session.add_all(transactions)

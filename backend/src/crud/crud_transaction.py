@@ -31,7 +31,26 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         )
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: TransactionCreate, user_id: int, category_id: int, budget_id: int) -> Transaction:  # type: ignore
+    async def get_all_transactions_for_category_in_account(
+        self, db: AsyncSession, *, user_id: int, category_id: int, account_id: int
+    ) -> Optional[list[Transaction]]:
+        result = await db.execute(
+            select(Transaction)
+            .filter(Transaction.user_id == user_id)
+            .filter(Transaction.account_id == account_id)
+            .filter(Transaction.category_id == category_id)
+        )
+        return result.scalars().all()
+
+    async def get_all_transactions_for_account(
+        self, db: AsyncSession, *, user_id: int, account_id: int
+    ) -> Optional[list[Transaction]]:
+        result = await db.execute(
+            select(Transaction).filter(Transaction.user_id == user_id).filter(Transaction.account_id == account_id)
+        )
+        return result.scalars().all()
+
+    async def create(self, db: AsyncSession, *, obj_in: TransactionCreate, user_id: int, category_id: int, budget_id: int, account_id: int) -> Transaction:  # type: ignore
         db_obj = Transaction(
             amount=obj_in.amount,
             desc=obj_in.desc,
@@ -40,6 +59,7 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
             user_id=user_id,
             category_id=category_id,
             budget_id=budget_id,
+            account_id=account_id,
         )
         return await super().create(db, obj_in=db_obj)  # type: ignore
 

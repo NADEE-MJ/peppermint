@@ -53,6 +53,33 @@ async def get_all_transactions_by_budget(
         return transactions
 
 
+@router.get("/account/{account_id}", response_model=list[TransactionResponse])
+async def get_all_transactions_by_account(
+    account_id: int,
+    *,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get all transactions for current user by account.
+    """
+    if current_user.id is not None:
+        # check if account belongs to that user
+        account = await crud.account.get(db, id=account_id)
+
+        if account is None:
+            raise HTTPException(status_code=404, detail="That account does not exist.")
+
+        if account.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
+
+        transactions = await crud.transaction.get_all_transactions_for_account(
+            db, user_id=current_user.id, account_id=account_id
+        )
+
+        return transactions
+
+
 @router.get("/budget/{budget_id}/category/{category_id}", response_model=list[TransactionResponse])
 async def get_all_transactions_by_budget_and_category(
     budget_id: int,
@@ -62,7 +89,7 @@ async def get_all_transactions_by_budget_and_category(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Get all transactions for current user.
+    Get all transactions for current user by budget and category.
     """
     if current_user.id is not None:
         # check if budget belongs to that user
@@ -90,6 +117,43 @@ async def get_all_transactions_by_budget_and_category(
         return transactions
 
 
+@router.get("/account/{account_id}/category/{category_id}", response_model=list[TransactionResponse])
+async def get_all_transactions_by_account_and_category(
+    account_id: int,
+    category_id: int,
+    *,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get all transactions for current user by account and category.
+    """
+    if current_user.id is not None:
+        # check if account belongs to that user
+        account = await crud.account.get(db, id=account_id)
+
+        if account is None:
+            raise HTTPException(status_code=404, detail="That account does not exist.")
+
+        if account.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
+
+        # check if category belongs to that user
+        category = await crud.category.get(db, id=category_id)
+
+        if category is None:
+            raise HTTPException(status_code=404, detail="That category does not exist.")
+
+        if category.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
+
+        transactions = await crud.transaction.get_all_transactions_for_category_in_account(
+            db, user_id=current_user.id, category_id=category_id, account_id=account_id
+        )
+
+        return transactions
+
+
 @router.get("/{transaction_id}", response_model=TransactionResponse)
 async def get_transaction(
     transaction_id: int,
@@ -108,10 +172,11 @@ async def get_transaction(
     return transaction
 
 
-@router.post("/budget/{budget_id}/category/{category_id}", response_model=TransactionResponse)
+@router.post("/budget/{budget_id}/category/{category_id}/account/{account_id}", response_model=TransactionResponse)
 async def create_transaction(
     budget_id: int,
     category_id: int,
+    account_id: int,
     *,
     db: AsyncSession = Depends(get_session),
     transaction_create: TransactionCreate,
@@ -139,12 +204,26 @@ async def create_transaction(
         if category.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
+        # check if category belongs to that user
+        account = await crud.account.get(db, id=account_id)
+
+        if account is None:
+            raise HTTPException(status_code=404, detail="That account does not exist.")
+
+        if account.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
+
         # ! need to add some sort of duplicate transaction check here
         # ! a couple ways to do this could be to ask the user if they are sure they
         # ! want to add a duplicate transaction
 
         transaction = await crud.transaction.create(
-            db, obj_in=transaction_create, user_id=current_user.id, category_id=category_id, budget_id=budget_id
+            db,
+            obj_in=transaction_create,
+            user_id=current_user.id,
+            category_id=category_id,
+            budget_id=budget_id,
+            account_id=account_id,
         )
 
         return transaction
