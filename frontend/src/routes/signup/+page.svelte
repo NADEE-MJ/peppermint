@@ -50,7 +50,7 @@
 					<Textfield name="passwordConfirm" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
 				</div>
 				<div class="flex justify-center p-2">
-					<button type="submit" class="btn btn-filled-primary btn-xl">Signup</button>
+					<button type="submit" class="btn variant-filled btn-xl">Signup</button>
 				</div>
 			</div>
 		</div>

@@ -1,7 +1,7 @@
 ---
 name: ✅ Task
 about: Single To-do
-title: "[TASK]"
+title: '[TASK]'
 labels: task
 ---
 

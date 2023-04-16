@@ -8,7 +8,7 @@
 		</header>
 
 		<div class="p-4 flex justify-center">
-			<a href="/login" class="btn btn-filled-primary btn-xl">Login</a>
+			<a href="/login" class="btn variant-filled btn-xl">Login</a>
 		</div>
 	</div>
 </div>

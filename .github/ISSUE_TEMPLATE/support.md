@@ -1,7 +1,7 @@
 ---
 name: 🤓 Support Question
 about: Question on how to use this project ❓
-title: "[SUPPORT]"
+title: '[SUPPORT]'
 labels: question
 ---
 

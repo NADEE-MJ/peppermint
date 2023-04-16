@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { signupValidator, loginValidator } from '$lib/zodValidators';
+import { signupValidator } from '$lib/zodValidators';
 import { fast } from '$lib/fast';
 
 export const actions: Actions = {
@@ -14,11 +14,10 @@ export const actions: Actions = {
 		}
 		const { email, password, full_name } = validatedBody.data;
 
-		const res = await fast.signup( email, password, full_name);
+		const res = await fast.signup(email, password, full_name);
 		let data = await res.json();
 
 		if (data?.full_name) {
-
 			const temp = await fast.login(email, password);
 			data = await temp.json();
 
@@ -33,16 +32,12 @@ export const actions: Actions = {
 				});
 
 				throw redirect(303, '/client/account');
-
 			} else {
 				//! return value from backend
 				return fail(400, { error: 'Unable to Sign In' });
 			}
-
-		}
-
-		else {
-			return fail(400, {error: "Unable to create new user"});
+		} else {
+			return fail(400, { error: 'Unable to create new user' });
 		}
 	}
 };

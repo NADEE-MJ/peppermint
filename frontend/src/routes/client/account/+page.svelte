@@ -16,7 +16,7 @@
 		email: data.userRecord.email,
 		password: null,
 		passwordConfirm: null,
-		full_name: data.userRecord.full_name,
+		full_name: data.userRecord.full_name
 	};
 
 	interface Errors {
@@ -71,16 +71,10 @@
 					errorMessages={validationErrors?.passwordConfirm}
 					value={userFormData.passwordConfirm}
 				/>
-				<Textfield
-					name="full_name"
-					type="text"
-					placeholder="Full Name"
-					errorMessages={validationErrors?.full_name}
-					value={userFormData.full_name}
-				/>
+				<Textfield name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
 			</div>
 			<div class="flex justify-center">
-				<button type="submit" class="btn btn-filled-primary btn-xl">Update Account Info</button>
+				<button type="submit" class="btn variant-filled btn-xl">Update Account Info</button>
 			</div>
 		</div>
 	</form>

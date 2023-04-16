@@ -1,7 +1,7 @@
 ---
 name: 🚀 Feature Request
 about: New feature or request 💡
-title: "[FEATURE]"
+title: '[FEATURE]'
 labels: feature
 ---
 

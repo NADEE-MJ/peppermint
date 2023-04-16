@@ -10,7 +10,7 @@ export const signupValidator = z
 		email: z.string().email({ message: 'Please provide a valid email.' }),
 		password: z.string().min(8, 'Password must be at least 8 characters.').max(32, 'Password must be less than 32 characters.'),
 		passwordConfirm: z.string().min(8, 'Password must be at least 8 characters.').max(32, 'Password must be less than 32 characters.'),
-		full_name: z.string().min(1, 'Full Name must be at least 1 character'),
+		full_name: z.string().min(1, 'Full Name must be at least 1 character')
 	})
 	.superRefine(({ password, passwordConfirm }, ctx) => {
 		if (password !== passwordConfirm) {
@@ -32,7 +32,7 @@ export const UpdateUserValidator = z
 		email: z.nullable(z.string().email({ message: 'Please provide a valid email.' })),
 		password: z.nullable(z.string().min(8, 'Password must be at least 8 characters.').max(32, 'Password must be less than 32 characters.')),
 		passwordConfirm: z.nullable(z.string().min(8, 'Password must be at least 8 characters.').max(32, 'Password must be less than 32 characters.')),
-		full_name: z.nullable(z.string().min(1, 'Full Name must be at least 1 character')),
+		full_name: z.nullable(z.string().min(1, 'Full Name must be at least 1 character'))
 	})
 	.superRefine(({ password, passwordConfirm }, ctx) => {
 		if (password !== passwordConfirm) {

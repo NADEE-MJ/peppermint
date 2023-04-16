@@ -20,7 +20,7 @@
 	<label for={name} class="label max-w-md space-y-1">
 		{#if errorMessages}
 			{#each errorMessages as message}
-				<aside class="alert alert-error">
+				<aside class="alert variant-ghost-error">
 					<img src={ErrorCircle} alt="ErrorCicle" class="w-6 h-6" />
 					<div class="alert-message">
 						<p>{message}</p>
