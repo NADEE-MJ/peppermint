@@ -11,6 +11,9 @@ from src.core.config import settings
 from src.models.user import User
 from src.models.account import Account
 from src.models.budget import Budget
+from src.models.category import Category
+from src.models.transaction import Transaction
+from src.models.filter import Filter
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
