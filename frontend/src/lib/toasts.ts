@@ -4,7 +4,7 @@ export const toast = {
 	error: (message: string) => {
 		const t: ToastSettings = {
 			message: message,
-			preset: 'error',
+			background: 'variant-filled-warning',
 			autohide: true,
 			timeout: 5000
 		};

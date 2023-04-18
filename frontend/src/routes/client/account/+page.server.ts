@@ -3,11 +3,11 @@ import type { PageServerLoad } from './$types';
 import { UpdateUserValidator } from '$lib/zodValidators';
 import { fast } from '$lib/fast';
 
-export const load = (async ({cookies}) => {
+export const load = (async ({ cookies }) => {
 	const token = cookies.get('access_token');
 	if (token) {
-		const response = await fast.getCurrentUser(token)
-		const json = await response.json()
+		const response = await fast.getCurrentUser(token);
+		const json = await response.json();
 
 		return {
 			userRecord: json,
@@ -45,8 +45,8 @@ export const actions: Actions = {
 			return fail(400, { errors });
 		}
 		const body = validatedBody.data;
-		const token  = cookies.get('access_token')
-		if(token) {
+		const token = cookies.get('access_token');
+		if (token) {
 			const response = await fast.updateCurrentUser(token, body);
 			const message = await response.json();
 
@@ -57,8 +57,7 @@ export const actions: Actions = {
 
 			return { success: true };
 		} else {
-			return fail(401, { message: "You are not logged in." })
+			return fail(401, { message: 'You are not logged in.' });
 		}
-
 	}
 };

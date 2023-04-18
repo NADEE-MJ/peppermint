@@ -14,23 +14,22 @@ const config = {
 	],
 	kit: {
 		files: {
-			routes: "frontend/src/routes",
-			appTemplate: "frontend/src/app.html",
-			errorTemplate: "frontend/src/error.html",
-			assets: "frontend/static",
+			routes: 'frontend/src/routes',
+			appTemplate: 'frontend/src/app.html',
+			errorTemplate: 'frontend/src/error.html',
+			assets: 'frontend/static',
 			hooks: {
-				client: "frontend/src/hooks.client.ts",
-				server: "frontend/src/hooks.server.ts",
+				client: 'frontend/src/hooks.client.ts',
+				server: 'frontend/src/hooks.server.ts'
 			},
-			lib: "frontend/src/lib",
-			params: "frontend/src/params",
-			serviceWorker: "frontend/src/service-worker"
+			lib: 'frontend/src/lib',
+			params: 'frontend/src/params',
+			serviceWorker: 'frontend/src/service-worker'
 		},
 		adapter: adapter(),
 		env: {
-			dir: "."
+			dir: '.'
 		}
-
 	}
 };
 

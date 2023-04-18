@@ -1,7 +1,7 @@
 ---
 name: 💡 Spike
 about: Research Spike
-title: "[SPIKE]"
+title: '[SPIKE]'
 labels: spike
 ---
 
