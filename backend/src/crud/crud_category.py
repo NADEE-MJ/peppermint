@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -20,7 +20,9 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
         )
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: CategoryCreate, user_id: int, budget_id: int) -> Category:  # type: ignore
+    async def create(  # type: ignore
+        self, db: AsyncSession, *, obj_in: CategoryCreate, user_id: int, budget_id: int
+    ) -> Category:
         db_obj = Category(
             name=obj_in.name, desc=obj_in.desc, created_at=datetime.now(), user_id=user_id, budget_id=budget_id
         )

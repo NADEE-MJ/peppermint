@@ -1,5 +1,14 @@
 from fastapi import APIRouter
-from src.api.api_v1.endpoints import accounts, budgets, login, users, utils, transactions, categories, filters
+from src.api.api_v1.endpoints import (
+    accounts,
+    budgets,
+    categories,
+    filters,
+    login,
+    transactions,
+    users,
+    utils,
+)
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])

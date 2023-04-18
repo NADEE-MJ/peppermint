@@ -50,7 +50,16 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         )
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: TransactionCreate, user_id: int, category_id: int, budget_id: int, account_id: int) -> Transaction:  # type: ignore
+    async def create(  # type: ignore
+        self,
+        db: AsyncSession,
+        *,
+        obj_in: TransactionCreate,
+        user_id: int,
+        category_id: int,
+        budget_id: int,
+        account_id: int,
+    ) -> Transaction:
         db_obj = Transaction(
             amount=obj_in.amount,
             desc=obj_in.desc,

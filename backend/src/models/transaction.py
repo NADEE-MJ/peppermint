@@ -25,7 +25,7 @@ class TransactionUpdate(BaseModel):
 class Transaction(TransactionBase, table=True):
     id: int = Field(primary_key=True)
     created_at: datetime
-    date: datetime
+    date: datetime  # type: ignore
     user_id: int = Field(foreign_key="user.id")
     budget_id: int = Field(foreign_key="budget.id")
     category_id: int = Field(foreign_key="category.id")
@@ -40,4 +40,4 @@ class TransactionResponse(TransactionBase):
     category_id: int
     account_id: int
     created_at: datetime
-    date: datetime
+    date: datetime  # type: ignore

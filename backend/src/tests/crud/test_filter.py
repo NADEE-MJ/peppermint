@@ -1,10 +1,10 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
-from src.models.filter import FilterCreate, FilterUpdate
-from src.tests.utils.filter import create_test_filter
-from src.tests.utils.category import create_test_category
+from src.models.filter import FilterCreate
 from src.tests.utils.budget import create_test_budget
+from src.tests.utils.category import create_test_category
+from src.tests.utils.filter import create_test_filter
 from src.tests.utils.user import create_random_user
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -20,7 +20,9 @@ class CRUDFilter(CRUDBase[Filter, FilterCreate, FilterUpdate]):
         )
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: FilterCreate, user_id: int, category_id: int) -> Filter:  # type: ignore
+    async def create(  # type: ignore
+        self, db: AsyncSession, *, obj_in: FilterCreate, user_id: int, category_id: int
+    ) -> Filter:
         db_obj = Filter(filter_by=obj_in.filter_by, created_at=datetime.now(), user_id=user_id, category_id=category_id)
         return await super().create(db, obj_in=db_obj)  # type: ignore
 

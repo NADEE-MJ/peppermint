@@ -1,9 +1,9 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
-from src.models.category import CategoryCreate, CategoryUpdate
-from src.tests.utils.category import create_test_category
+from src.models.category import CategoryCreate
 from src.tests.utils.budget import create_test_budget
+from src.tests.utils.category import create_test_category
 from src.tests.utils.user import create_random_user
 
 
