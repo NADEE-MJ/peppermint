@@ -6,7 +6,8 @@ import { tableMapperValues } from '@skeletonlabs/skeleton';
 
 export let sourceData: Array<{}>;
 export let headerName: Array<string>;
-export let count: 
+export let count: 10;
+export let current: 0;
 
 </script>
 
@@ -23,7 +24,7 @@ export let count:
 		<tbody>
             {#each sourceData as data, i}
 				<tr>
-					{#each sourceData[i] as column, i}
+					{#each data as column, i}
 						<td>{column}</td>
 					{/each}
 				</tr>
@@ -31,6 +32,8 @@ export let count:
 		</tbody>
 		<tfoot>
 			<tr>
+				<td>Prev</td>
+				<td>Next</td>
 			</tr>
 		</tfoot>
 	</table>
