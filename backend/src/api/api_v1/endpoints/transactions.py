@@ -1,10 +1,14 @@
+import os
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.api import deps
+from src.core.config import settings
+from src.core.parser import parser
 from src.db.db import get_session
+from src.models.json_msg import JsonMsgSuccess
 from src.models.transaction import (
     TransactionCreate,
     TransactionResponse,
@@ -280,3 +284,48 @@ async def remove_transaction(
     transaction = await crud.transaction.remove(db, id=transaction_id)
 
     return transaction
+
+
+@router.post("/budget/{budget_id}/account/{account_id}/parse/{file_name}", response_model=JsonMsgSuccess)
+async def parse_transactions_from_csv(
+    budget_id: int,
+    account_id: int,
+    file_name: str,
+    mapping: dict = Body(...),
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Parse a csv file. Must be logged in first.
+    """
+    file_path = os.path.join(settings.UPLOAD_DIR, file_name)
+
+    if current_user.id is not None:
+        # check if budget belongs to that user
+        budget = await crud.budget.get(db, id=budget_id)
+
+        if budget is None:
+            raise HTTPException(status_code=404, detail="That budget does not exist.")
+
+        if budget.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
+
+        # check if account belongs to that user
+        account = await crud.account.get(db, id=account_id)
+
+        if account is None:
+            raise HTTPException(status_code=404, detail="That account does not exist.")
+
+        if account.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
+
+        return_value = await parser(
+            db,
+            mapping=mapping,
+            file_path=file_path,
+            user_id=current_user.id,
+            budget_id=budget_id,
+            account_id=account_id,
+        )
+
+    return {"message": "Finished Parsing", "success": return_value}

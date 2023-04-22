@@ -6,6 +6,7 @@ from src import crud
 from src.api import deps
 from src.db.db import get_session
 from src.models.budget import BudgetCreate, BudgetResponse, BudgetUpdate
+from src.models.category import CategoryCreate
 from src.models.user import User
 
 router = APIRouter()
@@ -56,16 +57,28 @@ async def create_budget(
     """
     if current_user.id is not None:
         budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
+        if budgets is not None and len(budgets) >= 1:
+            raise HTTPException(
+                status_code=400,
+                detail="You may only have one budget at a time.",
+            )
 
-        if budgets is not None:
-            for budget in budgets:
-                if budget.name == budget_create.name:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="A budget with the name already exists in the system.",
-                    )
+        # ? only enable this if we want to allow multiple budgets
+        # if budgets is not None:
+        #     for budget in budgets:
+        #         if budget.name == budget_create.name:
+        #             raise HTTPException(
+        #                 status_code=400,
+        #                 detail="A budget with the name already exists in the system.",
+        #             )
 
         budget = await crud.budget.create(db, obj_in=budget_create, user_id=current_user.id)
+        await crud.category.create(
+            db,
+            obj_in=CategoryCreate(name="Unsorted", desc="All unsorted transactions", amount=-1),
+            user_id=current_user.id,
+            budget_id=budget.id,
+        )
 
         return budget
 

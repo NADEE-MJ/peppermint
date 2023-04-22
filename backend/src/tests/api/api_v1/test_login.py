@@ -32,7 +32,6 @@ async def test_use_access_token(db: AsyncSession, client: TestClient, test_user:
     response = client.post(f"{settings.API_VERSION_STR}/login/test-token", headers=headers)
     result = response.json()
     await crud.user.remove(db, id=test_user.id)
-    print(result)
     assert response.status_code == 200
     assert "email" in result
 

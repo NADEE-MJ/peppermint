@@ -109,7 +109,7 @@ async def test_create_transaction(db: AsyncSession, client: TestClient, test_use
     budget = await create_test_budget(db, user_id=test_user.id)
     category = await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
     account = await create_test_account(db, user_id=test_user.id)
-    data = {"desc": "test", "amount": 100, "date": "2020-01-01"}
+    data = {"desc": "test", "amount": 100, "date": "01/01/2020"}
     response = client.post(
         f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/category/{category.id}/account/{account.id}",
         headers=headers,

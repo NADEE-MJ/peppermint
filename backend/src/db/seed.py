@@ -40,7 +40,6 @@ async def main() -> None:
 
     budgets = [
         Budget(name="my budget", amount=4000, created_at=now, user_id=1),
-        Budget(name="my second budget", amount=4000, created_at=now, user_id=1),
     ]
 
     session.add_all(budgets)
@@ -48,9 +47,10 @@ async def main() -> None:
     await session.commit()
 
     categories = [
-        Category(name="food", desc="things to eat", created_at=now, user_id=1, budget_id=1),
-        Category(name="shopping", desc="things to buy", created_at=now, user_id=1, budget_id=1),
-        Category(name="entertainmenet", desc="things to do", created_at=now, user_id=1, budget_id=2),
+        Category(name="Unsorted", desc="All unsorted transactions", created_at=now, user_id=1, budget_id=1, amount=-1),
+        Category(name="food", desc="things to eat", created_at=now, user_id=1, budget_id=1, amount=1000),
+        Category(name="shopping", desc="things to buy", created_at=now, user_id=1, budget_id=1, amount=1000),
+        Category(name="entertainment", desc="things to do", created_at=now, user_id=1, budget_id=1, amount=2000),
     ]
 
     session.add_all(categories)
@@ -58,9 +58,9 @@ async def main() -> None:
     await session.commit()
 
     filters = [
-        Filter(filter_by="panda express", created_at=now, user_id=1, category_id=1),
-        Filter(filter_by="macys", created_at=now, user_id=1, category_id=2),
-        Filter(filter_by="regal", created_at=now, user_id=1, category_id=3),
+        Filter(filter_by="panda express", created_at=now, user_id=1, category_id=2),
+        Filter(filter_by="macys", created_at=now, user_id=1, category_id=3),
+        Filter(filter_by="regal", created_at=now, user_id=1, category_id=4),
     ]
 
     session.add_all(filters)
@@ -82,7 +82,7 @@ async def main() -> None:
             amount=100.21, date=now, desc="macys", created_at=now, user_id=1, category_id=2, budget_id=1, account_id=1
         ),
         Transaction(
-            amount=14.56, date=now, desc="regal", created_at=now, user_id=1, category_id=3, budget_id=2, account_id=2
+            amount=14.56, date=now, desc="regal", created_at=now, user_id=1, category_id=3, budget_id=1, account_id=2
         ),
     ]
 
