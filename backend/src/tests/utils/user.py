@@ -17,9 +17,9 @@ async def create_test_user(db: AsyncSession) -> User:
             full_name=TEST_USER_NAME,
             email=TEST_USER_EMAIL,
             password=TEST_USER_PASSWORD,
+            is_admin=False
         )
         user = await crud.user.create(db, obj_in=user_create)
-
     return user
 
 
@@ -28,7 +28,7 @@ async def create_random_user(db: AsyncSession, password: str | None = None, is_a
     email = random_email()
     if password is None:
         password = random_lower_string()
-    user_create = UserCreate(full_name=full_name, email=email, password=password)
+    user_create = UserCreate(full_name=full_name, email=email, password=password, is_admin=False)
     user = await crud.user.create(db=db, obj_in=user_create)
     if not is_active:
         user = await crud.user.update(db=db, db_obj=user, obj_in={"is_active": False})

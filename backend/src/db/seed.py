@@ -23,6 +23,18 @@ async def main() -> None:
         password=get_password_hash("Test1234!"),
         is_active=True,
         created_at=now,
+        is_admin=True,
+        last_login=datetime.now(),
+    )
+    session.add(user)
+
+    user = User(
+        full_name="Test User",
+        email="user@test.com",
+        password=get_password_hash("Test1234!"),
+        is_active=True,
+        created_at=now,
+        is_admin=False,
         last_login=datetime.now(),
     )
     session.add(user)

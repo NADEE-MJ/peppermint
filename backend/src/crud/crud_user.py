@@ -20,6 +20,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             full_name=obj_in.full_name,
             created_at=datetime.now(),
             is_active=True,
+            is_admin=False
         )
         return await super().create(db, obj_in=db_obj)  # type: ignore
 
@@ -45,6 +46,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def is_active(self, user: User) -> bool:
         return user.is_active
-
-
+    
+    def is_admin(self, user:User) -> bool:
+        return user.is_admin
+    
 user = CRUDUser(User)

@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("last_login", sa.DateTime(), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
+        sa.Column("is_admin", sa.Boolean(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
