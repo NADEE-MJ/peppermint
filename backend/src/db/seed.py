@@ -49,21 +49,31 @@ async def main() -> None:
     categories = [
         Category(
             name="Unsorted",
-            desc="All unsorted transactions",
+            desc="All unsorted transactions.",
             created_at=now,
             user_id=user.id,
             budget_id=budgets[0].id,
             amount=-1,
         ),
         Category(
-            name="food", desc="things to eat", created_at=now, user_id=user.id, budget_id=budgets[0].id, amount=1000
+            name="Food and Drink",
+            desc="Stuff you need to stay alive.",
+            created_at=now,
+            user_id=user.id,
+            budget_id=budgets[0].id,
+            amount=1000,
         ),
         Category(
-            name="shopping", desc="things to buy", created_at=now, user_id=user.id, budget_id=budgets[0].id, amount=1000
+            name="Shopping",
+            desc="Stuff you probably don't need.",
+            created_at=now,
+            user_id=user.id,
+            budget_id=budgets[0].id,
+            amount=1000,
         ),
         Category(
-            name="entertainment",
-            desc="things to do",
+            name="Entertainment",
+            desc="Stuff you are probably wasting your time on.",
             created_at=now,
             user_id=user.id,
             budget_id=budgets[0].id,
@@ -76,9 +86,9 @@ async def main() -> None:
     await session.commit()
 
     filters = [
-        Filter(filter_by="panda express", created_at=now, user_id=user.id, category_id=categories[1].id),
-        Filter(filter_by="macys", created_at=now, user_id=user.id, category_id=categories[2].id),
-        Filter(filter_by="regal", created_at=now, user_id=user.id, category_id=categories[3].id),
+        Filter(filter_by="Panda Express", created_at=now, user_id=user.id, category_id=categories[1].id),
+        Filter(filter_by="Macy's", created_at=now, user_id=user.id, category_id=categories[2].id),
+        Filter(filter_by="Regal Entertainment", created_at=now, user_id=user.id, category_id=categories[3].id),
     ]
 
     session.add_all(filters)
@@ -89,7 +99,7 @@ async def main() -> None:
         Transaction(
             amount=14.56,
             date=now,
-            desc="panda express",
+            desc="Panda Express - Brea #k1jh234",
             created_at=now,
             user_id=user.id,
             category_id=categories[1].id,
@@ -99,7 +109,7 @@ async def main() -> None:
         Transaction(
             amount=100.21,
             date=now,
-            desc="macys",
+            desc="Macy's Trans#lk2341g3",
             created_at=now,
             user_id=user.id,
             category_id=categories[1].id,
@@ -109,7 +119,7 @@ async def main() -> None:
         Transaction(
             amount=14.56,
             date=now,
-            desc="regal",
+            desc="Regal Entertainment LKJ3123",
             created_at=now,
             user_id=user.id,
             category_id=categories[2].id,
