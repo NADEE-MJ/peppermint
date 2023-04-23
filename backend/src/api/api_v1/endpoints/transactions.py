@@ -308,7 +308,7 @@ async def parse_transactions_from_csv(
             raise HTTPException(status_code=404, detail="That budget does not exist.")
 
         if budget.user_id != current_user.id:
-            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
+            raise HTTPException(status_code=401, detail="You are unauthorized to add transactions to this budget")
 
         # check if account belongs to that user
         account = await crud.account.get(db, id=account_id)

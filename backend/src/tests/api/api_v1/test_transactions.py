@@ -1,4 +1,5 @@
 import pytest
+import os
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -9,6 +10,7 @@ from src.tests.utils.budget import create_test_budget
 from src.tests.utils.category import create_test_category
 from src.tests.utils.transaction import create_test_transaction
 from src.tests.utils.user import get_auth_header
+from src.tests.utils.filter import create_parser_test_filters
 
 
 @pytest.mark.asyncio
@@ -159,3 +161,71 @@ async def test_remove_transaction(db: AsyncSession, client: TestClient, test_use
     await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 0
+
+
+@pytest.mark.asyncio
+async def test_parse_transactions_from_csv_with_no_categories(
+    db: AsyncSession, client: TestClient, test_user: User
+) -> None:
+    headers = get_auth_header(client)
+    budget = await create_test_budget(db, user_id=test_user.id)
+    account = await create_test_account(db, user_id=test_user.id)
+    await create_parser_test_filters(db, user_id=test_user.id, budget_id=budget.id)
+
+    file_name = "transactions-to-parse.csv"
+    if os.path.exists(f"storage/imports/{file_name}"):
+        os.system(f"rm storage/imports/{file_name}")
+        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
+    else:
+        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
+
+    mapping = {"Date": "date", "Description": "desc", "Amount": "amnt"}
+
+    response = client.post(
+        f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/account/{account.id}/parse/{file_name}",
+        headers=headers,
+        json=mapping,
+    )
+
+    res = response.json()
+    assert res["success"] == True
+
+    response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
+    transactions = response.json()
+    await crud.user.remove(db, id=test_user.id)
+
+    assert len(transactions) == 21
+
+
+@pytest.mark.asyncio
+async def test_parse_transactions_from_csv_with_categories(
+    db: AsyncSession, client: TestClient, test_user: User
+) -> None:
+    headers = get_auth_header(client)
+    budget = await create_test_budget(db, user_id=test_user.id)
+    account = await create_test_account(db, user_id=test_user.id)
+    await create_parser_test_filters(db, user_id=test_user.id, budget_id=budget.id)
+
+    file_name = "transactions-to-parse.csv"
+    if os.path.exists(f"storage/imports/{file_name}"):
+        os.system(f"rm storage/imports/{file_name}")
+        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
+    else:
+        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
+
+    mapping = {"Date": "date", "Description": "desc", "Amount": "amnt", "Category": "category"}
+
+    response = client.post(
+        f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/account/{account.id}/parse/{file_name}",
+        headers=headers,
+        json=mapping,
+    )
+
+    res = response.json()
+    assert res["success"] == True
+
+    response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
+    transactions = response.json()
+    await crud.user.remove(db, id=test_user.id)
+
+    assert len(transactions) == 21
