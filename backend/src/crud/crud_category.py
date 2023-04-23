@@ -20,11 +20,27 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
         )
         return result.scalars().all()
 
+    async def get_unsorted_category_for_budget(
+        self, db: AsyncSession, *, user_id: int, budget_id: int
+    ) -> Optional[Category]:
+        result = await db.execute(
+            select(Category)
+            .filter(Category.user_id == user_id)
+            .filter(Category.budget_id == budget_id)
+            .filter(Category.name == "Unsorted")
+        )
+        return result.scalars().first()
+
     async def create(  # type: ignore
         self, db: AsyncSession, *, obj_in: CategoryCreate, user_id: int, budget_id: int
     ) -> Category:
         db_obj = Category(
-            name=obj_in.name, desc=obj_in.desc, created_at=datetime.now(), user_id=user_id, budget_id=budget_id
+            name=obj_in.name,
+            desc=obj_in.desc,
+            amount=obj_in.amount,
+            created_at=datetime.now(),
+            user_id=user_id,
+            budget_id=budget_id,
         )
         return await super().create(db, obj_in=db_obj)  # type: ignore
 

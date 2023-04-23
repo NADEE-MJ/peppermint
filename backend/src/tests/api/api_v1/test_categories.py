@@ -18,7 +18,7 @@ async def test_get_all_categories(db: AsyncSession, client: TestClient, test_use
     categories = response.json()
     await crud.user.remove(db, id=test_user.id)
 
-    assert len(categories) == 1
+    assert len(categories) == 2
     assert categories[0]["user_id"] == test_user.id
 
 
@@ -43,7 +43,7 @@ async def test_get_all_categories_by_budget(db: AsyncSession, client: TestClient
     categories = response.json()
     await crud.user.remove(db, id=test_user.id)
 
-    assert len(categories) == 1
+    assert len(categories) == 2
     assert categories[0]["user_id"] == test_user.id
 
 
@@ -51,7 +51,7 @@ async def test_get_all_categories_by_budget(db: AsyncSession, client: TestClient
 async def test_create_category(db: AsyncSession, client: TestClient, test_user: User) -> None:
     headers = get_auth_header(client)
     budget = await create_test_budget(db, user_id=test_user.id)
-    data = {"name": "test", "desc": "test desc"}
+    data = {"name": "test", "desc": "test desc", "amount": 100}
     response = client.post(f"{settings.API_VERSION_STR}/categories/budget/{budget.id}", headers=headers, json=data)
     category = response.json()
     await crud.user.remove(db, id=test_user.id)
@@ -88,4 +88,4 @@ async def test_remove_category(db: AsyncSession, client: TestClient, test_user: 
     categories = response.json()
     await crud.user.remove(db, id=test_user.id)
 
-    assert len(categories) == 0
+    assert len(categories) == 1

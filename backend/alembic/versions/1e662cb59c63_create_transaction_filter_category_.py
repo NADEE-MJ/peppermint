@@ -24,6 +24,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("amount", sa.Float(), nullable=False),
         sa.Column("desc", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("budget_id", sa.Integer(), nullable=False),

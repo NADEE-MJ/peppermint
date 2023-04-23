@@ -12,7 +12,7 @@ async def test_create_category(db: AsyncSession) -> None:
     user = await create_random_user(db)
     budget = await create_test_budget(db, user_id=user.id)
     # code from create_test_category copied for clarity
-    category = CategoryCreate(desc="for testing", name="test category")
+    category = CategoryCreate(desc="for testing", name="test category", amount=1000)
     category_from_db = await crud.category.create(db, obj_in=category, user_id=user.id, budget_id=budget.id)
 
     # ? deletes user and associated categories
@@ -29,8 +29,18 @@ async def test_get_all_categories_for_user(db: AsyncSession) -> None:
     categories = await crud.category.get_all_categories_for_user(db, user_id=user.id)
 
     await crud.user.remove(db, id=user.id)
-    assert len(categories) == 1
+    assert len(categories) == 2
     assert categories[0].user_id == user.id
+
+
+@pytest.mark.asyncio
+async def test_get_unsorted_category_for_budget(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    budget = await create_test_budget(db, user_id=user.id)
+    category = await crud.category.get_unsorted_category_for_budget(db, user_id=user.id, budget_id=budget.id)
+
+    await crud.user.remove(db, id=user.id)
+    assert category.name == "Unsorted"
 
 
 @pytest.mark.asyncio
@@ -41,5 +51,5 @@ async def test_get_all_categories_for_budget(db: AsyncSession) -> None:
     categories = await crud.category.get_all_categories_for_budget(db, user_id=user.id, budget_id=budget.id)
 
     await crud.user.remove(db, id=user.id)
-    assert len(categories) == 1
+    assert len(categories) == 2
     assert categories[0].user_id == user.id
