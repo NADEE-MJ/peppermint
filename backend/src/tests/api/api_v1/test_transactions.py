@@ -1,5 +1,6 @@
-import pytest
 import os
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -8,9 +9,9 @@ from src.models.user import User
 from src.tests.utils.account import create_test_account
 from src.tests.utils.budget import create_test_budget
 from src.tests.utils.category import create_test_category
+from src.tests.utils.filter import create_parser_test_filters
 from src.tests.utils.transaction import create_test_transaction
 from src.tests.utils.user import get_auth_header
-from src.tests.utils.filter import create_parser_test_filters
 
 
 @pytest.mark.asyncio
@@ -188,7 +189,7 @@ async def test_parse_transactions_from_csv_with_no_categories(
     )
 
     res = response.json()
-    assert res["success"] == True
+    assert res["success"] is True
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
@@ -222,7 +223,7 @@ async def test_parse_transactions_from_csv_with_categories(
     )
 
     res = response.json()
-    assert res["success"] == True
+    assert res["success"] is True
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()

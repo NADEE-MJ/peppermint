@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
-from src.models.filter import Filter, FilterCreate
 from src.models.category import CategoryCreate
+from src.models.filter import Filter, FilterCreate
 
 
 async def create_test_filter(db: AsyncSession, user_id: int, category_id: int) -> Filter:
