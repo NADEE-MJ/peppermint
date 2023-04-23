@@ -30,8 +30,8 @@ async def main() -> None:
     await session.commit()
 
     accounts = [
-        Account(name="Wells Fargo", account_type="checking", created_at=now, user_id=1),
-        Account(name="BOA", account_type="savings", created_at=now, user_id=1),
+        Account(name="Wells Fargo", account_type="checking", created_at=now, user_id=user.id),
+        Account(name="BOA", account_type="savings", created_at=now, user_id=user.id),
     ]
 
     session.add_all(accounts)
@@ -39,7 +39,7 @@ async def main() -> None:
     await session.commit()
 
     budgets = [
-        Budget(name="my budget", amount=4000, created_at=now, user_id=1),
+        Budget(name="my budget", amount=4000, created_at=now, user_id=user.id),
     ]
 
     session.add_all(budgets)
@@ -47,10 +47,28 @@ async def main() -> None:
     await session.commit()
 
     categories = [
-        Category(name="Unsorted", desc="All unsorted transactions", created_at=now, user_id=1, budget_id=1, amount=-1),
-        Category(name="food", desc="things to eat", created_at=now, user_id=1, budget_id=1, amount=1000),
-        Category(name="shopping", desc="things to buy", created_at=now, user_id=1, budget_id=1, amount=1000),
-        Category(name="entertainment", desc="things to do", created_at=now, user_id=1, budget_id=1, amount=2000),
+        Category(
+            name="Unsorted",
+            desc="All unsorted transactions",
+            created_at=now,
+            user_id=user.id,
+            budget_id=budgets[0].id,
+            amount=-1,
+        ),
+        Category(
+            name="food", desc="things to eat", created_at=now, user_id=user.id, budget_id=budgets[0].id, amount=1000
+        ),
+        Category(
+            name="shopping", desc="things to buy", created_at=now, user_id=user.id, budget_id=budgets[0].id, amount=1000
+        ),
+        Category(
+            name="entertainment",
+            desc="things to do",
+            created_at=now,
+            user_id=user.id,
+            budget_id=budgets[0].id,
+            amount=2000,
+        ),
     ]
 
     session.add_all(categories)
@@ -58,9 +76,9 @@ async def main() -> None:
     await session.commit()
 
     filters = [
-        Filter(filter_by="panda express", created_at=now, user_id=1, category_id=2),
-        Filter(filter_by="macys", created_at=now, user_id=1, category_id=3),
-        Filter(filter_by="regal", created_at=now, user_id=1, category_id=4),
+        Filter(filter_by="panda express", created_at=now, user_id=user.id, category_id=categories[1].id),
+        Filter(filter_by="macys", created_at=now, user_id=user.id, category_id=categories[2].id),
+        Filter(filter_by="regal", created_at=now, user_id=user.id, category_id=categories[3].id),
     ]
 
     session.add_all(filters)
@@ -73,16 +91,30 @@ async def main() -> None:
             date=now,
             desc="panda express",
             created_at=now,
-            user_id=1,
-            category_id=1,
-            budget_id=1,
-            account_id=1,
+            user_id=user.id,
+            category_id=categories[1].id,
+            budget_id=budgets[0].id,
+            account_id=accounts[0].id,
         ),
         Transaction(
-            amount=100.21, date=now, desc="macys", created_at=now, user_id=1, category_id=2, budget_id=1, account_id=1
+            amount=100.21,
+            date=now,
+            desc="macys",
+            created_at=now,
+            user_id=user.id,
+            category_id=categories[1].id,
+            budget_id=budgets[0].id,
+            account_id=accounts[0].id,
         ),
         Transaction(
-            amount=14.56, date=now, desc="regal", created_at=now, user_id=1, category_id=3, budget_id=1, account_id=2
+            amount=14.56,
+            date=now,
+            desc="regal",
+            created_at=now,
+            user_id=user.id,
+            category_id=categories[2].id,
+            budget_id=budgets[0].id,
+            account_id=accounts[1].id,
         ),
     ]
 
