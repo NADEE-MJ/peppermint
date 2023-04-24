@@ -1,6 +1,9 @@
 const config = {
 	darkMode: 'class',
-	content: ['./frontend/src/**/*.{html,js,svelte,ts}', require('path').join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')],
+	content: [
+		'./frontend/src/**/*.{html,js,svelte,ts}',
+		require('path').join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
+	],
 
 	theme: {
 		extend: {}

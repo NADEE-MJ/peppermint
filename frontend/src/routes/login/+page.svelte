@@ -33,7 +33,6 @@
 	};
 </script>
 
-
 <div class="container p-10 mx-auto w-2/5">
 	<form class="card p-4" action="?/login" method="POST" use:enhance={validateLogin}>
 		<header class="card-header text-center">

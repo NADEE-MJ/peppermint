@@ -15,7 +15,7 @@
 	{/if}
 
 	{#if type === 'email'}
-		<input  class="input {errorMessages ? 'input-invalid' : ''}" type="email" {placeholder} {name} bind:value />
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="email" {placeholder} {name} bind:value />
 	{:else if type === 'password'}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="password" {placeholder} {name} bind:value />
 	{:else}

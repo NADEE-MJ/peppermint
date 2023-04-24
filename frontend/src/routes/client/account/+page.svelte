@@ -57,7 +57,14 @@
 		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-4">
 				<Textfield label="Email" name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
-				<Textfield label="Full Name" name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
+				<Textfield
+					label="Full Name"
+					name="full_name"
+					type="text"
+					placeholder="Full Name"
+					errorMessages={validationErrors?.full_name}
+					value={userFormData.full_name}
+				/>
 			</div>
 			<div class="space-y-4">
 				<Textfield

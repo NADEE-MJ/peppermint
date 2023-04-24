@@ -10,11 +10,11 @@
 		drawerStore.open();
 	}
 
-	let page: string = "";
+	let page = '';
 
 	function redirectToPage(event: MouseEvent): void {
 		const target = event.target as HTMLButtonElement;
-		if(target.value == "account") {
+		if (target.value == 'account') {
 			goto('/client/account');
 		}
 	}
@@ -25,7 +25,6 @@
 		placement: 'bottom',
 		closeQuery: '.listbox-item'
 	};
-
 </script>
 
 <Drawer>
@@ -39,9 +38,9 @@
 				<button class="md:hidden btn btn-sm mr-4" on:click={drawerOpen}>
 					<span>
 						<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
-							<rect width="100" height="20"/>
-							<rect y="30" width="100" height="20"/>
-							<rect y="60" width="100" height="20"/>
+							<rect width="100" height="20" />
+							<rect y="30" width="100" height="20" />
+							<rect y="60" width="100" height="20" />
 						</svg>
 					</span>
 				</button>
