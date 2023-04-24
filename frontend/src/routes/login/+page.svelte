@@ -36,7 +36,7 @@
 <div class="container p-10 mx-auto w-2/5">
 	<form class="card p-4" action="?/login" method="POST" use:enhance={validateLogin}>
 		<header class="card-header text-center">
-			<h1 class="text-xl">Peppermint</h1>
+			<h1 class="text-xl">Login</h1>
 		</header>
 
 		<div class="p-6">
