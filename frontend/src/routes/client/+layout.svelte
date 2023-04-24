@@ -12,15 +12,16 @@
 
 	let page: string = "";
 
-	function redirectToPage(event: PointerEvent): void {
-		if(event?.target?.value == "account") {
+	function redirectToPage(event: MouseEvent): void {
+		const target = event.target as HTMLButtonElement;
+		if(target.value == "account") {
 			goto('/client/account');
 		}
 	}
 
 	let AccountOptions: PopupSettings = {
 		event: 'focus-click',
-		target: 'accountOptionsNav',
+		target: 'accountOptions',
 		placement: 'bottom',
 		closeQuery: '.listbox-item'
 	};
@@ -56,7 +57,7 @@
 					<button class="btn" use:popup={AccountOptions}>
 						<Avatar initials="PM" width="w-10" background="bg-primary-500" />
 					</button>
-					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptionsNav">
+					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptions">
 						<ListBox rounded="rounded-none" active="">
 							<ListBoxItem on:click={redirectToPage} bind:group={page} name="medium" value="account">Account</ListBoxItem>
 						</ListBox>

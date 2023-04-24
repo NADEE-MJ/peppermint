@@ -4,6 +4,6 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['frontend/src/**/*.{test,spec}.{js,ts}']
+		include: ['frontend/tests/vitest/**/*.{test,spec}.{js,ts}']
 	}
 });
