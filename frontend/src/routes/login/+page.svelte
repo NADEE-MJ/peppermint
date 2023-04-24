@@ -44,9 +44,9 @@
 				<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
 				<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
 			</div>
-			<div class="grid grid-cols-2 gap-10 p-2">
-				<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Login</button>
-				<a href="/signup" class="btn btn-xl variant-filled-primary card-hover">Signup</a>
+			<div class="grid grid-cols-3 p-2">
+				<button type="submit" class="btn btn-xl variant-filled-primary card-hover col-start-2">Login</button>
+				<a href="/signup" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4">Signup</a>
 			</div>
 		</div>
 	</form>

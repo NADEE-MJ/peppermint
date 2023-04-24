@@ -49,7 +49,8 @@
 				<Textfield name="passwordConfirm" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
 			</div>
 			<div class="grid grid-cols-3 p-2">
-				<button type="submit" class="btn btn-xl col-start-2 variant-filled-primary card-hover">Signup</button>
+				<button type="submit" class="btn btn-xl variant-filled-primary card-hover col-start-2">Signup</button>
+				<a href="/login" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4">Login</a>
 			</div>
 		</div>
 	</form>
