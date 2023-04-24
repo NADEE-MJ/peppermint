@@ -10,10 +10,10 @@
 		drawerStore.open();
 	}
 
-	let page: string = '';
+	let page: string = "";
 
-	function redirectToPage(): void {
-		if(page == "account") {
+	function redirectToPage(event: PointerEvent): void {
+		if(event?.target?.value == "account") {
 			goto('/client/account');
 		}
 	}
@@ -56,11 +56,11 @@
 					<button class="btn" use:popup={AccountOptions}>
 						<Avatar initials="PM" width="w-10" background="bg-primary-500" />
 					</button>
-					<div class="card w-48 shadow-xl py-2 variant-filled-primary" data-popup="accountOptionsNav">
+					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptionsNav">
 						<ListBox rounded="rounded-none" active="">
 							<ListBoxItem on:click={redirectToPage} bind:group={page} name="medium" value="account">Account</ListBoxItem>
 						</ListBox>
-						<div class="arrow variant-filled-primary" />
+						<div class="arrow variant-filled-tertiary" />
 					</div>
 				</div>
 
