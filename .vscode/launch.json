@@ -9,7 +9,7 @@
 			"type": "python",
 			"request": "launch",
 			"module": "uvicorn",
-			"args": ["backend.src.main:app", "--host", "0.0.0.0"],
+			"args": ["backend.src.main:app", "--host", "0.0.0.0", "--reload"],
 			"justMyCode": true,
 			"cwd": "${workspaceFolder}",
 			"env": {
