@@ -10,18 +10,18 @@
 
 <div class="space-y-2">
 	{#if type === 'email'}
-		<input class="input max-w-md {errorMessages ? 'input-invalid' : ''}" type="email" {placeholder} {name} bind:value />
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="email" {placeholder} {name} bind:value />
 	{:else if type === 'password'}
-		<input class="input max-w-md {errorMessages ? 'input-invalid' : ''}" type="password" {placeholder} {name} bind:value />
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="password" {placeholder} {name} bind:value />
 	{:else}
-		<input class="input max-w-md {errorMessages ? 'input-invalid' : ''}" type="text" {placeholder} {name} bind:value />
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="text" {placeholder} {name} bind:value />
 	{/if}
 
-	<label for={name} class="label max-w-md space-y-1">
+	<label for={name} class="label">
 		{#if errorMessages}
 			{#each errorMessages as message}
 				<aside class="alert variant-ghost-error">
-					<img src={ErrorCircle} alt="ErrorCicle" class="w-6 h-6" />
+					<img src={ErrorCircle} alt="ErrorCircle" class="w-6 h-6" />
 					<div class="alert-message">
 						<p>{message}</p>
 					</div>
