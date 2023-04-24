@@ -161,7 +161,6 @@ cython_debug/
 .mypy_cache
 .coverage
 htmlcov
-/.vscode
 
 #Svelte and SvelteKit
 .DS_Store
