@@ -56,11 +56,12 @@
 	<div class="p-6 space-y-4">
 		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-4">
-				<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
-				<Textfield name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
+				<Textfield label="Email" name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
+				<Textfield label="Full Name" name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
 			</div>
 			<div class="space-y-4">
 				<Textfield
+					label="New Password"
 					name="password"
 					type="password"
 					placeholder="New Password"
@@ -68,6 +69,7 @@
 					value={userFormData.password}
 				/>
 				<Textfield
+					label="Confirm New Password"
 					name="passwordConfirm"
 					type="password"
 					placeholder="Confirm New Password"
@@ -77,8 +79,7 @@
 			</div>
 		</div>
 		<div class="grid grid-cols-3 gap-10">
-			<div/>
-			<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Update Account Info</button>
+			<button type="submit" class="btn btn-xl col-start-2 variant-filled-primary card-hover">Update Account Info</button>
 		</div>
 	</div>
 </form>

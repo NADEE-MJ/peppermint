@@ -2,12 +2,29 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../../app.postcss';
-	import { AppShell, AppBar, Avatar, Drawer, drawerStore } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, ListBox, ListBoxItem, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Navigation from '$lib/components/Navigation.svelte';
+	import { goto } from '$app/navigation';
 
 	function drawerOpen(): void {
 		drawerStore.open();
 	}
+
+	let page: string = '';
+
+	function redirectToPage(): void {
+		if(page == "account") {
+			goto('/client/account');
+		}
+	}
+
+	let AccountOptions: PopupSettings = {
+		event: 'focus-click',
+		target: 'accountOptionsNav',
+		placement: 'bottom',
+		closeQuery: '.listbox-item'
+	};
+
 </script>
 
 <Drawer>
@@ -29,11 +46,23 @@
 				</button>
 				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
+			<svelte:fragment slot="default">
+				<div class="grid grid-cols-3">
+					<a class="btn btn-md col-start-2 variant-ghost-tertiary w-1/5 mx-auto" href="https://github.com/NADEE-MJ/peppermint">GitHub</a>
+				</div>
+			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<button class="btn">
-					<Avatar initials="PM" width="w-10" background="bg-primary-500" />
-				</button>
-				<a class="btn" href="/client/account">Account</a>
+				<div>
+					<button class="btn" use:popup={AccountOptions}>
+						<Avatar initials="PM" width="w-10" background="bg-primary-500" />
+					</button>
+					<div class="card w-48 shadow-xl py-2 variant-filled-primary" data-popup="accountOptionsNav">
+						<ListBox rounded="rounded-none" active="">
+							<ListBoxItem on:click={redirectToPage} bind:group={page} name="medium" value="account">Account</ListBoxItem>
+						</ListBox>
+						<div class="arrow variant-filled-primary" />
+					</div>
+				</div>
 
 				<form action="/logout" method="POST">
 					<button class="btn btn-md variant-filled-secondary">Logout</button>
