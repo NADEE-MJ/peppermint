@@ -46,7 +46,7 @@
 			</div>
 			<div class="grid grid-cols-3 p-2">
 				<button type="submit" class="btn btn-xl variant-filled-primary card-hover col-start-2">Login</button>
-				<a href="/signup" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4">Signup</a>
+				<a href="/signup" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4 my-auto h-2/3">Signup</a>
 			</div>
 		</div>
 	</form>

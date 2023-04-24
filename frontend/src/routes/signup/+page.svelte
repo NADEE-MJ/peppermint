@@ -50,7 +50,7 @@
 			</div>
 			<div class="grid grid-cols-3 p-2">
 				<button type="submit" class="btn btn-xl variant-filled-primary card-hover col-start-2">Signup</button>
-				<a href="/login" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4">Login</a>
+				<a href="/login" class="btn btn-md variant-filled-secondary card-hover mx-auto w-2/4 my-auto h-2/3">Login</a>
 			</div>
 		</div>
 	</form>

@@ -13,6 +13,7 @@
 	let page = '';
 
 	function redirectToPage(event: MouseEvent): void {
+		page = '';
 		const target = event.target as HTMLButtonElement;
 		if (target.value == 'account') {
 			goto('/client/account');
