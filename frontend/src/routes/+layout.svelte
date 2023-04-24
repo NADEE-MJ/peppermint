@@ -6,8 +6,8 @@
 </script>
 
 <svelte:head>
-	<title>peppermint</title>
-	<meta name="description" content="peppermint finance tracker" />
+	<title>Peppermint</title>
+	<meta name="description" content="Peppermint Finance Tracker" />
 </svelte:head>
 
 <Toast position="t" />

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import { toast } from '$lib/toasts';
-	import Textfield from '$lib/components/textfield.svelte';
+	import Textfield from '$lib/components/Textfield.svelte';
 
 	interface Errors {
 		email: Array<string> | null;
@@ -34,23 +34,20 @@
 </script>
 
 
+<div class="container p-10 mx-auto w-2/5">
+	<form class="card p-4" action="?/login" method="POST" use:enhance={validateLogin}>
+		<header class="card-header text-center">
+			<h1 class="text-xl">Peppermint</h1>
+		</header>
 
-<div class="container p-10 mx-auto">
-	<form action="?/login" method="POST" use:enhance={validateLogin}>
-		<div class="card p-4">
-			<header class="card-header text-center">
-				<h1 class="text-xl uppercase">peppermint</h1>
-			</header>
-
-			<div class="p-6">
-				<div class="space-y-4">
-					<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
-					<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
-				</div>
-				<div class="grid grid-cols-2 gap-10 p-2">
-					<button type="submit" class="btn variant-filled-primary btn-xl card-hover">Login</button>
-					<a href="/signup" class="btn variant-filled-primary btn-xl card-hover">Signup</a>
-				</div>
+		<div class="p-6">
+			<div class="space-y-4">
+				<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
+				<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
+			</div>
+			<div class="grid grid-cols-2 gap-10 p-2">
+				<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Login</button>
+				<a href="/signup" class="btn btn-xl variant-filled-primary card-hover">Signup</a>
 			</div>
 		</div>
 	</form>

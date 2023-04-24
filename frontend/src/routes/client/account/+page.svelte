@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import type { PageData } from './$types';
-	import Textfield from '$lib/components/textfield.svelte';
+	import Textfield from '$lib/components/Textfield.svelte';
 	import { toast } from '$lib/toasts';
 
 	type UserFormData = {
@@ -49,31 +49,36 @@
 </script>
 
 <form class="card p-4" method="POST" action="?/updateUser" use:enhance={validateUpdateUser}>
-	<header class="card-header text-center p-2">
-		<h2>User Profile</h2>
+	<header class="card-header text-center">
+		<h1 class="text-xl">User Profile</h1>
 	</header>
 
-	<div class="p-6 grid gap-4">
-		<div class="space-y-4">
-			<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
-			<Textfield
-				name="password"
-				type="password"
-				placeholder="New Password"
-				errorMessages={validationErrors?.password}
-				value={userFormData.password}
-			/>
-			<Textfield
-				name="passwordConfirm"
-				type="password"
-				placeholder="Confirm New Password"
-				errorMessages={validationErrors?.passwordConfirm}
-				value={userFormData.passwordConfirm}
-			/>
-			<Textfield name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
+	<div class="p-6 space-y-4">
+		<div class="grid grid-cols-2 gap-4">
+			<div class="space-y-4">
+				<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
+				<Textfield name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
+			</div>
+			<div class="space-y-4">
+				<Textfield
+					name="password"
+					type="password"
+					placeholder="New Password"
+					errorMessages={validationErrors?.password}
+					value={userFormData.password}
+				/>
+				<Textfield
+					name="passwordConfirm"
+					type="password"
+					placeholder="Confirm New Password"
+					errorMessages={validationErrors?.passwordConfirm}
+					value={userFormData.passwordConfirm}
+				/>
+			</div>
 		</div>
-		<div class="flex justify-center">
-			<button type="submit" class="btn variant-filled btn-xl">Update Account Info</button>
+		<div class="grid grid-cols-3 gap-10">
+			<div/>
+			<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Update Account Info</button>
 		</div>
 	</div>
 </form>

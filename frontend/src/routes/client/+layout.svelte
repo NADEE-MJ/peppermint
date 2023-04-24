@@ -3,7 +3,7 @@
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../../app.postcss';
 	import { AppShell, AppBar, Avatar, Drawer, drawerStore } from '@skeletonlabs/skeleton';
-	import Navigation from '$lib/components/navigation.svelte';
+	import Navigation from '$lib/components/Navigation.svelte';
 
 	function drawerOpen(): void {
 		drawerStore.open();
@@ -27,13 +27,16 @@
 						</svg>
 					</span>
 				</button>
-				<strong class="text-xl uppercase">peppermint</strong>
+				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a class="btn btn-md variant-ghost-surface" href="https://github.com/NADEE-MJ/peppermint" target="_blank" rel="noreferrer">GitHub</a>
-				<Avatar initials="PM" width="w-10" background="bg-primary-500" />
+				<button class="btn">
+					<Avatar initials="PM" width="w-10" background="bg-primary-500" />
+				</button>
+				<a class="btn" href="/client/account">Account</a>
+
 				<form action="/logout" method="POST">
-					<button class="btn variant-filled-secondary btn-md">Logout</button>
+					<button class="btn btn-md variant-filled-secondary">Logout</button>
 				</form>
 			</svelte:fragment>
 		</AppBar>
