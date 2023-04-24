@@ -49,7 +49,10 @@
 			</svelte:fragment>
 			<svelte:fragment slot="default">
 				<div class="grid grid-cols-3">
-					<a class="btn btn-md col-start-2 variant-ghost-tertiary w-1/5 mx-auto" href="https://github.com/NADEE-MJ/peppermint">GitHub</a>
+					<div class="col-start-2 mx-auto">
+						<a class="btn btn-md variant-ghost-tertiary w-1/5" href="https://github.com/NADEE-MJ/peppermint">GitHub</a>
+						<a class="btn btn-md variant-ghost-tertiary w-1/5" href="https://docs.google.com/document/d/1bKWnTiJezL7QpqsS6EcR1HyTvwvQB3s1RVC6jnCUPJ4">Docs</a>
+					</div>
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
