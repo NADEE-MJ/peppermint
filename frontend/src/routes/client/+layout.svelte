@@ -2,33 +2,21 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../../app.postcss';
-	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, ListBox, ListBoxItem, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Navigation from '$lib/components/Navigation.svelte';
-	import { goto } from '$app/navigation';
 
 	function drawerOpen(): void {
 		drawerStore.open();
-	}
-
-	let page = '';
-
-	function redirectToPage(event: MouseEvent): void {
-		page = '';
-		const target = event.target as HTMLButtonElement;
-		if (target.value == 'account') {
-			goto('/client/account');
-		}
 	}
 
 	let AccountOptions: PopupSettings = {
 		event: 'focus-click',
 		target: 'accountOptions',
 		placement: 'bottom',
-		closeQuery: '.listbox-item'
 	};
 </script>
 
-<Drawer>
+<Drawer class="w-2/3">
 	<Navigation />
 </Drawer>
 
@@ -47,6 +35,7 @@
 				</button>
 				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
+
 			<svelte:fragment slot="default">
 				<div class="grid grid-cols-3">
 					<div class="col-start-2 mx-auto">
@@ -55,15 +44,18 @@
 					</div>
 				</div>
 			</svelte:fragment>
+
 			<svelte:fragment slot="trail">
 				<div>
 					<button class="btn" use:popup={AccountOptions}>
 						<Avatar initials="PM" width="w-10" background="bg-primary-500" />
 					</button>
 					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptions">
-						<ListBox rounded="rounded-none" active="">
-							<ListBoxItem on:click={redirectToPage} bind:group={page} name="medium" value="account">Account</ListBoxItem>
-						</ListBox>
+						<nav class="list-nav">
+							<ul>
+								<li><a href="/client/account">Account</a></li>
+							</ul>
+						</nav>
 						<div class="arrow variant-filled-tertiary" />
 					</div>
 				</div>
@@ -74,9 +66,11 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
+
 	<svelte:fragment slot="sidebarLeft">
 		<Navigation />
 	</svelte:fragment>
+
 	<div class="container p-10 mx-auto">
 		<slot />
 	</div>
