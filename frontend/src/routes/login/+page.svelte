@@ -2,6 +2,7 @@
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import { toast } from '$lib/toasts';
 	import Textfield from '$lib/components/Textfield.svelte';
+	import { focusTrap } from '@skeletonlabs/skeleton';
 
 	interface Errors {
 		email: Array<string> | null;
