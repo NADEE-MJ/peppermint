@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div class="container p-10 mx-auto w-2/5">
+<div class="container p-10 mx-auto w-3/4">
 	<div class="card p-4">
 		<header class="card-header text-center">
 			<h1 class="text-xl">Temporary Landing Page</h1>

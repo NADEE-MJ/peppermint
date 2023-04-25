@@ -51,7 +51,7 @@
 
 <form class="card p-4" method="POST" action="?/updateUser" use:focusTrap={true} use:enhance={validateUpdateUser}>
 	<header class="card-header text-center">
-		<h1 class="text-xl">User Profile</h1>
+		<strong class="text-7xl">User Profile</strong>
 	</header>
 
 	<div class="p-6 space-y-4">
@@ -87,7 +87,7 @@
 			</div>
 		</div>
 		<div class="grid grid-cols-3 gap-10">
-			<button type="submit" class="btn btn-xl col-start-2 variant-filled-primary card-hover">Update Account Info</button>
+			<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Update Account Info</button>
 		</div>
 	</div>
 </form>
