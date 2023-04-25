@@ -2,7 +2,7 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../../app.postcss';
-	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, type PopupSettings, LightSwitch } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Navigation from '$lib/components/Navigation.svelte';
 
 	function drawerOpen(): void {
@@ -48,7 +48,6 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="trail">
-				<LightSwitch />
 				<div>
 					<button class="btn" use:popup={AccountOptions}>
 						<Avatar src="https://api.dicebear.com/6.x/bottts-neutral/svg?seed=Peppermint" width="w-10" background="bg-primary-500" />
