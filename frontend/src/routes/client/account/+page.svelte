@@ -43,6 +43,8 @@
 						toast.error(message);
 					}
 				}
+			} else {
+				validationErrors = null;
 			}
 			update({ reset: false });
 		};
