@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import Textfield from '$lib/components/Textfield.svelte';
 	import { toast } from '$lib/toasts';
+	import { focusTrap } from '@skeletonlabs/skeleton';
 
 	type UserFormData = {
 		email?: string | null;
@@ -48,7 +49,7 @@
 	};
 </script>
 
-<form class="card p-4" method="POST" action="?/updateUser" use:enhance={validateUpdateUser}>
+<form class="card p-4" method="POST" action="?/updateUser" use:focusTrap={true} use:enhance={validateUpdateUser}>
 	<header class="card-header text-center">
 		<h1 class="text-xl">User Profile</h1>
 	</header>

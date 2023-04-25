@@ -34,7 +34,7 @@
 </script>
 
 <div class="container p-10 mx-auto w-2/5">
-	<form class="card p-4" action="?/login" method="POST" use:enhance={validateLogin}>
+	<form class="card p-4" action="?/login" method="POST" use:focusTrap={true} use:enhance={validateLogin}>
 		<header class="card-header text-center">
 			<h1 class="text-xl">Login</h1>
 		</header>
