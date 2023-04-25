@@ -48,7 +48,7 @@
 			<svelte:fragment slot="trail">
 				<div>
 					<button class="btn" use:popup={AccountOptions}>
-						<Avatar initials="PM" width="w-10" background="bg-primary-500" />
+						<Avatar src="https://api.dicebear.com/6.x/bottts-neutral/svg?seed=Peppermint" width="w-10" background="bg-primary-500" />
 					</button>
 					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptions">
 						<nav class="list-nav">
