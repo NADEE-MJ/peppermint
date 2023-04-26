@@ -1,8 +1,25 @@
 <script lang="ts">
 	import { enhance, type SubmitFunction } from '$app/forms';
-	import { toast } from '$lib/toasts';
 	import Textfield from '$lib/components/Textfield.svelte';
-	import { focusTrap } from '@skeletonlabs/skeleton';
+	import { focusTrap, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { toast } from '$lib/toasts';
+
+	const sendMagicLink: ModalSettings = {
+		type: 'prompt',
+		title: 'Get a Magic Link 🪄',
+		body: 'This will send a one-time login link to your email address to log you in to your account. From there you may change your password on your account page.',
+		value: 'Email',
+		valueAttr: { type: 'email', minlength: 3, maxlength: 30, required: true },
+		response: async (email: string) => {
+			const res = await fetch(`magic-link?email=${email}`, { method: 'POST' });
+			const data = await res.json();
+			if (data?.success) {
+				toast.success('Magic Link sent! 🪄');
+			} else if (data?.message !== 'No email provided') {
+				toast.error(data.message);
+			}
+		}
+	};
 
 	interface Errors {
 		email: Array<string> | null;
@@ -25,7 +42,7 @@
 					if (error) {
 						toast.error(error);
 					} else if (message) {
-						toast.error(message);
+						toast.warning(message);
 					}
 				}
 			}
@@ -54,7 +71,7 @@
 				<div class="space-y-10">
 					<div class="grid grid-cols-2">
 						<button type="submit" class="btn btn-xl w-3/5 variant-filled-primary card-hover">Login</button>
-						<a class="justify-self-end" href="#!">Forgot password?</a>
+						<button type="button" class="justify-self-end" on:click={() => modalStore.trigger(sendMagicLink)}>Forgot password?</button>
 					</div>
 					<p class="font-semibold">
 						Don't have an account?

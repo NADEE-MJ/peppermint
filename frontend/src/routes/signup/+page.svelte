@@ -27,7 +27,7 @@
 					if (error) {
 						toast.error(error);
 					} else if (message) {
-						toast.error(message);
+						toast.warning(message);
 					}
 				}
 			}
