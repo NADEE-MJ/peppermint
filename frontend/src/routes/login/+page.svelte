@@ -39,7 +39,7 @@
 		<div>
 			<div class="mx-auto">
 				<img src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" alt="Login Left" />
-		  	</div>
+			</div>
 		</div>
 		<div>
 			<header class="card-header text-center">
@@ -65,4 +65,3 @@
 		</div>
 	</form>
 </div>
-
