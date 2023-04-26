@@ -14,9 +14,9 @@ async def create_test_user(db: AsyncSession) -> User:
     user = await crud.user.get_by_email(db, email=TEST_USER_EMAIL)
     if not user:
         user_create = UserCreate(
-            full_name=TEST_USER_NAME,
-            email=TEST_USER_EMAIL,
-            password=TEST_USER_PASSWORD,
+            full_name=TEST_USER_NAME, 
+            email=TEST_USER_EMAIL, 
+            password=TEST_USER_PASSWORD, 
             is_admin=False
         )
         user = await crud.user.create(db, obj_in=user_create)

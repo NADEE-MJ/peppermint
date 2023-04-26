@@ -11,6 +11,7 @@ from src.utils import send_new_account_email
 
 router = APIRouter()
 
+
 @router.delete("/{user_id}", response_model=UserResponse)
 async def remove_user(
     user_id: int,
@@ -25,36 +26,31 @@ async def remove_user(
     if user is None:
         raise HTTPException(status_code=404, detail="That user does not exist.")
 
-    if user.user_id != current_user.id:
-        raise HTTPException(status_code=401, detail="You are unauthorized to remove this budget")
-
     if user.is_admin:
         raise HTTPException(status_code=403, detail="Admin cannot be removed")
     user = await crud.user.remove(db, id=user_id)
 
     return user
 
-@router.post("/{user_id}", response_model=UserCreate)
+
+@router.post("/", response_model=UserResponse)
 async def create_user(
     user_create: UserCreate,
+    is_admin: bool,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_admin),
-)   -> Any:
+) -> Any:
     """
     Create new user. Must be admin and logged in.
     """
-    if not settings.USERS_OPEN_REGISTRATION:
-        raise HTTPException(
-            status_code=403,
-            detail="Open user registration is forbidden on this server",
-        )
+
     user = await crud.user.get_by_email(db, email=user_create.email)
     if user:
         raise HTTPException(
             status_code=400,
-            detail="The user with this username already exists in the system",
+            detail="The user with this email already exists in the system",
         )
-    user = await crud.user.create(db, obj_in=user_create)
+    user = await crud.user.create(db, admin=is_admin, obj_in=user_create)
     if settings.EMAILS_ENABLED:
         send_new_account_email(
             email=user_create.email,
@@ -62,11 +58,16 @@ async def create_user(
         )
     return user
 
-@router.put("/{user_id}", response_model=UserUpdate)
+
+@router.put("/{user_id}", response_model=UserResponse)
 async def update_user(
+    *,
     user_update: UserUpdate,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_admin),
-)   -> Any:
-    user = await crud.user.get(user_update.email)
+) -> Any:
+    """
+    Update selected user.
+    """
+    user = await crud.user.update(db, db_obj=current_user, obj_in=user_update)
     return user

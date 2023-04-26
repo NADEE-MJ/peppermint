@@ -16,7 +16,7 @@ async def main() -> None:
     now = datetime.now()
 
     session: AsyncSession = [i async for i in get_session()][0]
-
+    userList = []
     user = User(
         full_name="Admin Admin",
         email="admin@test.com",
@@ -26,8 +26,9 @@ async def main() -> None:
         is_admin=True,
         last_login=datetime.now(),
     )
-    session.add(user)
-
+    
+    userList.append(user)
+    
     user = User(
         full_name="Test User",
         email="user@test.com",
@@ -37,7 +38,9 @@ async def main() -> None:
         is_admin=False,
         last_login=datetime.now(),
     )
-    session.add(user)
+    
+    userList.append(user)
+    session.add_all(userList)
 
     await session.commit()
 
