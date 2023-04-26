@@ -13,10 +13,16 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         return result.scalars().all()
 
     async def get_all_transactions_for_budget(
-        self, db: AsyncSession, *, user_id: int, budget_id: int
+        self, db: AsyncSession, *, user_id: int, budget_id: int, page: int
     ) -> Optional[list[Transaction]]:
+        limit = 10
+        page *= limit
         result = await db.execute(
-            select(Transaction).filter(Transaction.user_id == user_id).filter(Transaction.budget_id == budget_id)
+            select(Transaction)
+            .filter(Transaction.user_id == user_id)
+            .filter(Transaction.budget_id == budget_id)
+            .offset(page)
+            .limit(limit)
         )
         return result.scalars().all()
 

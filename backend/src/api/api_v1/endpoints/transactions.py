@@ -37,6 +37,7 @@ async def get_all_transactions(
 @router.get("/budget/{budget_id}", response_model=list[TransactionResponse])
 async def get_all_transactions_by_budget(
     budget_id: int,
+    page: int = 0,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -55,7 +56,7 @@ async def get_all_transactions_by_budget(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
 
         transactions = await crud.transaction.get_all_transactions_for_budget(
-            db, user_id=current_user.id, budget_id=budget_id
+            db, user_id=current_user.id, budget_id=budget_id, page=page
         )
 
         return transactions
