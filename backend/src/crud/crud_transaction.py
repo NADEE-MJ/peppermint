@@ -63,7 +63,7 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         db_obj = Transaction(
             amount=obj_in.amount,
             desc=obj_in.desc,
-            date=datetime.fromisoformat(obj_in.date),
+            date=datetime.strptime(obj_in.date, "%m/%d/%Y"),
             created_at=datetime.now(),
             user_id=user_id,
             category_id=category_id,

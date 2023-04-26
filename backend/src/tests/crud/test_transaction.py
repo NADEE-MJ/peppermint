@@ -19,7 +19,7 @@ async def test_create_transaction(db: AsyncSession) -> None:
     transaction = TransactionCreate(
         amount=400,
         desc="test transaction",
-        date="2023-05-01",
+        date="05/01/2023",
     )
     transaction_from_db = await crud.transaction.create(
         db,

@@ -37,8 +37,11 @@ async def test_create_budget(db: AsyncSession, client: TestClient, test_user: Us
     data = {"name": "test", "amount": 400}
     response = client.post(f"{settings.API_VERSION_STR}/budgets/", headers=headers, json=data)
     budget = response.json()
+    category = await crud.category.get_unsorted_category_for_budget(db, user_id=test_user.id, budget_id=budget["id"])
     await crud.user.remove(db, id=test_user.id)
 
+    assert category is not None
+    assert category.name == "Unsorted"
     assert budget["user_id"] == test_user.id
     assert budget["name"] == "test"
 

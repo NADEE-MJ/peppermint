@@ -2,30 +2,78 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Avatar, Drawer, drawerStore, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import Navigation from '$lib/components/Navigation.svelte';
+
+	function drawerOpen(): void {
+		drawerStore.open();
+	}
+
+	let AccountOptions: PopupSettings = {
+		event: 'focus-click',
+		target: 'accountOptions',
+		placement: 'bottom'
+	};
 </script>
 
-<AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
-	<svelte:fragment slot="sidebarLeft">
-		<nav class="list-nav">
-			<ul>
-				<li><a href="/client/account">Account</a></li>
-				<li><a href="/client/skelly">Skelly</a></li>
-			</ul>
-		</nav>
-	</svelte:fragment>
+<Drawer class="w-2/3">
+	<Navigation />
+</Drawer>
+
+<AppShell slotSidebarLeft="w-0 md:w-52 bg-surface-500/10">
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">peppermint</strong>
+				<button class="md:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+					<span>
+						<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
+							<rect width="100" height="20" />
+							<rect y="30" width="100" height="20" />
+							<rect y="60" width="100" height="20" />
+						</svg>
+					</span>
+				</button>
+				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
+
+			<svelte:fragment slot="default">
+				<div class="grid grid-cols-3">
+					<div class="col-start-2 mx-auto">
+						<a class="btn btn-md variant-ghost-tertiary w-2/5" href="https://github.com/NADEE-MJ/peppermint">GitHub</a>
+						<a class="btn btn-md variant-ghost-tertiary w-2/5" href="https://docs.google.com/document/d/1bKWnTiJezL7QpqsS6EcR1HyTvwvQB3s1RVC6jnCUPJ4"
+							>Docs</a
+						>
+					</div>
+				</div>
+			</svelte:fragment>
+
 			<svelte:fragment slot="trail">
-				<a class="btn btn-sm btn-ghost-surface" href="https://github.com/NADEE-MJ/peppermint" target="_blank" rel="noreferrer">GitHub</a>
+				<div>
+					<button class="btn" use:popup={AccountOptions}>
+						<Avatar src="https://api.dicebear.com/6.x/bottts-neutral/svg?seed=Peppermint" width="w-10" background="bg-primary-500" />
+					</button>
+					<div class="card w-48 shadow-xl py-2 variant-filled-tertiary" data-popup="accountOptions">
+						<nav class="list-nav">
+							<ul>
+								<li><a href="/client/account">Account</a></li>
+							</ul>
+						</nav>
+						<div class="arrow variant-filled-tertiary" />
+					</div>
+				</div>
+
 				<form action="/logout" method="POST">
-					<button class="btn btn-filled-secondary btn-sm">Logout</button>
+					<button class="btn btn-md variant-filled-secondary">Logout</button>
 				</form>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	<slot />
+
+	<svelte:fragment slot="sidebarLeft">
+		<Navigation />
+	</svelte:fragment>
+
+	<div class="container p-10 mx-auto">
+		<slot />
+	</div>
 </AppShell>

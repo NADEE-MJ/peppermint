@@ -1,7 +1,8 @@
 # peppermint
 
-```python
-# add the below comment after a line in fastapi to ignore that line in mypy
-# type: ignore
+A Finance Tracking Application
 
-```
+## Docs / Homework
+
+[Homework 1](https://docs.google.com/document/d/1waCemyHYx8ZkpaHSmnUptUs98aiZXUUy-v-Beb4qrHY)
+[Homework 2](https://docs.google.com/document/d/1bKWnTiJezL7QpqsS6EcR1HyTvwvQB3s1RVC6jnCUPJ4)
