@@ -62,6 +62,12 @@ export class fast {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
 		return response;
 	}
+
+	static async getTransactionsByBudget(token: string, budgetId: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`transactions/budget/${budgetId}?page=${page}`, token);
+		return response;
+	}
 }
 
 type userUpdate = {
