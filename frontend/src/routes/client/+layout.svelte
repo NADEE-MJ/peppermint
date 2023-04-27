@@ -35,7 +35,7 @@
 				</button>
 				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
-
+			
 			<svelte:fragment slot="default">
 				<div class="grid grid-cols-3">
 					<div class="col-start-2 mx-auto">
