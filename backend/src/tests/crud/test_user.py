@@ -3,8 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.core.security import verify_password
 from src.models.user import UserCreate, UserUpdate
+from src.models.token import Token, access_token
+from src.models.token_blacklist import TokenBlacklistCreate, TokenBlacklist
 from src.tests.utils.user import create_random_user
-from src.tests.utils.utils import random_email, random_lower_string, random_name
+from src.tests.utils.utils import random_email, random_lower_string, random_name, random_token
+
 
 
 @pytest.mark.asyncio
@@ -85,3 +88,68 @@ async def test_update_user(db: AsyncSession) -> None:
     assert user_from_db
     assert user.email == user_from_db.email
     assert verify_password(new_password, user_from_db.password)
+
+
+@pytest.mark.asyncio
+async def test_user_login(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    user_from_db = await crud.user.user_login(db, id=user.id)
+    await crud.user.remove(db, id=user.id)  # type: ignore
+    assert user_from_db
+    assert user.email == user_from_db.email
+    assert user.password == user_from_db.password
+    assert access_token == user_from_db.access_token
+
+
+@pytest.mark.asyncio
+async def test_user_logout(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    user_from_db = await crud.user.user_logout(db, id=user.id)
+    await crud.user.remove(db, id=user.id)  # type: ignore
+    assert user_from_db
+    assert user.random_token == user_from_db.random_token
+
+
+
+@pytest.mark.asyncio
+async def test_token_length(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    user_from_db = await crud.user.user_login(db, id=user.id)
+    await crud.user.remove(db, id=user.id)  # type: ignore
+    assert user_from_db
+    assert len(user_from_db.token) >= 1
+
+
+@pytest.mark.asyncio
+async def test_bad_token(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    user_from_db = await crud.user.user_login(db, id=user.id)
+    await crud.user.remove(db, id=user.id)  # type: ignore
+    assert user_from_db
+    assert user_from_db.token == TokenBlacklist(token="bad token")
+    #assert user_from_db.token[0] == user.token[0]
+    #assert user_from_db.token[0] != "bad token"
+
+@python.mark.asyncio
+async def test_create_blacklist(db :AsyncSession) -> None:
+    token = random_token()
+    token_blacklist_create = TokenBlacklistCreate(token)
+    await crud.user.blacklist_add(db, obj_in=token_blacklist_create)
+    await crud.user.remove(db, id=token_blacklist_create.id)  # type: ignore
+    assert token_blacklist_create
+    assert token_blacklist_create.token == token
+    assert hasattr(token_blacklist_create, "token")
+    #token_blacklist = await crud.user.blacklist_get(db, token=token)
+    #await crud.user.remove(db, id=token_blacklist.id)  # type: ignore
+    #assert token_blacklist
+    #assert token_blacklist.token == token
+    #assert hasattr(token_blacklist, "token")
+    #assert token_blacklist_create.token == token
+    #assert hasattr(token_blacklist_create, "token")
+
+
+
+
+
+    
+

@@ -12,6 +12,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
 from src.models.token import Token
+from src.models.token import TokenBlacklistReponse
 from src.models.user import User, UserResponse
 from src.utils import (
     generate_magic_link_token,
