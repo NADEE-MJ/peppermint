@@ -7,53 +7,37 @@
     import type { TableSource } from '@skeletonlabs/skeleton'; 
 
     export let pageNumber = 1;
-    let selected: Array<{}> = [];
     
-
-    function pageUp() {
-        pageNumber++;
-    }
-
-    function pageDown() {
-        pageNumber--;
-    }
+    const pageUp = () => { pageNumber++; }
+    const pageDown = () => { pageNumber--; }
     
-    export let sourceTable: TableSource
+    export let sourceTable: TableSource;
 
     function addSelected(meta: {}) {
-        console.log(meta['detail']);
         selected.push(meta['detail']);
         console.log(selected);
+        selected = selected;
     }
-
+    export let selected: Array<{}> = [];
 </script>
 
-{#if !(selected)}
-    <div>
-        <button class="btn btn-sm variant-filled-primary float-right"><Edit classOverride="w-6 h-6" /></button>
-        <button class="btn btn-sm variant-filled-primary float-right"><Trash classOverride="w-6 h-6" /></button>
-    </div>
-{:else}
-    <div class="p-6"></div>
-{/if}
+
+<h3 class="float-left p-2">Page {pageNumber}</h3>
+<div class="btn-group float-right">
+    {#if (selected.length < 1)}
+    <button disabled class="btn btn-sm variant-soft m-2 float-right"><Edit classOverride="w-6 h-6" /></button>
+    <button disabled class="btn btn-sm variant-soft m-2 float-right"><Trash classOverride="w-6 h-6" /></button>
+    {:else}
+    <button class="btn btn-sm variant-filled-primary m-2 float-right"><Edit classOverride="w-6 h-6" /></button>
+    <button class="btn btn-sm variant-filled-primary m-2 float-right"><Trash classOverride="w-6 h-6" /></button>
+    {/if}
+</div>
 <Table source={sourceTable} interactive={true} on:selected={addSelected} />
 <div class="btn-group variant-filled float-right">
-	{#if (pageNumber !== 1)}
-        <button type="submit" on:click={pageDown}>
-            <Back classOverride="w-6 h-6" />
-        </button>
-    {:else}
-        <button disabled>
-            <Back classOverride="w-6 h-6" />
-        </button>
-    {/if}
-    {#if (11 < 10)}
-        <button disabled>
-            <Next classOverride="w-6 h-6" />
-        </button>
-    {:else}
-        <button type="submit" on:click={pageUp}>
-            <Next classOverride="w-6 h-6" />
-        </button>
-    {/if}
+    <button type="submit" on:click={pageDown}>
+        <Back classOverride="w-6 h-6" />
+    </button>
+    <button type="submit" on:click={pageUp}>
+        <Next classOverride="w-6 h-6" />
+    </button>
 </div>

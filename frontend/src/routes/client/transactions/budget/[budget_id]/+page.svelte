@@ -17,9 +17,10 @@
 	$: something = test(pageNumber);
 
 	const updateTableData: SubmitFunction = ({data}) => {
+		console.log()
 		data.set('pageNumber', pageNumber);
 		return async ({ result, update }) => {
-			console.log('here3', result);
+			// console.log('here3', result);
 			if (result.type !== 'failure') {
 				if (result.data) {
 					const { transactions } = result.data;
@@ -38,7 +39,6 @@
 	};
 
 	const headers = Object.keys(tableData[0]);
-    
     let sourceTable: TableSource = {
         head: headers,
         body: tableMapperValues(tableData, headers),
