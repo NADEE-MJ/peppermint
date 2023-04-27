@@ -49,5 +49,5 @@
 </script>
 
 <form class="card p-4" method="POST" action="?/getTransactionsByBudget" use:enhance={updateTableData}>
-	<Table bind:pageNumber={pageNumber} sourceTable={sourceTable}/>
+	<Table bind:pageNumber={pageNumber} sourceTable={sourceTable} />
 </form>

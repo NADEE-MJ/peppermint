@@ -22,27 +22,27 @@
 </script>
 
 <div>
-    <button class="btn btn-sm variant-filled-primary float-right"><Edit /></button>
-    <button class="btn btn-sm variant-filled-primary float-right"><Trash /></button>
+    <button class="btn btn-sm variant-filled-primary float-right"><Edit classOverride="w-6 h-6" /></button>
+    <button class="btn btn-sm variant-filled-primary float-right"><Trash classOverride="w-6 h-6" /></button>
 </div>
 <Table source={sourceTable} interactive={true} />
 <div class="btn-group variant-filled float-right">
 	{#if (pageNumber !== 1)}
         <button type="submit" on:click={pageDown}>
-            <Back />
+            <Back classOverride="w-6 h-6" />
         </button>
     {:else}
         <button disabled>
-            <Back />
+            <Back classOverride="w-6 h-6" />
         </button>
     {/if}
     {#if (11 < 10)}
         <button disabled>
-            <Next />
+            <Next classOverride="w-6 h-6" />
         </button>
     {:else}
         <button type="submit" on:click={pageUp}>
-            <Next />
+            <Next classOverride="w-6 h-6" />
         </button>
     {/if}
 </div>
