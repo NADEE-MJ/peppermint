@@ -4,9 +4,9 @@
 	import { tableMapperValues, tableSourceMapper, type TableSource } from '@skeletonlabs/skeleton';
 	import type { PageData, SubmitFunction } from './$types';
 
-	
 
-	export let data: PageData 
+	export let data: PageData;
+	let dataLength: number = 10;
 	let tableData = data.transactions;
 	let pageNumber = 1;
 	const test = (num: number) => {
@@ -24,7 +24,7 @@
 			if (result.type !== 'failure') {
 				if (result.data) {
 					const { transactions } = result.data;
-					
+					dataLength = transactions.length;
 					console.log('transactions from action', transactions);
 					const newHeaders = Object.keys(transactions[0]);
 					sourceTable = {
@@ -48,5 +48,5 @@
 </script>
 
 <form class="card p-4" method="POST" action="?/getTransactionsByBudget" use:enhance={updateTableData}>
-	<Table bind:pageNumber={pageNumber} sourceTable={sourceTable} />
+	<Table bind:pageNumber={pageNumber} sourceTable={sourceTable} dataLength={dataLength} />
 </form>
