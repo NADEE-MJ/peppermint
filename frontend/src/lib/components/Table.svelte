@@ -4,10 +4,11 @@
     import Trash from '$lib/assets/Trash.svg.svelte';
     import Edit from '$lib/assets/Edit.svg.svelte';
     import { Table, Stepper, Step, tableMapperValues } from '@skeletonlabs/skeleton';
-    import type { TableSource } from '@skeletonlabs/skeleton';  
+    import type { TableSource } from '@skeletonlabs/skeleton'; 
 
     export let pageNumber = 1;
-    // export let tableData: Array<{}>;
+    let selected: Array<{}> = [];
+    
 
     function pageUp() {
         pageNumber++;
@@ -19,13 +20,23 @@
     
     export let sourceTable: TableSource
 
+    function addSelected(meta: {}) {
+        console.log(meta['detail']);
+        selected.push(meta['detail']);
+        console.log(selected);
+    }
+
 </script>
 
-<div>
-    <button class="btn btn-sm variant-filled-primary float-right"><Edit classOverride="w-6 h-6" /></button>
-    <button class="btn btn-sm variant-filled-primary float-right"><Trash classOverride="w-6 h-6" /></button>
-</div>
-<Table source={sourceTable} interactive={true} />
+{#if !(selected)}
+    <div>
+        <button class="btn btn-sm variant-filled-primary float-right"><Edit classOverride="w-6 h-6" /></button>
+        <button class="btn btn-sm variant-filled-primary float-right"><Trash classOverride="w-6 h-6" /></button>
+    </div>
+{:else}
+    <div class="p-6"></div>
+{/if}
+<Table source={sourceTable} interactive={true} on:selected={addSelected} />
 <div class="btn-group variant-filled float-right">
 	{#if (pageNumber !== 1)}
         <button type="submit" on:click={pageDown}>

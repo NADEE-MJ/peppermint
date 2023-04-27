@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
     import Table from '$lib/components/Table.svelte';
-	import { tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { tableMapperValues, tableSourceMapper, type TableSource } from '@skeletonlabs/skeleton';
 	import type { PageData, SubmitFunction } from './$types';
 
 	
@@ -29,11 +29,10 @@
 					sourceTable = {
 						head: newHeaders,
         				body: tableMapperValues(transactions, newHeaders),
-						meta: tableMapperValues(transactions, newHeaders),
+						meta: tableSourceMapper(transactions, newHeaders),
 					};
 				}
 			}
-
 			update({ reset: false });
 		};
 	};
@@ -43,7 +42,7 @@
     let sourceTable: TableSource = {
         head: headers,
         body: tableMapperValues(tableData, headers),
-        meta: tableMapperValues(tableData, headers),
+        meta: tableSourceMapper(tableData, headers),
     };
 	
 </script>
