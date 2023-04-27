@@ -1,4 +1,4 @@
-<div class="container h-full mx-auto flex justify-center items-center">
+<div class="container h-full mx-auto flex justify-center items-center p-52">
 	<div class="space-y-10 text-center">
 		<figure>
 			<section class="img-bg" />

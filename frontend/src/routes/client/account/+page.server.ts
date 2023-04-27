@@ -2,17 +2,13 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { UpdateUserValidator } from '$lib/zodValidators';
 import { fast } from '$lib/fast';
+import { userStore } from '$lib/stores';
+import { get } from 'svelte/store';
 
-export const load = (async ({ cookies }) => {
-	const token = cookies.get('access_token');
-	if (token) {
-		const response = await fast.getCurrentUser(token);
-		const json = await response.json();
-
-		return {
-			userRecord: json,
-			id: json.id
-		};
+export const load = (async () => {
+	const user = get(userStore);
+	if (user) {
+		return { email: user.email, full_name: user.full_name };
 	} else {
 		//! let user know they are not logged in
 	}
@@ -48,12 +44,14 @@ export const actions: Actions = {
 		const token = cookies.get('access_token');
 		if (token) {
 			const response = await fast.updateCurrentUser(token, body);
-			const message = await response.json();
+			const data = await response.json();
 
 			//! make sure this is working as intended, maybe 500 is not correct code here
 			if (response.status != 200) {
-				return fail(500, { message: message });
+				return fail(500, { message: data });
 			}
+
+			userStore.set({ id: data.id, full_name: data.full_name, email: data.email });
 
 			return { success: true };
 		} else {

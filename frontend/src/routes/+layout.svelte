@@ -2,13 +2,17 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
-	import { Toast } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
+	import { storePopup, Toast, Modal } from '@skeletonlabs/skeleton';
+
+	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 </script>
 
 <svelte:head>
-	<title>peppermint</title>
-	<meta name="description" content="peppermint finance tracker" />
+	<title>Peppermint</title>
+	<meta name="description" content="Peppermint Finance Tracker" />
 </svelte:head>
 
+<Modal />
 <Toast position="t" />
 <slot />

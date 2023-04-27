@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import type { PageData } from './$types';
-	import Textfield from '$lib/components/textfield.svelte';
+	import Textfield from '$lib/components/Textfield.svelte';
 	import { toast } from '$lib/toasts';
+	import { focusTrap } from '@skeletonlabs/skeleton';
 
 	type UserFormData = {
 		email?: string | null;
@@ -13,10 +14,10 @@
 
 	export let data: PageData;
 	let userFormData: UserFormData = {
-		email: data.userRecord.email,
+		email: data.email,
 		password: null,
 		passwordConfirm: null,
-		full_name: data.userRecord.full_name
+		full_name: data.full_name
 	};
 
 	interface Errors {
@@ -42,22 +43,35 @@
 						toast.error(message);
 					}
 				}
+			} else {
+				validationErrors = null;
 			}
 			update({ reset: false });
 		};
 	};
 </script>
 
-<div class="page-container">
-	<form class="card p-4" method="POST" action="?/updateUser" use:enhance={validateUpdateUser}>
-		<header class="card-header text-center p-2">
-			<h2>User Profile</h2>
-		</header>
+<form class="card p-4" method="POST" action="?/updateUser" use:focusTrap={true} use:enhance={validateUpdateUser}>
+	<header class="card-header text-center">
+		<strong class="text-7xl">User Profile</strong>
+	</header>
 
-		<div class="p-6 grid gap-4">
+	<div class="p-6 space-y-4">
+		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-4">
-				<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
+				<Textfield label="Email" name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
 				<Textfield
+					label="Full Name"
+					name="full_name"
+					type="text"
+					placeholder="Full Name"
+					errorMessages={validationErrors?.full_name}
+					value={userFormData.full_name}
+				/>
+			</div>
+			<div class="space-y-4">
+				<Textfield
+					label="New Password"
 					name="password"
 					type="password"
 					placeholder="New Password"
@@ -65,17 +79,17 @@
 					value={userFormData.password}
 				/>
 				<Textfield
+					label="Confirm New Password"
 					name="passwordConfirm"
 					type="password"
 					placeholder="Confirm New Password"
 					errorMessages={validationErrors?.passwordConfirm}
 					value={userFormData.passwordConfirm}
 				/>
-				<Textfield name="full_name" type="text" placeholder="Full Name" errorMessages={validationErrors?.full_name} value={userFormData.full_name} />
-			</div>
-			<div class="flex justify-center">
-				<button type="submit" class="btn variant-filled btn-xl">Update Account Info</button>
 			</div>
 		</div>
-	</form>
-</div>
+		<div class="grid grid-cols-3 gap-10">
+			<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Update Account Info</button>
+		</div>
+	</div>
+</form>
