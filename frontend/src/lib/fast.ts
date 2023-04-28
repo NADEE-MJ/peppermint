@@ -63,10 +63,10 @@ export class fast {
 		return response;
 	}
 
-    static async logout(token: string): Promise<Response> {
-        const response = await fast.post('logout', '', token);
-        return response
-    }
+	static async logout(token: string): Promise<Response> {
+		const response = await fast.post('logout', JSON.stringify({ token }), token);
+		return response;
+	}
 }
 
 type userUpdate = {
