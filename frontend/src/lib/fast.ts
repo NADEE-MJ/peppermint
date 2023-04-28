@@ -62,6 +62,11 @@ export class fast {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
 		return response;
 	}
+
+	static async logout(token: string): Promise<Response> {
+		const response = await fast.post('logout', JSON.stringify({ token }), token);
+		return response;
+	}
 }
 
 type userUpdate = {
