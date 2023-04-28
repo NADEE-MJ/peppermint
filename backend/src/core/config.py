@@ -14,8 +14,6 @@ class Settings(BaseSettings):
 
     USERS_OPEN_REGISTRATION: bool = False
 
-    UPLOAD_DIR: str
-
     # email/smtp settings
     EMAILS_ENABLED: bool
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int

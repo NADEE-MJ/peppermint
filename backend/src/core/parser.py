@@ -1,4 +1,3 @@
-import csv
 import base64
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,11 +40,11 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
 
     for row in file_lines:
         # row example = 3/11/2023,3/12/2023,THIS IS A DESCRIPTION,3000,Food,1000000
-        row = row.split(",")
+        split_row = row.split(",")
         new_transaction = {}
         for index, column_name in indexes.items():
             try:
-                new_transaction[column_name] = row[index]
+                new_transaction[column_name] = split_row[index]
             except IndexError:
                 # this most likely means that the csv file is not formatted correctly
                 return False
