@@ -27,7 +27,7 @@
 					if (error) {
 						toast.error(error);
 					} else if (message) {
-						toast.error(message);
+						toast.warning(message);
 					}
 				}
 			}
@@ -41,7 +41,7 @@
 		<div>
 			<div class="mx-auto">
 				<img src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" alt="Login Left" />
-		  	</div>
+			</div>
 		</div>
 
 		<div>
@@ -65,7 +65,6 @@
 						<a href="/login">Login</a>
 					</p>
 				</div>
-
 			</div>
 		</div>
 	</form>

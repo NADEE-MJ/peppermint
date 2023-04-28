@@ -3,7 +3,6 @@
 	import EyeClosed from '$lib/assets/EyeClosed.svg.svelte';
 	import EyeOpen from '$lib/assets/EyeOpen.svg.svelte';
 
-
 	export let errorMessages: Array<string> | null | undefined;
 	export let type: string;
 	export let label: string | null | undefined = null;
@@ -34,11 +33,11 @@
 			{/if}
 
 			<button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" on:click={togglePasswordVisibility}>
-			{#if passwordHidden}
-				<EyeOpen classOverride="text-white w-6" />
-			{:else}
-				<EyeClosed classOverride="text-white w-6"/>
-			{/if}
+				{#if passwordHidden}
+					<EyeOpen classOverride="text-white w-6" />
+				{:else}
+					<EyeClosed classOverride="text-white w-6" />
+				{/if}
 			</button>
 		</div>
 	{:else}

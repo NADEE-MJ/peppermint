@@ -14,10 +14,10 @@
 
 	export let data: PageData;
 	let userFormData: UserFormData = {
-		email: data.userRecord.email,
+		email: data.email,
 		password: null,
 		passwordConfirm: null,
-		full_name: data.userRecord.full_name
+		full_name: data.full_name
 	};
 
 	interface Errors {
