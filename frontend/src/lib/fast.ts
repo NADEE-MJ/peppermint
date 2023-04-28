@@ -68,6 +68,11 @@ export class fast {
 		const response = await fast.post(`transactions/parse/budget/${budget_id}/account/${account_id}`, data, token);
 		return response;
 	}
+
+	static async logout(token: string): Promise<Response> {
+		const response = await fast.post('logout', JSON.stringify({ token }), token);
+		return response;
+	}
 }
 
 type userUpdate = {
