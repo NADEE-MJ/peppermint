@@ -20,7 +20,7 @@ async def create_user(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Create new user. Must Be logged in first.
+    Create new user. Must Be logged in first. Test
     """
     user = await crud.user.get_by_email(db, email=user_create.email)
     if user:

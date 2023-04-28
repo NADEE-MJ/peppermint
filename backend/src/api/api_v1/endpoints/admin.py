@@ -11,8 +11,32 @@ from src.utils import send_new_account_email
 
 router = APIRouter()
 
+@router.post("", response_model=UserResponse)
+async def create_user(
+    is_admin: bool,
+    user_create: UserCreate,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_admin),
+) -> Any:
+    """
+    Create new user. Must be admin and logged in.
+    """
+    user = await crud.user.get_by_email(db, email=user_create.email)
+    if user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this email already exists in the system",
+        )
+    user = await crud.user.create(db, admin=is_admin, obj_in=user_create)
+    if settings.EMAILS_ENABLED:
+        send_new_account_email(
+            email=user_create.email,
+            password=user_create.password,
+        )
+    return user
 
-@router.delete("/{user_id}", response_model=UserResponse)
+
+@router.delete("", response_model=UserResponse)
 async def remove_user(
     user_id: int,
     db: AsyncSession = Depends(get_session),
@@ -33,35 +57,10 @@ async def remove_user(
     return user
 
 
-@router.post("/", response_model=UserResponse)
-async def create_user(
-    user_create: UserCreate,
-    is_admin: bool,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(deps.get_current_active_admin),
-) -> Any:
-    """
-    Create new user. Must be admin and logged in.
-    """
-
-    user = await crud.user.get_by_email(db, email=user_create.email)
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this email already exists in the system",
-        )
-    user = await crud.user.create(db, admin=is_admin, obj_in=user_create)
-    if settings.EMAILS_ENABLED:
-        send_new_account_email(
-            email=user_create.email,
-            password=user_create.password,
-        )
-    return user
-
-
-@router.put("/{user_id}", response_model=UserResponse)
+@router.put("/user/{user_id}", response_model=UserResponse)
 async def update_user(
     *,
+    user_id: int,
     user_update: UserUpdate,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_admin),
@@ -69,5 +68,18 @@ async def update_user(
     """
     Update selected user.
     """
-    user = await crud.user.update(db, db_obj=current_user, obj_in=user_update)
+    user_to_update = await crud.user.get(db, id=user_id)
+    user = await crud.user.update(db, db_obj=user_to_update, obj_in=user_update)
+    return user
+
+@router.get("/{user_id}", response_model=UserResponse)
+async def read_user_me(
+    user_id: int, 
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_admin),
+) -> Any:
+    """
+    Get user from the given id.
+    """
+    user = await crud.user.get(db, user_id)
     return user
