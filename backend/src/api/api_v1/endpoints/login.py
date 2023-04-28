@@ -40,14 +40,6 @@ async def login_access_token(
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
     return {"access_token": access_token}
 
-@router.get("/test")
-async def test(
-    file,
-    db: AsyncSession = Depends(get_session),
-) -> Any:
-    print(file)
-    return {"test": file}
-
 
 @router.post("/login/test-token", response_model=UserResponse)
 def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:

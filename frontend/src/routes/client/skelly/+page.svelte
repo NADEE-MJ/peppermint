@@ -9,9 +9,6 @@
 				/>
 			</svg>
 		</figure>
-		<div class=" p-10 "> <!-- Here IS THE CODE -->
-			<a href="/csv-upload">Upload-CSV</a>
-		</div> <!-- Here Is The Code-->
 	</div>
 
 	<style lang="postcss">

@@ -16,8 +16,12 @@
 	};
 </script>
 
-<Drawer class="w-2/3">
-	<Navigation />
+<Drawer>
+	{#if $drawerStore.id === 'something-else'}
+		<!-- something else -->
+	{:else}
+		<Navigation />
+	{/if}
 </Drawer>
 
 <AppShell slotSidebarLeft="w-0 md:w-52 bg-surface-500/10">
@@ -35,7 +39,7 @@
 				</button>
 				<strong class="text-3xl uppercase">peppermint</strong>
 			</svelte:fragment>
-			
+
 			<svelte:fragment slot="default">
 				<div class="grid grid-cols-3">
 					<div class="col-start-2 mx-auto">
