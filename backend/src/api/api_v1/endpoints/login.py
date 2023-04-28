@@ -91,3 +91,37 @@ async def magic_link(
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
     return {"access_token": access_token}
+
+@router.post("/logout", response_model=TokenBlacklistReponse)
+async def logout(
+    token: str,
+    db: AsyncSession = Depends(get_session),
+) -> Any:
+    """
+    Logout user
+    """
+    email = verify_magic_link_token(token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    user = await crud.user.get_by_email(db, email=email)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this email does not exist in the system.",
+        )
+    elif not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    payload = {"email": user.email, "id": user.id}
+    await crud.token_blacklist.blacklist_create(db, obj_in=token, user_id=user.id)
+    access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
+    return {"access_token": access_token}
+   
+@router.post("/logout/test-token", response_model=TokenBlacklistReponse)
+def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
+    """
+    Test access token
+    """
+    return current_user
+

@@ -3,7 +3,6 @@ from typing import Any, Dict, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from src.core.security import get_password_hash, verify_password
 from src.crud.base import CRUDBase
 from src.models.user import TokenBlackListCreate, TokenBlackListUpdate, TokenBlackList
 
