@@ -13,14 +13,14 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         result = await db.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
-    async def create(self, db: AsyncSession, *, admin: bool = False, obj_in: UserCreate) -> User:
+    async def create(self, db: AsyncSession, *, is_admin: bool = False, obj_in: UserCreate) -> User:
         db_obj = User(
             email=obj_in.email,
             password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
             created_at=datetime.now(),
             is_active=True,
-            is_admin=admin,
+            is_admin=is_admin,
         )
         return await super().create(db, obj_in=db_obj)  # type: ignore
 

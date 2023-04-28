@@ -53,5 +53,5 @@ def get_current_active_admin(
         raise HTTPException(status_code=401, detail="Admins only allowed")
 
     if not current_user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(status_code=400, detail="Inactive admin")
     return current_user
