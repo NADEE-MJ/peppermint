@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlmodel import Field, SQLModel
 from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
 
 class TokenBlacklistBase(SQLModel):

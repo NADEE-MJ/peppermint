@@ -1,6 +1,5 @@
 import json
 
-from datetime import timedelta, datetime
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -35,9 +34,10 @@ async def get_current_user(
     # check if token is blacklisted
     blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user_id)
 
-    for blacklisted_token in blacklisted_tokens:
-        if blacklisted_token.token == token:
-            raise HTTPException(status_code=401, detail="Could not validate credentials: Token blacklisted")
+    if blacklisted_tokens:
+        for blacklisted_token in blacklisted_tokens:
+            if blacklisted_token.token == token:
+                raise HTTPException(status_code=401, detail="Could not validate credentials: Token blacklisted")
 
     user = await crud.user.get(db, id=user_id)
     if not user:

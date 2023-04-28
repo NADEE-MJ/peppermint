@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,7 +12,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
 from src.models.token import Token
-from src.models.token_blacklist import TokenBlacklistResponse, TokenBlacklistCreate
+from src.models.token_blacklist import TokenBlacklistCreate, TokenBlacklistResponse
 from src.models.user import User, UserResponse
 from src.utils import (
     generate_magic_link_token,
@@ -39,9 +39,11 @@ async def login_access_token(
 
     # remove all expired blacklist tokens
     blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user.id)
-    for blacklisted_token in blacklisted_tokens:
-        if blacklisted_token.created_at + timedelta(minutes=1) < datetime.now():
-            await crud.token_blacklist.remove(db, id=blacklisted_token.id)
+
+    if blacklisted_tokens:
+        for blacklisted_token in blacklisted_tokens:
+            if blacklisted_token.created_at + timedelta(minutes=1) < datetime.now():
+                await crud.token_blacklist.remove(db, id=blacklisted_token.id)
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
