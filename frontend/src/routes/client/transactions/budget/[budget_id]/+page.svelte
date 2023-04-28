@@ -6,47 +6,28 @@
 
 
 	export let data: PageData;
-	let dataLength: number = 10;
 	let tableData = data.transactions;
+	let dataLength: number = tableData.length;
 	let pageNumber = 1;
-	const test = (num: number) => {
-		// console.log('here', num);
-		// console.log(tableData);
-		return num;
-	} 
-	$: something = test(pageNumber);
 
 	const updateTableData: SubmitFunction = ({data}) => {
-		console.log()
 		data.set('pageNumber', pageNumber);
 		return async ({ result, update }) => {
 			// console.log('here3', result);
 			if (result.type !== 'failure') {
 				if (result.data) {
-					const { transactions } = result.data;
-					dataLength = transactions.length;
-					console.log('transactions from action', transactions);
-					const newHeaders = Object.keys(transactions[0]);
-					sourceTable = {
-						head: newHeaders,
-        				body: tableMapperValues(transactions, newHeaders),
-						meta: tableSourceMapper(transactions, newHeaders),
-					};
+					tableData = result.data['transactions'];
+					dataLength = tableData.length;
+					console.log('transactions from action', tableData);
 				}
 			}
 			update({ reset: false });
 		};
 	};
-
 	const headers = Object.keys(tableData[0]);
-    let sourceTable: TableSource = {
-        head: headers,
-        body: tableMapperValues(tableData, headers),
-        meta: tableSourceMapper(tableData, headers),
-    };
 	
 </script>
 
 <form class="card p-4" method="POST" action="?/getTransactionsByBudget" use:enhance={updateTableData}>
-	<Table bind:pageNumber={pageNumber} sourceTable={sourceTable} dataLength={dataLength} />
+	<Table bind:pageNumber={pageNumber} tableData={tableData} dataLength={dataLength} />
 </form>
