@@ -13,5 +13,6 @@ def random_email() -> str:
 def random_name() -> str:
     return f"test user{random_lower_string()}"
 
+
 def random_token() -> str:
-    return f"{random_lower_string()}"
+    return f"{random_lower_string()}.{random_lower_string()}.{random_lower_string()}"

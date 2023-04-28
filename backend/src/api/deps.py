@@ -1,6 +1,6 @@
 import json
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -23,13 +23,6 @@ async def get_current_user(
     if not token:
         raise HTTPException(status_code=401, detail="Not Logged In")
     try:
-        blacklisted_tokens = await crud.token_blacklist.get_all(db)
-        for blacklisted_token in blacklisted_tokens:
-            if blacklisted_token in blacklisted_tokens:
-                raise HTTPException(status_code=401, detail="Token is blacklisted")
-            if blacklisted_token.created_at + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES) < datetime.now():
-                await crud.token_blacklist.remove(db, blacklisted_token)
-
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
         token_data = TokenPayload(**payload)
     except (JWTError, ValidationError):
@@ -37,7 +30,16 @@ async def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = await crud.user.get(db, id=json.loads(token_data.sub)["id"])
+
+    user_id = json.loads(token_data.sub)["id"]
+    # check if token is blacklisted
+    blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user_id)
+
+    for blacklisted_token in blacklisted_tokens:
+        if blacklisted_token.token == token:
+            raise HTTPException(status_code=401, detail="Could not validate credentials: Token blacklisted")
+
+    user = await crud.user.get(db, id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

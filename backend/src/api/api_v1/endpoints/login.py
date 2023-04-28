@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,7 +12,7 @@ from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
 from src.models.token import Token
-from src.models.token import TokenBlacklistReponse
+from src.models.token_blacklist import TokenBlacklistResponse, TokenBlacklistCreate
 from src.models.user import User, UserResponse
 from src.utils import (
     generate_magic_link_token,
@@ -36,6 +36,13 @@ async def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
         raise HTTPException(status_code=400, detail="Inactive user")
+
+    # remove all expired blacklist tokens
+    blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user.id)
+    for blacklisted_token in blacklisted_tokens:
+        if blacklisted_token.created_at + timedelta(minutes=1) < datetime.now():
+            await crud.token_blacklist.remove(db, id=blacklisted_token.id)
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
@@ -92,36 +99,22 @@ async def magic_link(
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
     return {"access_token": access_token}
 
-@router.post("/logout", response_model=TokenBlacklistReponse)
+
+@router.post("/logout", response_model=TokenBlacklistResponse)
 async def logout(
-    token: str,
+    token_blacklist_create: TokenBlacklistCreate,
     db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_user),
 ) -> Any:
     """
-    Logout user
+    Logout user or admin
     """
-    email = verify_magic_link_token(token)
-    if not email:
-        raise HTTPException(status_code=400, detail="Invalid token")
-    user = await crud.user.get_by_email(db, email=email)
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this email does not exist in the system.",
-        )
-    elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload = {"email": user.email, "id": user.id}
-    await crud.token_blacklist.blacklist_create(db, obj_in=token, user_id=user.id)
-    access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {"access_token": access_token}
-   
-@router.post("/logout/test-token", response_model=TokenBlacklistReponse)
-def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
-    """
-    Test access token
-    """
-    return current_user
+    token_blacklist = await crud.token_blacklist.get_by_token(db, token=token_blacklist_create.token)
 
+    if not token_blacklist:
+        token_blacklist = await crud.token_blacklist.create(db, obj_in=token_blacklist_create, user_id=current_user.id)
+
+    if not token_blacklist:
+        return {"token": token_blacklist_create.token, "success": False}
+
+    return {"token": token_blacklist_create.token, "success": True}
