@@ -127,8 +127,6 @@ async def test_bad_token(db: AsyncSession) -> None:
     await crud.user.remove(db, id=user.id)  # type: ignore
     assert user_from_db
     assert user_from_db.token == TokenBlacklist(token="bad token")
-    #assert user_from_db.token[0] == user.token[0]
-    #assert user_from_db.token[0] != "bad token"
 
 @python.mark.asyncio
 async def test_create_blacklist(db :AsyncSession) -> None:
@@ -136,7 +134,6 @@ async def test_create_blacklist(db :AsyncSession) -> None:
     token_blacklist_create = TokenBlacklistCreate(token)
     await crud.user.blacklist_add(db, obj_in=token_blacklist_create)
     await crud.user.remove(db, id=token_blacklist_create.id)  # type: ignore
-    assert token_blacklist_create
     assert token_blacklist_create.token == token
     assert hasattr(token_blacklist_create, "token")
     #token_blacklist = await crud.user.blacklist_get(db, token=token)
