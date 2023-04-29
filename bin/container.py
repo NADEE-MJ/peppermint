@@ -22,8 +22,16 @@ def restart() -> None:
     system(f"docker container start peppermint-app peppermint-db")
 
 
+# stop containers made from prcs / the start command that have been started
+# this does not remove the containers though like down does
 @app.command()
 def stop() -> None:
+    print("[bold red]Stopping Built Containers!")
+    system(f"docker container stop peppermint-app peppermint-db")
+
+
+@app.command()
+def down() -> None:
     print("[bold red]Stop Containers!")
     system("docker compose down")
 
