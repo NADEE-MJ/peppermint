@@ -58,6 +58,11 @@ export class fast {
 		return response;
 	}
 
+	static async getCurrentAdmin(token: string): Promise<Response> {
+		const response = await fast.get('admin', token);
+		return response;
+	}
+
 	static async updateCurrentUser(token: string, userUpdate: userUpdate): Promise<Response> {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
 		return response;

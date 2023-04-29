@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 export const load = (async () => {
 	const user = get(userStore);
 	if (user) {
-		throw redirect(303, '/client/account');
+		throw redirect(303, '/client/profile');
 	}
 }) satisfies PageServerLoad;
 
@@ -35,11 +35,19 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 * 30 //30 days //!probably should change this
 			});
 
-			res = await fast.getCurrentUser(token);
+			if (data?.is_admin) {
+				res = await fast.getCurrentAdmin(token);
+			} else {
+				res = await fast.getCurrentUser(token);
+			}
+
 			const user = await res.json();
 			userStore.set({ id: user.id, full_name: user.full_name, email: user.email });
 
-			throw redirect(303, '/client/account');
+			if (user?.is_admin) {
+				throw redirect(303, '/admin/profile');
+			}
+			throw redirect(303, '/client/profile');
 		} else {
 			//! return value from backend
 			return fail(400, { error: 'Invalid Credentials' });
