@@ -6,17 +6,34 @@
 		target: 'accountOptions',
 		placement: 'bottom'
 	};
+
+	export let userType: 'client' | 'admin' | 'public';
+
+	const srcURL = () => {
+		let seed: string;
+		if (userType === 'client') {
+			seed = 'Peppermint';
+		} else if (userType === 'admin') {
+			seed = 'admin';
+		} else {
+			seed = 'default';
+		}
+
+		return `https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${seed}`;
+	};
+
+	const profileURL = `/${userType}/profile`;
 </script>
 
 <div>
 	<button class="btn" use:popup={AccountOptions}>
-		<Avatar src="https://api.dicebear.com/6.x/bottts-neutral/svg?seed=Peppermint" width="w-10" background="bg-primary-500" />
+		<Avatar src={srcURL()} width="w-10" background="bg-primary-500" />
 	</button>
 	<div class="card w-48 shadow-xl variant-filled-tertiary" data-popup="accountOptions">
 		<div class="p-2 space-y-2">
 			<nav class="list-nav">
 				<ul>
-					<li><a class="btn btn-md" href="/client/profile">Profile</a></li>
+					<li><a class="btn btn-md" href={profileURL}>Profile</a></li>
 				</ul>
 			</nav>
 			<form action="/logout" method="POST" class="flex justify-center">

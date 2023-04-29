@@ -51,7 +51,7 @@ export const actions: Actions = {
 				return fail(500, { message: data });
 			}
 
-			userStore.set({ id: data.id, full_name: data.full_name, email: data.email });
+			userStore.set({ id: data.id, full_name: data.full_name, email: data.email, is_admin: data.is_admin });
 
 			return { success: true };
 		} else {

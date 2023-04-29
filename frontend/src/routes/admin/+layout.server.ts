@@ -5,8 +5,11 @@ import { get } from 'svelte/store';
 
 export const load = (async () => {
 	const user = get(userStore);
-	if (user) {
-		return { email: user.email, full_name: user.full_name };
+
+	if (!user?.is_admin) {
+		throw redirect(303, '/client/profile');
+	} else if (user) {
+		return { loggedIn: true };
 	} else {
 		//! user is not logged in
 		throw redirect(303, '/login');
