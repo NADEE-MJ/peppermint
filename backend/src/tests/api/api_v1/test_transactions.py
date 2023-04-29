@@ -1,5 +1,3 @@
-import os
-
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +8,10 @@ from src.tests.utils.account import create_test_account
 from src.tests.utils.budget import create_test_budget
 from src.tests.utils.category import create_test_category
 from src.tests.utils.filter import create_parser_test_filters
-from src.tests.utils.transaction import create_test_transaction
+from src.tests.utils.transaction import (
+    TRANSACTIONS_TO_PARSE_BASE64,
+    create_test_transaction,
+)
 from src.tests.utils.user import get_auth_header
 
 
@@ -173,19 +174,13 @@ async def test_parse_transactions_from_csv_with_no_categories(
     account = await create_test_account(db, user_id=test_user.id)
     await create_parser_test_filters(db, user_id=test_user.id, budget_id=budget.id)
 
-    file_name = "transactions-to-parse.csv"
-    if os.path.exists(f"storage/imports/{file_name}"):
-        os.system(f"rm storage/imports/{file_name}")
-        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
-    else:
-        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
-
     mapping = {"Date": "date", "Description": "desc", "Amount": "amnt"}
+    data = {"file": TRANSACTIONS_TO_PARSE_BASE64, "mapping": mapping}
 
     response = client.post(
-        f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/account/{account.id}/parse/{file_name}",
+        f"{settings.API_VERSION_STR}/transactions/parse/budget/{budget.id}/account/{account.id}",
         headers=headers,
-        json=mapping,
+        json=data,
     )
 
     res = response.json()
@@ -207,19 +202,13 @@ async def test_parse_transactions_from_csv_with_categories(
     account = await create_test_account(db, user_id=test_user.id)
     await create_parser_test_filters(db, user_id=test_user.id, budget_id=budget.id)
 
-    file_name = "transactions-to-parse.csv"
-    if os.path.exists(f"storage/imports/{file_name}"):
-        os.system(f"rm storage/imports/{file_name}")
-        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
-    else:
-        os.system(f"cp storage/test-files/{file_name} storage/imports/{file_name}")
-
     mapping = {"Date": "date", "Description": "desc", "Amount": "amnt", "Category": "category"}
+    data = {"file": TRANSACTIONS_TO_PARSE_BASE64, "mapping": mapping}
 
     response = client.post(
-        f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/account/{account.id}/parse/{file_name}",
+        f"{settings.API_VERSION_STR}/transactions/parse/budget/{budget.id}/account/{account.id}",
         headers=headers,
-        json=mapping,
+        json=data,
     )
 
     res = response.json()

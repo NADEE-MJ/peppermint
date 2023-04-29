@@ -14,5 +14,5 @@
 </svelte:head>
 
 <Modal />
-<Toast position="t" />
+<Toast position="bl" max={5} />
 <slot />
