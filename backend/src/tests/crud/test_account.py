@@ -23,10 +23,14 @@ async def test_create_account(db: AsyncSession) -> None:
 async def test_get_all_accounts_for_user(db: AsyncSession) -> None:
     user = await create_random_user(db)
     await create_test_account(db, user_id=user.id)
-    accounts = await crud.account.get_all_accounts_for_user(db, user_id=user.id)
+    data = await crud.account.get_all_accounts_for_user(db, user_id=user.id)
+
+    accounts = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(accounts) == 1
+    assert total_pages == 1
     assert accounts[0].user_id == user.id
 
 
