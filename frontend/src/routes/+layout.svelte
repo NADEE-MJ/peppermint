@@ -2,8 +2,8 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup, Toast, Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import AccountOptions from '$lib/components/AccountOptions.svelte';
 	import ImportantLinks from '$lib/components/ImportantLinks.svelte';
