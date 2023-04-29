@@ -11,7 +11,7 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("", response_model=list[AccountResponse])
+@router.get("", response_model=dict[str, int | list[AccountResponse]])
 async def get_all_accounts(
     page: int = 0,
     limit: int = 10,
@@ -23,9 +23,9 @@ async def get_all_accounts(
     Get all bank accounts for current user.
     """
     if current_user.id is not None:
-        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, page=page, limit=limit)
+        data = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, page=page, limit=limit)
 
-        return accounts
+        return data
 
 
 @router.get("/{account_id}", response_model=AccountResponse)
@@ -57,15 +57,17 @@ async def create_account(
     Create new bank account. Must Be logged in first.
     """
     if current_user.id is not None:
-        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+        data = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, limit=-1)
 
-        if accounts is not None:
-            for account in accounts:
-                if account.name == account_create.name:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="An account with the name already exists in the system.",
-                    )
+        if data is not None:
+            accounts = data["paginated_results"]
+            if accounts is not None and type(accounts) == list:
+                for account in accounts:
+                    if account.name == account_create.name:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="An account with the name already exists in the system.",
+                        )
 
         account = await crud.account.create(db, obj_in=account_create, user_id=current_user.id)
 
@@ -90,15 +92,17 @@ async def update_account(
     if account_from_db.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this bank account")
 
-    accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+    data = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, limit=-1)
 
-    if accounts is not None:
-        for account in accounts:
-            if account.name == account_update.name:
-                raise HTTPException(
-                    status_code=400,
-                    detail="An account with the name already exists in the system.",
-                )
+    if data is not None:
+        accounts = data["paginated_results"]
+        if accounts is not None and type(accounts) == list:
+            for account in accounts:
+                if account.name == account_update.name:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="An account with the name already exists in the system.",
+                    )
 
     account = await crud.account.update(db, db_obj=account_from_db, obj_in=account_update)
 

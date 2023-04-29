@@ -16,9 +16,12 @@ async def test_get_all_filters(db: AsyncSession, client: TestClient, test_user: 
     category = await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
     await create_test_filter(db, user_id=test_user.id, category_id=category.id)
     response = client.get(f"{settings.API_VERSION_STR}/filters/", headers=headers)
-    filters = response.json()
+    data = response.json()
+    filters = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(filters) == 1
+    assert total_pages == 1
     assert filters[0]["user_id"] == test_user.id
 
 
@@ -41,9 +44,12 @@ async def test_get_all_filters_by_category(db: AsyncSession, client: TestClient,
     category = await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
     await create_test_filter(db, user_id=test_user.id, category_id=category.id)
     response = client.get(f"{settings.API_VERSION_STR}/filters/category/{category.id}", headers=headers)
-    filters = response.json()
+    data = response.json()
+    filters = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(filters) == 1
+    assert total_pages == 1
     assert filters[0]["user_id"] == test_user.id
 
 
@@ -86,6 +92,9 @@ async def test_remove_filter(db: AsyncSession, client: TestClient, test_user: Us
     assert filter["user_id"] == test_user.id
 
     response = client.get(f"{settings.API_VERSION_STR}/filters/", headers=headers)
-    filters = response.json()
+    data = response.json()
+    filters = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(filters) == 0
+    assert total_pages == 0

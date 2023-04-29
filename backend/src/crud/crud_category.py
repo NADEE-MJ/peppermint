@@ -42,7 +42,7 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
             user_id=user_id,
             budget_id=budget_id,
         )
-        return await super().create(db, obj_in=db_obj)  # type: ignore
+        return await super().create(db, obj_in=db_obj)
 
 
 category = CRUDCategory(Category)

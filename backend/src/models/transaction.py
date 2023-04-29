@@ -27,10 +27,12 @@ class TransactionUpdate(BaseModel):
     date: str | None = None
 
 
-class Transaction(TransactionBase, table=True):
+class Transaction(SQLModel, table=True):
     id: int = Field(primary_key=True)
+    amount: float
+    date: datetime
+    desc: str
     created_at: datetime
-    date: datetime  # type: ignore
     user_id: int = Field(foreign_key="user.id")
     budget_id: int = Field(foreign_key="budget.id")
     category_id: int = Field(foreign_key="category.id")
@@ -38,11 +40,13 @@ class Transaction(TransactionBase, table=True):
 
 
 # Additional properties to return via API
-class TransactionResponse(TransactionBase):
+class TransactionResponse(SQLModel):
     id: int
     user_id: int
     budget_id: int
     category_id: int
     account_id: int
     created_at: datetime
-    date: datetime  # type: ignore
+    date: datetime
+    amount: float
+    desc: str
