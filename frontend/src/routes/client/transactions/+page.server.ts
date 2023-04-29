@@ -5,7 +5,7 @@ import { fast } from '$lib/fast';
 import { userStore } from '$lib/stores';
 import { get } from 'svelte/store';
 
-export const load = (async ({cookies}) => {
+export const load = (async ({ cookies }) => {
 	const token = cookies.get('access_token');
 	const user = get(userStore);
 	if (token && user) {
@@ -14,7 +14,6 @@ export const load = (async ({cookies}) => {
 
 		return jsonData;
 	} else {
-
 	}
 }) satisfies PageServerLoad;
 
@@ -62,7 +61,7 @@ export const actions: Actions = {
 			return fail(401, { message: 'You are not logged in.' });
 		}
 	},
-    getTransactionsByBudget: async ({ request, cookies }) => {
+	getTransactionsByBudget: async ({ request, cookies }) => {
 		const data = Object.fromEntries(await request.formData());
 		const token = cookies.get('access_token');
 		if (token) {
@@ -71,7 +70,6 @@ export const actions: Actions = {
 
 			return jsonData;
 		} else {
-
 		}
 	}
 };
