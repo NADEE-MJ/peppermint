@@ -21,6 +21,7 @@ router = APIRouter()
 @router.get("", response_model=list[TransactionResponse])
 async def get_all_transactions(
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -29,7 +30,9 @@ async def get_all_transactions(
     Get all transactions for current user.
     """
     if current_user.id is not None:
-        transactions = await crud.transaction.get_all_transactions_for_user(db, user_id=current_user.id, page=page)
+        transactions = await crud.transaction.get_all_transactions_for_user(
+            db, user_id=current_user.id, page=page, limit=limit
+        )
 
         return transactions
 
@@ -38,6 +41,7 @@ async def get_all_transactions(
 async def get_all_transactions_by_budget(
     budget_id: int,
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -56,7 +60,7 @@ async def get_all_transactions_by_budget(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
 
         transactions = await crud.transaction.get_all_transactions_for_budget(
-            db, user_id=current_user.id, budget_id=budget_id, page=page
+            db, user_id=current_user.id, budget_id=budget_id, page=page, limit=limit
         )
 
         return transactions
@@ -66,6 +70,7 @@ async def get_all_transactions_by_budget(
 async def get_all_transactions_by_account(
     account_id: int,
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -84,7 +89,7 @@ async def get_all_transactions_by_account(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
 
         transactions = await crud.transaction.get_all_transactions_for_account(
-            db, user_id=current_user.id, account_id=account_id, page=page
+            db, user_id=current_user.id, account_id=account_id, page=page, limit=limit
         )
 
         return transactions
@@ -95,6 +100,7 @@ async def get_all_transactions_by_budget_and_category(
     budget_id: int,
     category_id: int,
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -122,7 +128,7 @@ async def get_all_transactions_by_budget_and_category(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
         transactions = await crud.transaction.get_all_transactions_for_category_in_budget(
-            db, user_id=current_user.id, category_id=category_id, budget_id=budget_id, page=page
+            db, user_id=current_user.id, category_id=category_id, budget_id=budget_id, page=page, limit=limit
         )
 
         return transactions
@@ -133,6 +139,7 @@ async def get_all_transactions_by_account_and_category(
     account_id: int,
     category_id: int,
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -160,7 +167,7 @@ async def get_all_transactions_by_account_and_category(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
         transactions = await crud.transaction.get_all_transactions_for_category_in_account(
-            db, user_id=current_user.id, category_id=category_id, account_id=account_id, page=page
+            db, user_id=current_user.id, category_id=category_id, account_id=account_id, page=page, limit=limit
         )
 
         return transactions
