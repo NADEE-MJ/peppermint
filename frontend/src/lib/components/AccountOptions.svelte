@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Avatar, popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { string } from 'zod';
 
 	let AccountOptions: PopupSettings = {
 		event: 'focus-click',
@@ -11,19 +10,19 @@
 	export let userType: 'client' | 'admin' | 'public';
 
 	const srcURL = () => {
-		let seed: string
+		let seed: string;
 		if (userType === 'client') {
-			seed = "Peppermint"
+			seed = 'Peppermint';
 		} else if (userType === 'admin') {
-			seed = "admin"
+			seed = 'admin';
 		} else {
-			seed = 'default'
+			seed = 'default';
 		}
 
 		return `https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${seed}`;
-	}
+	};
 
-	const profileURL = `/${userType}/profile`
+	const profileURL = `/${userType}/profile`;
 </script>
 
 <div>

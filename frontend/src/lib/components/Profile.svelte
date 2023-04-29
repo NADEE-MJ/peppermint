@@ -4,9 +4,9 @@
 	import { toast } from '$lib/toasts';
 	import { focusTrap } from '@skeletonlabs/skeleton';
 
-    export let actionRoute: string;
-    export let title: string;
-	export let data: {email?: undefined, full_name?: undefined} | {email: string, full_name: string};
+	export let actionRoute: string;
+	export let title: string;
+	export let data: { email?: undefined; full_name?: undefined } | { email: string; full_name: string };
 
 	type UserFormData = {
 		email?: string | null;

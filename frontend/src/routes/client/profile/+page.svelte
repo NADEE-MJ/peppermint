@@ -3,8 +3,7 @@
 	import Profile from '$lib/components/Profile.svelte';
 
 	export let data: PageData;
-	const actionRoute = "?/updateUser";
+	const actionRoute = '?/updateUser';
 </script>
 
-
-<Profile data={data} {actionRoute} title="User Profile" />
+<Profile {data} {actionRoute} title="User Profile" />

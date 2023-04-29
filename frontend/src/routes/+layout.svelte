@@ -22,7 +22,7 @@
 		} else {
 			return 'bg-gray-500/30';
 		}
-	}
+	};
 
 	const getType = () => {
 		if (isAdminPage) {
@@ -32,7 +32,7 @@
 		} else {
 			return 'public';
 		}
-	}
+	};
 </script>
 
 <svelte:head>
@@ -58,7 +58,7 @@
 
 				<svelte:fragment slot="trail">
 					{#if isAdminPage}
-						 <strong class="text-3xl uppercase">ADMIN</strong>
+						<strong class="text-3xl uppercase">ADMIN</strong>
 					{/if}
 					<AccountOptions userType={getType()} />
 				</svelte:fragment>
