@@ -14,14 +14,14 @@ export const POST: RequestHandler = async ({ request, cookies, params }) => {
 		if (typeof params.budget_id === 'string') {
 			budget_id = parseInt(params.budget_id);
 		} else {
-			throw new Error('Budget Id must be and Integer');
+			throw new Error('Budget id must be and integer');
 		}
 
 		let account_id: number;
 		if (typeof params.account_id === 'string') {
 			account_id = parseInt(params.account_id);
 		} else {
-			throw new Error('Budget Id must be and Integer');
+			throw new Error('Account id must be and integer');
 		}
 
 		const res = await fast.parseTransactions(token, mapping, file, budget_id, account_id);

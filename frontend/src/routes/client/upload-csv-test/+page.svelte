@@ -1,78 +1,45 @@
 <script lang="ts">
 	import Mapping from '$lib/components/Mapping.svelte';
-	import { toast } from '$lib/toasts';
-	import { FileButton, ProgressBar, drawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
+	import { FileButton } from '@skeletonlabs/skeleton';
+	import { uploadFile } from '$lib/utils';
 
 	let files: FileList;
-	let loading = false;
-
-	const fileToBase64 = (file: File): Promise<string | null> => {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader();
-			reader.readAsBinaryString(file);
-
-			reader.onload = () => {
-				const result = reader.result;
-				if (typeof result === 'string') {
-					const base64data = btoa(result);
-					const mimeType = file.type;
-
-					resolve(`Data:${mimeType};base64,${base64data}`);
-				}
-			};
-
-			reader.onerror = (error) => {
-				toast.error(`Error converting file to base64: ${error}`);
-				reject(null);
-			};
-		});
-	};
 
 	let needsToMap = false;
 	let fileHeaders: string[] = [];
 
 	const onFileChange = async () => {
-		fileHeaders = (await files[0].text()).split('\n')[0].split(',');
+		const fileItem = files.item(0);
+		if (!fileItem) return;
+		const fileText = await fileItem.text();
+		const fileHeader = fileText.split('\n')[0];
+		fileHeaders = fileHeader.split(',');
 		needsToMap = true;
-
-		console.log('files', await files[0].text());
-		console.log('files typeof');
-		console.log('test123', await fileToBase64(files[0]));
-		console.log('files', files);
 	};
 
-	const uploadFile = async (mapping: any) => {
-		if (!files) {
-			toast.error('Please select a file to upload');
-			return;
-		} else if (files.length > 1) {
-			toast.error('Only one file can be uploaded at a time');
-			return;
-		}
-		if (!mapping) {
-			toast.error('Please enter a mapping');
-			return;
-		}
+	const uploadMappingAndFile = async (mapping: object) => {
+		const uploadURL = '/client/budget/1/account/1/upload';
+		await uploadFile(files[0], mapping, uploadURL);
+	};
 
-		const headers = { 'Content-Type': 'application/json' };
-		const body = JSON.stringify({ file: await fileToBase64(files[0]), mapping });
-		loading = true;
-		const res = await fetch('/client/budget/1/account/1/upload', { method: 'POST', body, headers });
-		const result = await res.json();
-		console.log(result);
-		result?.success ? toast.success('File uploaded successfully') : toast.error('File upload failed');
-		loading = false;
+	const cancelUpload = () => {
+		needsToMap = false;
 	};
 </script>
 
 <div class="card p-4">
+	<header class="card-header text-center">
+		<strong class="text-7xl">CSV File Upload</strong>
+	</header>
 	{#if needsToMap}
-		<Mapping currentFile={files[0].name} {fileHeaders} {uploadFile} />
+		<div class="p-4 space-y-5">
+			<Mapping currentFile={files[0].name} {fileHeaders} uploadFile={uploadMappingAndFile} />
+			<button class="btn btn-lg variant-filled-secondary" type="button" on:click={cancelUpload}>Cancel Upload</button>
+		</div>
 	{:else}
-		<FileButton bind:files name="csv" on:change={onFileChange} />
-	{/if}
-	<!-- <button type="button" on:click={uploadFile} class="btn btn-lg variant-filled-primary">Upload</button> -->
-	{#if loading}
-		<ProgressBar />
+		<div class="p-4 grid grid-rows-2 space-y-5">
+			<strong class="text-6xl">Select a file</strong>
+			<FileButton bind:files name="csv" on:change={onFileChange} />
+		</div>
 	{/if}
 </div>
