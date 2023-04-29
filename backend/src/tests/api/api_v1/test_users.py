@@ -13,7 +13,7 @@ async def test_get_users_me(db: AsyncSession, client: TestClient, test_user: Use
     headers = get_auth_header(client)
     response = client.get(f"{settings.API_VERSION_STR}/users/me", headers=headers)
     current_user = response.json()
-    await crud.user.remove(db, id=test_user.id)
+
     assert current_user
     assert current_user["email"] == TEST_USER_EMAIL
 
@@ -28,7 +28,7 @@ async def test_update_user_me(db: AsyncSession, client: TestClient, test_user: U
         headers=headers,
     )
     current_user = response.json()
-    await crud.user.remove(db, id=test_user.id)
+
     assert current_user
     assert current_user["id"] == test_user.id
     assert current_user["email"] == test_user.email
@@ -48,7 +48,7 @@ async def test_create_user_new_email(db: AsyncSession, client: TestClient, test_
     )
     assert 200 <= response.status_code < 300
     user = await crud.user.get_by_email(db, email=email)
-    await crud.user.remove(db, id=test_user.id)
+
     assert user
     assert user.email == email
 
@@ -66,7 +66,7 @@ async def test_create_user_existing_email(db: AsyncSession, client: TestClient, 
         headers=headers,
     )
     created_user = response.json()
-    await crud.user.remove(db, id=test_user.id)
+
     assert response.status_code == 400
     assert "email" not in created_user
 
@@ -83,6 +83,6 @@ async def test_create_user_open_registration(db: AsyncSession, client: TestClien
         json=data,
         headers=headers,
     )
-    await crud.user.remove(db, id=test_user.id)
+
     assert response.status_code == 200
     assert "email" in response.json()
