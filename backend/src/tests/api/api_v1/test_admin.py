@@ -25,7 +25,6 @@ async def test_create_new_admin(db: AsyncSession, client: TestClient, test_admin
 
     user = await crud.user.get_by_email(db, email=email)
 
-    await crud.user.remove(db, id=test_admin.id)
     await crud.user.remove(db, id=user.id)
 
     assert response.status_code == 200
@@ -42,10 +41,6 @@ async def test_remove_user(db: AsyncSession, client: TestClient, test_admin: Use
         f"{settings.API_VERSION_STR}/admin/user/{test_user.id}",
         headers=headers,
     )
-
-    print(response.json())
-
-    await crud.user.remove(db, id=test_admin.id)
 
     assert response.status_code == 200
 
@@ -67,9 +62,6 @@ async def test_admin_update_user(db: AsyncSession, client: TestClient, test_admi
     )
     res = response.json()
 
-    await crud.user.remove(db, id=test_user.id)
-    await crud.user.remove(db, id=test_admin.id)
-
     assert res["id"] == test_user.id
     assert res["full_name"] == new_name
 
@@ -81,8 +73,6 @@ async def test_get_users_me(db: AsyncSession, client: TestClient, test_admin: Us
     response = client.get(f"{settings.API_VERSION_STR}/admin", headers=headers)
     retrieved_admin = response.json()
 
-    await crud.user.remove(db, id=test_admin.id)
-
     assert retrieved_admin
     assert retrieved_admin["id"] == test_admin.id
 
@@ -93,9 +83,6 @@ async def test_get_user_by_email(db: AsyncSession, client: TestClient, test_admi
 
     response = client.get(f"{settings.API_VERSION_STR}/admin/user/{test_user.email}", headers=headers)
     user = response.json()
-
-    await crud.user.remove(db, id=test_admin.id)
-    await crud.user.remove(db, id=test_user.id)
 
     assert user
     assert user["id"] == test_user.id
@@ -109,8 +96,6 @@ async def test_update_admin_me(db: AsyncSession, client: TestClient, test_admin:
     data = {"full_name": new_name}
     response = client.put(f"{settings.API_VERSION_STR}/admin", headers=headers, json=data)
     admin = response.json()
-
-    await crud.user.remove(db, id=test_admin.id)
 
     assert admin
     assert admin["id"] == test_admin.id

@@ -26,7 +26,6 @@ async def test_get_all_transactions(db: AsyncSession, client: TestClient, test_u
     )
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 1
     assert transactions[0]["user_id"] == test_user.id
@@ -43,7 +42,6 @@ async def test_get_transaction(db: AsyncSession, client: TestClient, test_user: 
     )
     response = client.get(f"{settings.API_VERSION_STR}/transactions/{transaction.id}", headers=headers)
     transaction = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert transaction["user_id"] == test_user.id
 
@@ -59,7 +57,6 @@ async def test_get_all_transactions_by_account(db: AsyncSession, client: TestCli
     )
     response = client.get(f"{settings.API_VERSION_STR}/transactions/account/{account.id}", headers=headers)
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 1
     assert transactions[0]["user_id"] == test_user.id
@@ -80,7 +77,6 @@ async def test_get_all_transactions_by_budget_and_category(
         f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/category/{category.id}", headers=headers
     )
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 1
     assert transactions[0]["user_id"] == test_user.id
@@ -101,7 +97,6 @@ async def test_get_all_transactions_by_account_and_category(
         f"{settings.API_VERSION_STR}/transactions/account/{account.id}/category/{category.id}", headers=headers
     )
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 1
     assert transactions[0]["user_id"] == test_user.id
@@ -120,7 +115,6 @@ async def test_create_transaction(db: AsyncSession, client: TestClient, test_use
         json=data,
     )
     transaction = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert transaction["user_id"] == test_user.id
     assert transaction["desc"] == "test"
@@ -138,7 +132,6 @@ async def test_update_transaction(db: AsyncSession, client: TestClient, test_use
     data = {"desc": "test new desc"}
     response = client.put(f"{settings.API_VERSION_STR}/transactions/{transaction.id}", headers=headers, json=data)
     transaction = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert transaction["user_id"] == test_user.id
     assert transaction["desc"] == "test new desc"
@@ -160,7 +153,6 @@ async def test_remove_transaction(db: AsyncSession, client: TestClient, test_use
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 0
 
@@ -188,7 +180,6 @@ async def test_parse_transactions_from_csv_with_no_categories(
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 21
 
@@ -216,6 +207,5 @@ async def test_parse_transactions_from_csv_with_categories(
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(transactions) == 21

@@ -20,7 +20,7 @@ async def test_get_access_token(db: AsyncSession, client: TestClient, test_user:
     )
 
     token = response.json()
-    await crud.user.remove(db, id=test_user.id)
+
     assert response.status_code == 200
     assert "access_token" in token
     assert token["access_token"]
@@ -31,7 +31,7 @@ async def test_use_access_token(db: AsyncSession, client: TestClient, test_user:
     headers = get_auth_header(client)
     response = client.post(f"{settings.API_VERSION_STR}/login/test-token", headers=headers)
     result = response.json()
-    await crud.user.remove(db, id=test_user.id)
+
     assert response.status_code == 200
     assert "email" in result
 
@@ -39,7 +39,7 @@ async def test_use_access_token(db: AsyncSession, client: TestClient, test_user:
 @pytest.mark.asyncio
 async def test_send_magic_link(db: AsyncSession, client: TestClient, test_user: User) -> None:
     response = client.post(f"{settings.API_VERSION_STR}/send-magic-link?email={TEST_USER_EMAIL}")
-    await crud.user.remove(db, id=test_user.id)
+
     result = response.json()
     assert result["message"] == "Magic Link Sent"
     assert result["success"] is True
@@ -53,7 +53,6 @@ async def test_magic_link(db: AsyncSession, client: TestClient, test_user: User)
     headers = {"Authorization": f"Bearer {result['access_token']}"}
     response = client.post(f"{settings.API_VERSION_STR}/login/test-token", headers=headers)
     result = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert result["id"] == test_user.id
 
@@ -77,7 +76,7 @@ async def test_logout(db: AsyncSession, client: TestClient, test_user: User) -> 
     result = response.json()
 
     token_blacklists = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=test_user.id)
-    await crud.user.remove(db, id=test_user.id)
+
     assert result["success"] is True
     assert len(token_blacklists) == 1
 
@@ -105,8 +104,6 @@ async def test_use_blacklisted_token(db: AsyncSession, client: TestClient, test_
     response = client.get(f"{settings.API_VERSION_STR}/users/me", json=data, headers=headers)
 
     result = response.json()
-
-    await crud.user.remove(db, id=test_user.id)
 
     assert response.status_code == 401
     assert result["detail"] == "Could not validate credentials: Token blacklisted"

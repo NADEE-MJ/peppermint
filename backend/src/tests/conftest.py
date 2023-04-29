@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from src.core.config import settings
 from src.main import app
 from src.models.user import User
+from src import crud
 from src.tests.utils.user import create_test_admin, create_test_user
 
 
@@ -29,13 +30,25 @@ async def db() -> AsyncGenerator:
 @pytest_asyncio.fixture(scope="function")
 async def test_user(db: AsyncSession) -> User:
     user = await create_test_user(db)
-    return user
+
+    yield user
+
+    try:
+        await crud.user.remove(db, id=user.id)
+    except Exception:
+        pass
 
 
 @pytest_asyncio.fixture(scope="function")
 async def test_admin(db: AsyncSession) -> User:
     user = await create_test_admin(db)
-    return user
+
+    yield user
+
+    try:
+        await crud.user.remove(db, id=user.id)
+    except Exception:
+        pass
 
 
 @pytest.fixture(scope="session")
