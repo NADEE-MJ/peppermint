@@ -11,8 +11,9 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("/", response_model=list[AccountResponse])
+@router.get("", response_model=list[AccountResponse])
 async def get_all_accounts(
+    page: int = 0,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -21,7 +22,7 @@ async def get_all_accounts(
     Get all bank accounts for current user.
     """
     if current_user.id is not None:
-        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id)
+        accounts = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, page=page)
 
         return accounts
 
@@ -44,7 +45,7 @@ async def get_account(
     return account
 
 
-@router.post("/", response_model=AccountResponse)
+@router.post("", response_model=AccountResponse)
 async def create_account(
     *,
     db: AsyncSession = Depends(get_session),

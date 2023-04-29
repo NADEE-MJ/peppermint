@@ -11,7 +11,7 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("/", response_model=list[CategoryResponse])
+@router.get("", response_model=list[CategoryResponse])
 async def get_all_categories(
     *,
     db: AsyncSession = Depends(get_session),

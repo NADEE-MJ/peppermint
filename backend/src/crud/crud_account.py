@@ -8,8 +8,12 @@ from src.models.account import Account, AccountCreate, AccountUpdate
 
 
 class CRUDAccount(CRUDBase[Account, AccountCreate, AccountUpdate]):
-    async def get_all_accounts_for_user(self, db: AsyncSession, *, user_id: int) -> Optional[list[Account]]:
-        result = await db.execute(select(Account).filter(Account.user_id == user_id))
+    async def get_all_accounts_for_user(
+        self, db: AsyncSession, *, user_id: int, page: int = 0
+    ) -> Optional[list[Account]]:
+        limit = 10
+        page *= limit
+        result = await db.execute(select(Account).filter(Account.user_id == user_id).offset(page).limit(limit))
         return result.scalars().all()
 
     async def create(self, db: AsyncSession, *, obj_in: AccountCreate, user_id: int) -> Account:  # type: ignore
