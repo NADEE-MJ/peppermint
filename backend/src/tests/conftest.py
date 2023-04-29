@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from src.core.config import settings
 from src.main import app
 from src.models.user import User
-from src.tests.utils.user import create_test_user
+from src.tests.utils.user import create_test_admin, create_test_user
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -29,6 +29,12 @@ async def db() -> AsyncGenerator:
 @pytest_asyncio.fixture(scope="function")
 async def test_user(db: AsyncSession) -> User:
     user = await create_test_user(db)
+    return user
+
+
+@pytest_asyncio.fixture(scope="function")
+async def test_admin(db: AsyncSession) -> User:
+    user = await create_test_admin(db)
     return user
 
 

@@ -29,6 +29,7 @@ class User(UserBase, table=True):
     created_at: datetime
     last_login: datetime | None = None
     is_active: bool
+    is_admin: bool
 
 
 # Additional properties to return via API
@@ -38,3 +39,4 @@ class UserResponse(UserBase):
     created_at: datetime
     last_login: datetime | None = None
     is_active: bool
+    is_admin: bool
