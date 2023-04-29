@@ -53,6 +53,12 @@ export class fast {
 		return response;
 	}
 
+	static async createUserOrAdmin(is_admin: boolean, email: string, password: string, full_name: string): Promise<Response> {
+		const body =  JSON.stringify({ is_admin, email, password, full_name });
+		const response = await fast.post("admin", body);
+		return response;
+	}
+
 	static async getCurrentUser(token: string): Promise<Response> {
 		const response = await fast.get('users/me', token);
 		return response;
