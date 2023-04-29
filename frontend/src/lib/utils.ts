@@ -1,4 +1,7 @@
+import Profile from './components/Profile.svelte';
 import { toast } from './toasts';
+
+const updateValidation = Profile.validateUpdateUser;
 
 export const uploadFile = async (file: File, mapping: object, URL: string) => {
 	if (!mapping) {
