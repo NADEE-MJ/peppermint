@@ -15,6 +15,13 @@ def start(recreate: bool = False, nocache: bool = False) -> None:
     system(f"docker compose up -d {'--force-recreate' if recreate else ''}")
 
 
+# restart containers made from prcs / the start command that have been stopped
+@app.command()
+def restart() -> None:
+    print("[bold green]Restarting Built Containers!")
+    system(f"docker container start peppermint-app peppermint-db")
+
+
 @app.command()
 def stop() -> None:
     print("[bold red]Stop Containers!")
