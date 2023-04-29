@@ -6,28 +6,33 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
     export let pageNumber = 1;
-    export let selected: {};
     export let tableData: {}[];
     export let dataLength: number;
 
+    let checkedBoxes: Array<{}> = [];
     let headers: string[] = ["Amount", "Date", "Desc"];
     let backState = "variant-ghost";
     let nextState = "variant-filled-surface";
+    let deleteState = "btn btn-sm variant-ghost-primary m-2 float-right";
 
     $: backState = (pageNumber === 1) ? "variant-ghost" : "variant-filled-surface";
     $: nextState = (dataLength < 10) ? "variant-ghost" : "variant-filled-surface";
+    $: deleteState = (checkedBoxes) ? "btn btn-sm variant-ghost-primary m-2 float-right" 
+        : "btn btn-sm variant-filled-primary m-2 float-right";
 
-    const pageUp = () => { if (dataLength >= 10) { pageNumber++;
-    console.log(tableData) } }
+    const pageUp = () => { if (dataLength >= 10) { pageNumber++;} }
     const pageDown = () => { if (pageNumber > 1) { pageNumber--; } }
 
-    function addSelected(meta: {}) {
-        if (selected === meta['detail']) {
-            selected = undefined;
+    function addSelected(event: any) {
+        const valueString = event.target.value;
+        const value = JSON.parse(valueString);
+        if (event.target.checked) {
+            checkedBoxes = [...checkedBoxes, value];
         } else {
-            selected = meta['detail'];
+            let item = checkedBoxes.indexOf((item) => item === value);
+            checkedBoxes.splice(item, 1);
         }
-        console.log(selected);
+        console.log(checkedBoxes);
     }
 
     const confirm: ModalSettings = {
@@ -43,15 +48,9 @@
 
 <h2 class="float-left p-2">Title Page</h2>
 <div class="btn-group float-right">
-    {#if !selected}
-        <button type="button" disabled class="btn btn-sm variant-ghost-primary m-2 float-right"><Trash classOverride="w-6 h-6" /></button>
-    {:else}
-        <button type="button" class="btn btn-sm variant-filled-primary m-2 float-right"><Trash classOverride="w-6 h-6" /></button>
-    {/if}
+    <button type="button" disabled={(checkedBoxes.length < 1)} class={deleteState}><Trash classOverride="w-6 h-6" /></button>
 </div>
-<!-- <Table source={sourceTable} interactive={true} on:selected={addSelected} selected={selected} classRowSelected="bg-white-500" /> -->
 <div class="table-container">
-	<!-- Native Table Element -->
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -66,7 +65,7 @@
 			{#each tableData as row, i}
 				<tr>
                     <td>
-                        <input type="checkbox" class="form-checkbox" value="{row['id']}" />
+                        <input type="checkbox" class="checkbox" value={JSON.stringify(row)} on:change={addSelected} />
                     </td>
                     {#each headers as header}
                         <td>{row[header.toLowerCase()]}</td>
