@@ -42,7 +42,7 @@ export const actions: Actions = {
 			}
 
 			const user = await res.json();
-			userStore.set({ id: user.id, full_name: user.full_name, email: user.email });
+			userStore.set({ id: user.id, full_name: user.full_name, email: user.email, is_admin: user.is_admin });
 
 			if (user?.is_admin) {
 				throw redirect(303, '/admin/profile');

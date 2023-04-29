@@ -26,7 +26,7 @@ export const GET = (async ({ url, cookies }) => {
 
 			const user = await res.json();
 			if (user?.id) {
-				userStore.set({ id: user.id, full_name: user.full_name, email: user.email });
+				userStore.set({ id: user.id, full_name: user.full_name, email: user.email, is_admin: user.is_admin });
 			} else {
 				throw error(400, 'Invalid Token');
 			}
