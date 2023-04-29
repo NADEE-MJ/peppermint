@@ -29,7 +29,17 @@ async def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = await crud.user.get(db, id=json.loads(token_data.sub)["id"])
+
+    user_id = json.loads(token_data.sub)["id"]
+    # check if token is blacklisted
+    blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user_id)
+
+    if blacklisted_tokens:
+        for blacklisted_token in blacklisted_tokens:
+            if blacklisted_token.token == token:
+                raise HTTPException(status_code=401, detail="Could not validate credentials: Token blacklisted")
+
+    user = await crud.user.get(db, id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

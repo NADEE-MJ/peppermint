@@ -16,8 +16,12 @@
 	};
 </script>
 
-<Drawer class="w-2/3">
-	<Navigation />
+<Drawer>
+	{#if $drawerStore.id === 'something-else'}
+		<!-- something else -->
+	{:else}
+		<Navigation />
+	{/if}
 </Drawer>
 
 <AppShell slotSidebarLeft="w-0 md:w-52 bg-surface-500/10">

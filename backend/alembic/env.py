@@ -14,6 +14,7 @@ from src.models.budget import Budget
 from src.models.category import Category
 from src.models.transaction import Transaction
 from src.models.filter import Filter
+from src.models.token_blacklist import TokenBlacklist
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

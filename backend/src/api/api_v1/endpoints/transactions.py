@@ -1,15 +1,14 @@
-import os
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.api import deps
-from src.core.config import settings
 from src.core.parser import parser
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
 from src.models.transaction import (
+    ParseCSV,
     TransactionCreate,
     TransactionResponse,
     TransactionUpdate,
@@ -286,19 +285,18 @@ async def remove_transaction(
     return transaction
 
 
-@router.post("/budget/{budget_id}/account/{account_id}/parse/{file_name}", response_model=JsonMsgSuccess)
+@router.post("/parse/budget/{budget_id}/account/{account_id}", response_model=JsonMsgSuccess)
 async def parse_transactions_from_csv(
     budget_id: int,
     account_id: int,
-    file_name: str,
-    mapping: dict = Body(...),
+    input: ParseCSV,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Parse a csv file. Must be logged in first.
     """
-    file_path = os.path.join(settings.UPLOAD_DIR, file_name)
+    mapping = input.mapping
 
     if current_user.id is not None:
         # check if budget belongs to that user
@@ -319,10 +317,14 @@ async def parse_transactions_from_csv(
         if account.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
 
+        csv_file = input.file
+        if "csv" not in csv_file.split(",")[0]:
+            raise HTTPException(status_code=422, detail="File is not a csv file.")
+
         return_value = await parser(
             db,
             mapping=mapping,
-            file_path=file_path,
+            file=csv_file,
             user_id=current_user.id,
             budget_id=budget_id,
             account_id=account_id,
