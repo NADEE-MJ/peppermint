@@ -14,7 +14,6 @@ async def test_get_all_budgets(db: AsyncSession, client: TestClient, test_user: 
     await create_test_budget(db, user_id=test_user.id)
     response = client.get(f"{settings.API_VERSION_STR}/budgets/", headers=headers)
     budgets = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(budgets) == 1
     assert budgets[0]["user_id"] == test_user.id
@@ -26,7 +25,6 @@ async def test_get_budget(db: AsyncSession, client: TestClient, test_user: User)
     budget = await create_test_budget(db, user_id=test_user.id)
     response = client.get(f"{settings.API_VERSION_STR}/budgets/{budget.id}", headers=headers)
     budget = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert budget["user_id"] == test_user.id
 
@@ -38,7 +36,6 @@ async def test_create_budget(db: AsyncSession, client: TestClient, test_user: Us
     response = client.post(f"{settings.API_VERSION_STR}/budgets/", headers=headers, json=data)
     budget = response.json()
     category = await crud.category.get_unsorted_category_for_budget(db, user_id=test_user.id, budget_id=budget["id"])
-    await crud.user.remove(db, id=test_user.id)
 
     assert category is not None
     assert category.name == "Unsorted"
@@ -53,7 +50,6 @@ async def test_update_budget(db: AsyncSession, client: TestClient, test_user: Us
     data = {"name": "test_new"}
     response = client.put(f"{settings.API_VERSION_STR}/budgets/{budget.id}", headers=headers, json=data)
     budget = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert budget["user_id"] == test_user.id
     assert budget["name"] == "test_new"
@@ -70,6 +66,5 @@ async def test_remove_budget(db: AsyncSession, client: TestClient, test_user: Us
 
     response = client.get(f"{settings.API_VERSION_STR}/budgets/", headers=headers)
     budgets = response.json()
-    await crud.user.remove(db, id=test_user.id)
 
     assert len(budgets) == 0
