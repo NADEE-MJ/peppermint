@@ -11,7 +11,7 @@ from src.core import security
 from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
-from src.models.token import Token
+from src.models.token import TokenAndAdminResponse
 from src.models.token_blacklist import TokenBlacklistCreate, TokenBlacklistResponse
 from src.models.user import User, UserResponse
 from src.utils import (
@@ -23,7 +23,7 @@ from src.utils import (
 router = APIRouter()
 
 
-@router.post("/login/access-token", response_model=Token)
+@router.post("/login/access-token", response_model=TokenAndAdminResponse)
 async def login_access_token(
     login_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_session),
@@ -48,7 +48,7 @@ async def login_access_token(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {"access_token": access_token}
+    return {"access_token": access_token, "is_admin": user.is_admin}
 
 
 @router.post("/login/test-token", response_model=UserResponse)
@@ -76,7 +76,7 @@ async def send_magic_link(email: EmailStr, db: AsyncSession = Depends(get_sessio
     return {"message": "Magic Link Sent", "success": True}
 
 
-@router.post("/magic-link", response_model=Token)
+@router.post("/magic-link", response_model=TokenAndAdminResponse)
 async def magic_link(
     token: str,
     db: AsyncSession = Depends(get_session),
@@ -99,7 +99,7 @@ async def magic_link(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {"access_token": access_token}
+    return {"access_token": access_token, "is_admin": user.is_admin}
 
 
 @router.post("/logout", response_model=TokenBlacklistResponse)

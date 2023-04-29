@@ -115,7 +115,7 @@
 		loading = true;
 		await uploadFile(mapping);
 		loading = false;
-		goto('/client/account');
+		goto('/client/profile');
 	};
 </script>
 
