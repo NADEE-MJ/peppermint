@@ -14,7 +14,6 @@ export const load = (async () => {
 	}
 }) satisfies PageServerLoad;
 
-
 export const actions: Actions = {
 	updateUser: async ({ request, cookies }) => {
 		const data = Object.fromEntries(await request.formData());
