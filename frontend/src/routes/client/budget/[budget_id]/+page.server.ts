@@ -7,11 +7,14 @@ export const load = (async ({ cookies, params }) => {
 	if (token) {
 		const response = await fast.getTransactionsByBudget(token, params.budget_id, 1);
 		const data = await response.json();
-		if (data.length === 0) {
+		const paginatedResults = data['paginated_results'];
+		const totalPages = data['total_pages'];
+
+		if (paginatedResults.length === 0) {
 			throw fail(404, { message: 'No transactions found' });
 		}
 
-		return { transactions: data };
+		return { transactions: paginatedResults, totalPages };
 	} else {
 		//! user is not logged in
 		throw redirect(303, '/login');

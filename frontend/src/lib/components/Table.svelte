@@ -84,21 +84,6 @@
 		const value = JSON.parse(valueString);
 		console.log(value);
 	};
-
-	const updateTableData: SubmitFunction = ({ data }) => {
-		data.set('pageNumber', pageNumber);
-		return async ({ result, update }) => {
-			// console.log('here3', result);
-			if (result.type !== 'failure') {
-				if (result.data) {
-					tableData = result.data['transactions'];
-					dataLength = tableData.length;
-					console.log('transactions from action', tableData);
-				}
-			}
-			update({ reset: false });
-		};
-	};
 </script>
 
 {#if !(editMode)}
@@ -141,7 +126,7 @@
 							{/each}
 							<td>
 								<!-- Doesn't work -->
-								<button type="button" 
+								<button type="button"
 									class="btn btn-sm variant-filled-surface"
 									value={JSON.stringify(row)}
 									on:click={editRowData}>
@@ -177,8 +162,8 @@
 	<div class="card-header grid grid-cols-2">
 		<strong class="text-3xl">Add/Edit {title}</strong>
 		<div class="flex h-12 justify-end">
-			<button 
-				class="btn btn-sm variant-filled-primary" 
+			<button
+				class="btn btn-sm variant-filled-primary"
 				on:click={() => editMode = false}>
 				<Close
 					classOverride="w-6 h-6" />
@@ -215,6 +200,6 @@
 		<div class="flex justify-end space-x-4">
 			<button class="btn variant-filled-secondary">Submit</button>
 		</div>
-	</div>	
+	</div>
 </form>
 {/if}
