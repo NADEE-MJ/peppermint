@@ -16,22 +16,34 @@ async def main() -> None:
     now = datetime.now()
 
     session: AsyncSession = [i async for i in get_session()][0]
+    users = [
+        User(
+            full_name="Admin Admin",
+            email="admin@test.com",
+            password=get_password_hash("Test1234!"),
+            is_active=True,
+            created_at=now,
+            is_admin=True,
+            last_login=datetime.now(),
+        ),
+        User(
+            full_name="Test User",
+            email="user@test.com",
+            password=get_password_hash("Test1234!"),
+            is_active=True,
+            created_at=now,
+            is_admin=False,
+            last_login=datetime.now(),
+        ),
+    ]
 
-    user = User(
-        full_name="Admin Admin",
-        email="admin@test.com",
-        password=get_password_hash("Test1234!"),
-        is_active=True,
-        created_at=now,
-        last_login=datetime.now(),
-    )
-    session.add(user)
+    session.add_all(users)
 
     await session.commit()
 
     accounts = [
-        Account(name="Wells Fargo", account_type="checking", created_at=now, user_id=user.id),
-        Account(name="BOA", account_type="savings", created_at=now, user_id=user.id),
+        Account(name="Wells Fargo", account_type="checking", created_at=now, user_id=users[1].id),
+        Account(name="BOA", account_type="savings", created_at=now, user_id=users[1].id),
     ]
 
     session.add_all(accounts)
@@ -39,7 +51,7 @@ async def main() -> None:
     await session.commit()
 
     budgets = [
-        Budget(name="my budget", amount=4000, created_at=now, user_id=user.id),
+        Budget(name="my budget", amount=4000, created_at=now, user_id=users[1].id),
     ]
 
     session.add_all(budgets)
@@ -51,7 +63,7 @@ async def main() -> None:
             name="Unsorted",
             desc="All unsorted transactions.",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             budget_id=budgets[0].id,
             amount=-1,
         ),
@@ -59,7 +71,7 @@ async def main() -> None:
             name="Food and Drink",
             desc="Stuff you need to stay alive.",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             budget_id=budgets[0].id,
             amount=1000,
         ),
@@ -67,7 +79,7 @@ async def main() -> None:
             name="Shopping",
             desc="Stuff you probably don't need.",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             budget_id=budgets[0].id,
             amount=1000,
         ),
@@ -75,7 +87,7 @@ async def main() -> None:
             name="Entertainment",
             desc="Stuff you are probably wasting your time on.",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             budget_id=budgets[0].id,
             amount=2000,
         ),
@@ -86,9 +98,9 @@ async def main() -> None:
     await session.commit()
 
     filters = [
-        Filter(filter_by="Panda Express", created_at=now, user_id=user.id, category_id=categories[1].id),
-        Filter(filter_by="Macy's", created_at=now, user_id=user.id, category_id=categories[2].id),
-        Filter(filter_by="Regal Entertainment", created_at=now, user_id=user.id, category_id=categories[3].id),
+        Filter(filter_by="Panda Express", created_at=now, user_id=users[1].id, category_id=categories[1].id),
+        Filter(filter_by="Macy's", created_at=now, user_id=users[1].id, category_id=categories[2].id),
+        Filter(filter_by="Regal Entertainment", created_at=now, user_id=users[1].id, category_id=categories[3].id),
     ]
 
     session.add_all(filters)
@@ -101,7 +113,7 @@ async def main() -> None:
             date=now,
             desc="Panda Express - Brea #k1jh234",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             category_id=categories[1].id,
             budget_id=budgets[0].id,
             account_id=accounts[0].id,
@@ -111,7 +123,7 @@ async def main() -> None:
             date=now,
             desc="Macy's Trans#lk2341g3",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             category_id=categories[1].id,
             budget_id=budgets[0].id,
             account_id=accounts[0].id,
@@ -121,7 +133,7 @@ async def main() -> None:
             date=now,
             desc="Regal Entertainment LKJ3123",
             created_at=now,
-            user_id=user.id,
+            user_id=users[1].id,
             category_id=categories[2].id,
             budget_id=budgets[0].id,
             account_id=accounts[1].id,

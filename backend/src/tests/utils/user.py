@@ -6,20 +6,28 @@ from src.models.user import User, UserCreate
 from src.tests.utils.utils import random_email, random_lower_string, random_name
 
 TEST_USER_NAME = "test user"
-TEST_USER_EMAIL = "test@test.com"
+TEST_USER_EMAIL = "fortestingonly@user.com"
 TEST_USER_PASSWORD = "test"
+
+
+TEST_ADMIN_NAME = "test admin"
+TEST_ADMIN_EMAIL = "fortestingonly@admin.com"
+TEST_ADMIN_PASSWORD = "test"
 
 
 async def create_test_user(db: AsyncSession) -> User:
     user = await crud.user.get_by_email(db, email=TEST_USER_EMAIL)
     if not user:
-        user_create = UserCreate(
-            full_name=TEST_USER_NAME,
-            email=TEST_USER_EMAIL,
-            password=TEST_USER_PASSWORD,
-        )
+        user_create = UserCreate(full_name=TEST_USER_NAME, email=TEST_USER_EMAIL, password=TEST_USER_PASSWORD)
         user = await crud.user.create(db, obj_in=user_create)
+    return user
 
+
+async def create_test_admin(db: AsyncSession) -> User:
+    user = await crud.user.get_by_email(db, email=TEST_ADMIN_EMAIL)
+    if not user:
+        user_create = UserCreate(full_name=TEST_ADMIN_NAME, email=TEST_ADMIN_EMAIL, password=TEST_ADMIN_PASSWORD)
+        user = await crud.user.create(db, obj_in=user_create, is_admin=True)
     return user
 
 
@@ -39,6 +47,16 @@ def get_auth_header(client: TestClient) -> dict:
     login_data = {
         "username": TEST_USER_EMAIL,
         "password": TEST_USER_PASSWORD,
+    }
+
+    response = client.post(f"{settings.API_VERSION_STR}/login/access-token", data=login_data)
+    return {"Authorization": f"Bearer {response.json()['access_token']}"}
+
+
+def get_admin_auth_header(client: TestClient) -> dict:
+    login_data = {
+        "username": TEST_ADMIN_EMAIL,
+        "password": TEST_ADMIN_PASSWORD,
     }
 
     response = client.post(f"{settings.API_VERSION_STR}/login/access-token", data=login_data)

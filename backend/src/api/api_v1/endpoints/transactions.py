@@ -1,15 +1,14 @@
-import os
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.api import deps
-from src.core.config import settings
 from src.core.parser import parser
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
 from src.models.transaction import (
+    ParseCSV,
     TransactionCreate,
     TransactionResponse,
     TransactionUpdate,
@@ -19,8 +18,10 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("/", response_model=list[TransactionResponse])
+@router.get("", response_model=list[TransactionResponse])
 async def get_all_transactions(
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -29,7 +30,9 @@ async def get_all_transactions(
     Get all transactions for current user.
     """
     if current_user.id is not None:
-        transactions = await crud.transaction.get_all_transactions_for_user(db, user_id=current_user.id)
+        transactions = await crud.transaction.get_all_transactions_for_user(
+            db, user_id=current_user.id, page=page, limit=limit
+        )
 
         return transactions
 
@@ -38,6 +41,7 @@ async def get_all_transactions(
 async def get_all_transactions_by_budget(
     budget_id: int,
     page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -56,7 +60,7 @@ async def get_all_transactions_by_budget(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
 
         transactions = await crud.transaction.get_all_transactions_for_budget(
-            db, user_id=current_user.id, budget_id=budget_id, page=page
+            db, user_id=current_user.id, budget_id=budget_id, page=page, limit=limit
         )
 
         return transactions
@@ -65,6 +69,8 @@ async def get_all_transactions_by_budget(
 @router.get("/account/{account_id}", response_model=list[TransactionResponse])
 async def get_all_transactions_by_account(
     account_id: int,
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -83,7 +89,7 @@ async def get_all_transactions_by_account(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
 
         transactions = await crud.transaction.get_all_transactions_for_account(
-            db, user_id=current_user.id, account_id=account_id
+            db, user_id=current_user.id, account_id=account_id, page=page, limit=limit
         )
 
         return transactions
@@ -93,6 +99,8 @@ async def get_all_transactions_by_account(
 async def get_all_transactions_by_budget_and_category(
     budget_id: int,
     category_id: int,
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -120,7 +128,7 @@ async def get_all_transactions_by_budget_and_category(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
         transactions = await crud.transaction.get_all_transactions_for_category_in_budget(
-            db, user_id=current_user.id, category_id=category_id, budget_id=budget_id
+            db, user_id=current_user.id, category_id=category_id, budget_id=budget_id, page=page, limit=limit
         )
 
         return transactions
@@ -130,6 +138,8 @@ async def get_all_transactions_by_budget_and_category(
 async def get_all_transactions_by_account_and_category(
     account_id: int,
     category_id: int,
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -157,7 +167,7 @@ async def get_all_transactions_by_account_and_category(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
         transactions = await crud.transaction.get_all_transactions_for_category_in_account(
-            db, user_id=current_user.id, category_id=category_id, account_id=account_id
+            db, user_id=current_user.id, category_id=category_id, account_id=account_id, page=page, limit=limit
         )
 
         return transactions
@@ -287,19 +297,18 @@ async def remove_transaction(
     return transaction
 
 
-@router.post("/budget/{budget_id}/account/{account_id}/parse/{file_name}", response_model=JsonMsgSuccess)
+@router.post("/parse/budget/{budget_id}/account/{account_id}", response_model=JsonMsgSuccess)
 async def parse_transactions_from_csv(
     budget_id: int,
     account_id: int,
-    file_name: str,
-    mapping: dict = Body(...),
+    input: ParseCSV,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Parse a csv file. Must be logged in first.
     """
-    file_path = os.path.join(settings.UPLOAD_DIR, file_name)
+    mapping = input.mapping
 
     if current_user.id is not None:
         # check if budget belongs to that user
@@ -320,10 +329,14 @@ async def parse_transactions_from_csv(
         if account.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
 
+        csv_file = input.file
+        if "csv" not in csv_file.split(",")[0]:
+            raise HTTPException(status_code=422, detail="File is not a csv file.")
+
         return_value = await parser(
             db,
             mapping=mapping,
-            file_path=file_path,
+            file=csv_file,
             user_id=current_user.id,
             budget_id=budget_id,
             account_id=account_id,

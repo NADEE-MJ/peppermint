@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -11,7 +11,8 @@ from src.core import security
 from src.core.config import settings
 from src.db.db import get_session
 from src.models.json_msg import JsonMsgSuccess
-from src.models.token import Token
+from src.models.token import TokenAndAdminResponse
+from src.models.token_blacklist import TokenBlacklistCreate, TokenBlacklistResponse
 from src.models.user import User, UserResponse
 from src.utils import (
     generate_magic_link_token,
@@ -22,7 +23,7 @@ from src.utils import (
 router = APIRouter()
 
 
-@router.post("/login/access-token", response_model=Token)
+@router.post("/login/access-token", response_model=TokenAndAdminResponse)
 async def login_access_token(
     login_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_session),
@@ -35,10 +36,19 @@ async def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
         raise HTTPException(status_code=400, detail="Inactive user")
+
+    # remove all expired blacklist tokens
+    blacklisted_tokens = await crud.token_blacklist.get_all_tokens_for_user(db, user_id=user.id)
+
+    if blacklisted_tokens:
+        for blacklisted_token in blacklisted_tokens:
+            if blacklisted_token.created_at + timedelta(minutes=1) < datetime.now():
+                await crud.token_blacklist.remove(db, id=blacklisted_token.id)
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {"access_token": access_token}
+    return {"access_token": access_token, "is_admin": user.is_admin}
 
 
 @router.post("/login/test-token", response_model=UserResponse)
@@ -66,7 +76,7 @@ async def send_magic_link(email: EmailStr, db: AsyncSession = Depends(get_sessio
     return {"message": "Magic Link Sent", "success": True}
 
 
-@router.post("/magic-link", response_model=Token)
+@router.post("/magic-link", response_model=TokenAndAdminResponse)
 async def magic_link(
     token: str,
     db: AsyncSession = Depends(get_session),
@@ -89,4 +99,24 @@ async def magic_link(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"email": user.email, "id": user.id}
     access_token: str = security.create_access_token(payload, expires_delta=access_token_expires)
-    return {"access_token": access_token}
+    return {"access_token": access_token, "is_admin": user.is_admin}
+
+
+@router.post("/logout", response_model=TokenBlacklistResponse)
+async def logout(
+    token_blacklist_create: TokenBlacklistCreate,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Logout user or admin
+    """
+    token_blacklist = await crud.token_blacklist.get_by_token(db, token=token_blacklist_create.token)
+
+    if not token_blacklist:
+        token_blacklist = await crud.token_blacklist.create(db, obj_in=token_blacklist_create, user_id=current_user.id)
+
+    if not token_blacklist:
+        return {"token": token_blacklist_create.token, "success": False}
+
+    return {"token": token_blacklist_create.token, "success": True}

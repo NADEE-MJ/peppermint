@@ -15,6 +15,11 @@ class TransactionCreate(TransactionBase):
     pass
 
 
+class ParseCSV(SQLModel):
+    mapping: dict[str, str]
+    file: str
+
+
 # Properties to receive via API on update
 class TransactionUpdate(BaseModel):
     amount: float | None = None

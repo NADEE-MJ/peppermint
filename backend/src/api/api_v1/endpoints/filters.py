@@ -11,8 +11,10 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("/", response_model=list[FilterResponse])
+@router.get("", response_model=list[FilterResponse])
 async def get_all_filters(
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -21,7 +23,7 @@ async def get_all_filters(
     Get all filters for current user.
     """
     if current_user.id is not None:
-        filters = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id)
+        filters = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id, page=page, limit=limit)
 
         return filters
 
@@ -29,6 +31,8 @@ async def get_all_filters(
 @router.get("/category/{category_id}", response_model=list[FilterResponse])
 async def get_all_filters_by_category(
     category_id: int,
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -46,7 +50,9 @@ async def get_all_filters_by_category(
         if category.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a filter to this category")
 
-        filters = await crud.filter.get_all_filters_for_category(db, user_id=current_user.id, category_id=category_id)
+        filters = await crud.filter.get_all_filters_for_category(
+            db, user_id=current_user.id, category_id=category_id, page=page, limit=limit
+        )
 
         return filters
 

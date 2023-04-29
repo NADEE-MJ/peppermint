@@ -12,7 +12,7 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("/", response_model=list[BudgetResponse])
+@router.get("", response_model=list[BudgetResponse])
 async def get_all_budgets(
     *,
     db: AsyncSession = Depends(get_session),
@@ -45,7 +45,7 @@ async def get_budget(
     return budget
 
 
-@router.post("/", response_model=BudgetResponse)
+@router.post("", response_model=BudgetResponse)
 async def create_budget(
     *,
     db: AsyncSession = Depends(get_session),

@@ -23,12 +23,13 @@ class UserUpdate(BaseModel):
 
 
 class User(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
     password: str
     full_name: str
     created_at: datetime
     last_login: datetime | None = None
     is_active: bool
+    is_admin: bool
 
 
 # Additional properties to return via API
@@ -38,3 +39,4 @@ class UserResponse(UserBase):
     created_at: datetime
     last_login: datetime | None = None
     is_active: bool
+    is_admin: bool

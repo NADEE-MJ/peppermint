@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, Optional, Type, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -25,10 +25,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def get(self, db: AsyncSession, id: Any) -> Optional[ModelType]:
         result = await db.execute(select(self.model).filter(self.model.id == id))  # type: ignore
         return result.scalars().first()
-
-    async def get_multi(self, db: AsyncSession, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
-        result = await db.execute(select(self.model).offset(skip).limit(limit))
-        return result.scalars().all()
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)

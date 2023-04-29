@@ -58,8 +58,24 @@ export class fast {
 		return response;
 	}
 
+	static async getCurrentAdmin(token: string): Promise<Response> {
+		const response = await fast.get('admin', token);
+		return response;
+	}
+
 	static async updateCurrentUser(token: string, userUpdate: userUpdate): Promise<Response> {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
+		return response;
+	}
+
+	static async parseTransactions(token: string, mapping: object, base64String: string, budget_id: number, account_id: number): Promise<Response> {
+		const data = JSON.stringify({ mapping, file: base64String });
+		const response = await fast.post(`transactions/parse/budget/${budget_id}/account/${account_id}`, data, token);
+		return response;
+	}
+
+	static async logout(token: string): Promise<Response> {
+		const response = await fast.post('logout', JSON.stringify({ token }), token);
 		return response;
 	}
 
