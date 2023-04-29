@@ -19,7 +19,7 @@
 	export let createRequestURL: string = 'test1233';
 
 	let totalPages: number;
-	let tableData: Array<{[key: string]: any}> = [];
+	let tableData: Array<{ [key: string]: any }> = [];
 	let pageNumber: number = 1;
 	let checkedBoxes: Array<{}> = [];
 
@@ -29,7 +29,7 @@
 	});
 
 	const getTableData = async () => {
-		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, {method: 'GET'});
+		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
 		tableData = data['transactions'];
 		totalPages = data['totalPages'];
@@ -53,9 +53,7 @@
 		}
 	};
 
-
-
-	function addSelected(event: any) {
+	function addRemoveSelected(event: any) {
 		const valueString = event.target.value;
 		const value = JSON.parse(valueString);
 		if (event.target.checked) {
@@ -95,8 +93,8 @@
 		const editModal: ModalSettings = {
 			type: 'component',
 			component: 'editModal',
-			meta: {rowData: target.value},
-			title: "Edit"
+			meta: { rowData: target.value },
+			title: 'Edit'
 		};
 		modalStore.trigger(editModal);
 	};
@@ -117,27 +115,26 @@
 		const createModal: ModalSettings = {
 			type: 'component',
 			component: 'createModal',
-			meta: {rowData: target.value},
-			title: "Create"
+			meta: { rowData: target.value },
+			title: 'Create'
 		};
 		modalStore.trigger(createModal);
 	};
 </script>
 
-<div class="card p-4" >
+<div class="card p-4">
 	<div class="card-header grid grid-cols-2">
 		<strong class="text-5xl">{title}</strong>
-		<div class="btn-group justify-end">
-			<button type="button"
-				class='btn btn-sm variant-filled-primary'
-				value={createRequestURL}
-				on:click|preventDefault={(e) => startCreateModal(e)}>
+		<div class="flex justify-end space-x-4">
+			<button type="button" class="btn btn-lg variant-filled-primary" value={createRequestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
 				<Plus classOverride="w-6 h-6" />
 			</button>
-			<button type="button"
+			<button
+				type="button"
 				disabled={checkedBoxes.length < 1}
-				class={checkedBoxes.length < 1 ? 'btn btn-sm variant-ghost-primary' : 'btn btn-sm variant-filled-primary'}
-				on:click={deleteModal}>
+				class={`btn btn-lg variant-${checkedBoxes.length < 1 ? 'ghost-primary' : 'filled-primary'}`}
+				on:click={deleteModal}
+			>
 				<Trash classOverride="w-6 h-6" />
 			</button>
 		</div>
@@ -158,16 +155,26 @@
 					<tr>
 						<!-- need to figure out how to remove item from list when deselected -->
 						<td>
-							<input type="checkbox" checked={checkedBoxes.includes(row)} class="checkbox" value={JSON.stringify(row)} on:change={addSelected} />
+							<input
+								type="checkbox"
+								checked={checkedBoxes.includes(row)}
+								class="checkbox"
+								value={JSON.stringify(row)}
+								on:change={addRemoveSelected}
+							/>
 						</td>
 						{#each headers as header}
 							<td>{row[header.toLowerCase()]}</td>
 						{/each}
 						<td>
-							<button type="button"
+							<button
+								type="button"
 								class="btn btn-sm variant-filled-surface"
 								value={JSON.stringify(row)}
-								on:click|preventDefault={(e) => {startEditModal(e)}}>
+								on:click|preventDefault={(e) => {
+									startEditModal(e);
+								}}
+							>
 								<Edit classOverride="w-6 h-6" />
 							</button>
 						</td>
@@ -183,14 +190,16 @@
 			<button
 				class={`btn btn-lg variant-${pageNumber === 1 ? 'ghost-surface' : 'filled-surface'}`}
 				type={pageNumber === 1 ? 'button' : 'submit'}
-				on:click={previousPage}>
+				on:click={previousPage}
+			>
 				<Back classOverride="w-6 h-6" />
 			</button>
 			<button
 				class={`btn btn-lg variant-${pageNumber >= totalPages ? 'ghost-surface' : 'filled-surface'}`}
 				type={pageNumber >= totalPages ? 'button' : 'submit'}
-				on:click={nextPage}>
-					<Next classOverride="w-6 h-6" />
+				on:click={nextPage}
+			>
+				<Next classOverride="w-6 h-6" />
 			</button>
 		</div>
 	</div>

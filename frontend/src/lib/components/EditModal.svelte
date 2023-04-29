@@ -28,7 +28,7 @@
 <!-- @component This example creates a simple form modal. -->
 
 {#if $modalStore[0]}
-	<div class="{cBase}">
+	<div class={cBase}>
 		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
 		<article>{$modalStore[0].body ?? '(body missing)'}</article>
 		<article>{$modalStore[0].meta?.rowData}</article>

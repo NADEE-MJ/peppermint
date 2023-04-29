@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Table from '$lib/components/Table.svelte';
-	import {page} from '$app/stores';
+	import { page } from '$app/stores';
 
 	// let tableData = data.transactions;
 	// let totalPages = data.totalPages;
@@ -9,5 +9,4 @@
 	let getRequestURL = $page.url.toString();
 </script>
 
-<Table {title} {headers} {getRequestURL}  />
-
+<Table {title} {headers} {getRequestURL} />

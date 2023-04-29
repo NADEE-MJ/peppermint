@@ -42,7 +42,7 @@
 </svelte:head>
 
 <!-- singletons must be imported in the root layout -->
-<Modal components={modalComponentRegistry}/>
+<Modal components={modalComponentRegistry} />
 <Toast position="bl" max={5} />
 
 {#if isAdminPage || isClientPage}
