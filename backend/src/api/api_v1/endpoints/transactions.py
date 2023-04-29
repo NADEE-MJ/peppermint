@@ -18,7 +18,7 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("", response_model=list[TransactionResponse])
+@router.get("", response_model=dict[str, int | list[TransactionResponse]])
 async def get_all_transactions(
     page: int = 0,
     limit: int = 10,
@@ -30,14 +30,12 @@ async def get_all_transactions(
     Get all transactions for current user.
     """
     if current_user.id is not None:
-        transactions = await crud.transaction.get_all_transactions_for_user(
-            db, user_id=current_user.id, page=page, limit=limit
-        )
+        data = await crud.transaction.get_all_transactions_for_user(db, user_id=current_user.id, page=page, limit=limit)
 
-        return transactions
+        return data
 
 
-@router.get("/budget/{budget_id}", response_model=list[TransactionResponse])
+@router.get("/budget/{budget_id}", response_model=dict[str, int | list[TransactionResponse]])
 async def get_all_transactions_by_budget(
     budget_id: int,
     page: int = 0,
@@ -59,14 +57,14 @@ async def get_all_transactions_by_budget(
         if budget.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
 
-        transactions = await crud.transaction.get_all_transactions_for_budget(
+        data = await crud.transaction.get_all_transactions_for_budget(
             db, user_id=current_user.id, budget_id=budget_id, page=page, limit=limit
         )
 
-        return transactions
+        return data
 
 
-@router.get("/account/{account_id}", response_model=list[TransactionResponse])
+@router.get("/account/{account_id}", response_model=dict[str, int | list[TransactionResponse]])
 async def get_all_transactions_by_account(
     account_id: int,
     page: int = 0,
@@ -88,14 +86,14 @@ async def get_all_transactions_by_account(
         if account.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this account")
 
-        transactions = await crud.transaction.get_all_transactions_for_account(
+        data = await crud.transaction.get_all_transactions_for_account(
             db, user_id=current_user.id, account_id=account_id, page=page, limit=limit
         )
 
-        return transactions
+        return data
 
 
-@router.get("/budget/{budget_id}/category/{category_id}", response_model=list[TransactionResponse])
+@router.get("/budget/{budget_id}/category/{category_id}", response_model=dict[str, int | list[TransactionResponse]])
 async def get_all_transactions_by_budget_and_category(
     budget_id: int,
     category_id: int,
@@ -127,14 +125,14 @@ async def get_all_transactions_by_budget_and_category(
         if category.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
-        transactions = await crud.transaction.get_all_transactions_for_category_in_budget(
+        data = await crud.transaction.get_all_transactions_for_category_in_budget(
             db, user_id=current_user.id, category_id=category_id, budget_id=budget_id, page=page, limit=limit
         )
 
-        return transactions
+        return data
 
 
-@router.get("/account/{account_id}/category/{category_id}", response_model=list[TransactionResponse])
+@router.get("/account/{account_id}/category/{category_id}", response_model=dict[str, int | list[TransactionResponse]])
 async def get_all_transactions_by_account_and_category(
     account_id: int,
     category_id: int,
@@ -166,11 +164,11 @@ async def get_all_transactions_by_account_and_category(
         if category.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this category")
 
-        transactions = await crud.transaction.get_all_transactions_for_category_in_account(
+        data = await crud.transaction.get_all_transactions_for_category_in_account(
             db, user_id=current_user.id, category_id=category_id, account_id=account_id, page=page, limit=limit
         )
 
-        return transactions
+        return data
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)

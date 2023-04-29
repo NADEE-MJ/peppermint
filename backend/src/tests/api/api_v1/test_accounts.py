@@ -12,9 +12,12 @@ async def test_get_all_accounts(db: AsyncSession, client: TestClient, test_user:
     headers = get_auth_header(client)
     await create_test_account(db, user_id=test_user.id)
     response = client.get(f"{settings.API_VERSION_STR}/accounts", headers=headers)
-    accounts = response.json()
+    data = response.json()
+    accounts = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(accounts) == 1
+    assert total_pages == 1
     assert accounts[0]["user_id"] == test_user.id
 
 
@@ -61,6 +64,7 @@ async def test_remove_account(db: AsyncSession, client: TestClient, test_user: U
     assert account["user_id"] == test_user.id
 
     response = client.get(f"{settings.API_VERSION_STR}/accounts", headers=headers)
-    accounts = response.json()
+    data = response.json()
+    accounts = data["paginated_results"]
 
     assert len(accounts) == 0
