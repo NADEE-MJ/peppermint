@@ -55,9 +55,7 @@ async def test_remove_user(db: AsyncSession, client: TestClient, test_admin: Use
 
 
 @pytest.mark.asyncio
-async def test_admin_update_user_password(
-    db: AsyncSession, client: TestClient, test_admin: User, test_user: User
-) -> None:
+async def test_admin_update_user(db: AsyncSession, client: TestClient, test_admin: User, test_user: User) -> None:
     headers = get_admin_auth_header(client)
 
     new_name = "Test New Full Name"
@@ -87,3 +85,33 @@ async def test_get_users_me(db: AsyncSession, client: TestClient, test_admin: Us
 
     assert retrieved_admin
     assert retrieved_admin["id"] == test_admin.id
+
+
+@pytest.mark.asyncio
+async def test_get_user_by_email(db: AsyncSession, client: TestClient, test_admin: User, test_user: User) -> None:
+    headers = get_admin_auth_header(client)
+
+    response = client.get(f"{settings.API_VERSION_STR}/admin/user/{test_user.email}", headers=headers)
+    user = response.json()
+
+    await crud.user.remove(db, id=test_admin.id)
+    await crud.user.remove(db, id=test_user.id)
+
+    assert user
+    assert user["id"] == test_user.id
+
+
+@pytest.mark.asyncio
+async def test_update_admin_me(db: AsyncSession, client: TestClient, test_admin: User) -> None:
+    headers = get_admin_auth_header(client)
+
+    new_name = "Test New Full Name"
+    data = {"full_name": new_name}
+    response = client.put(f"{settings.API_VERSION_STR}/admin", headers=headers, json=data)
+    admin = response.json()
+
+    await crud.user.remove(db, id=test_admin.id)
+
+    assert admin
+    assert admin["id"] == test_admin.id
+    assert admin["full_name"] == new_name

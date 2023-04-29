@@ -108,7 +108,7 @@ async def read_user_me(
 
 
 @router.put("", response_model=UserResponse)
-async def update_user_me(
+async def update_admin_me(
     admin_update: UserUpdate,
     db: AsyncSession = Depends(get_session),
     current_admin: User = Depends(deps.get_current_active_admin),

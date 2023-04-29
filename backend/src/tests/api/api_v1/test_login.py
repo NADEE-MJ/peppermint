@@ -106,5 +106,7 @@ async def test_use_blacklisted_token(db: AsyncSession, client: TestClient, test_
 
     result = response.json()
 
+    await crud.user.remove(db, id=test_user.id)
+
     assert response.status_code == 401
     assert result["detail"] == "Could not validate credentials: Token blacklisted"
