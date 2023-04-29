@@ -5,10 +5,10 @@ import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from src import crud
 from src.core.config import settings
 from src.main import app
 from src.models.user import User
-from src import crud
 from src.tests.utils.user import create_test_admin, create_test_user
 
 

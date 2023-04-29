@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from src import crud
 from src.core.config import settings
 from src.models.user import User
 from src.tests.utils.account import create_test_account
