@@ -1,31 +1,15 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Table from '$lib/components/Table.svelte';
-	import { tableMapperValues, tableSourceMapper, type TableSource } from '@skeletonlabs/skeleton';
-	import type { PageData, SubmitFunction } from './$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	let tableData = data.transactions;
-	let dataLength: number = tableData.length;
-	let pageNumber = 1;
 
-	const updateTableData: SubmitFunction = ({ data }) => {
-		data.set('pageNumber', pageNumber);
-		return async ({ result, update }) => {
-			// console.log('here3', result);
-			if (result.type !== 'failure') {
-				if (result.data) {
-					tableData = result.data['transactions'];
-					dataLength = tableData.length;
-					console.log('transactions from action', tableData);
-				}
-			}
-			update({ reset: false });
-		};
-	};
-	const headers = Object.keys(tableData[0]);
+	let tableData = data.transactions;
+	let pageNumber = 1;
+	let headers = ['Amount', 'Date', 'Desc'];
+	let title = 'Transactions';
+	let actionURL = "?/getTransactionsByBudget"
 </script>
 
-<form class="card p-4" method="POST" action="?/getTransactionsByBudget" use:enhance={updateTableData}>
-	<Table bind:pageNumber {tableData} {dataLength} />
-</form>
+<Table {title} {headers} bind:pageNumber {tableData} {actionURL}  />
+

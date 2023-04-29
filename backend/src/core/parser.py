@@ -1,4 +1,6 @@
 import base64
+import csv
+from io import StringIO
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -24,9 +26,12 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
         default_category_id = new_category.id
 
     decoded_data = base64.b64decode(file.split(",")[1])
-    lines = decoded_data.decode("utf-8").splitlines()
-    file_lines = iter(lines)
-    header_row = next(file_lines).split(",")
+    lines = decoded_data.decode("utf-8")
+
+    csvfile = StringIO(lines)
+    csvreader = csv.reader(csvfile)
+    file_lines = iter(csvreader)
+    header_row = next(file_lines)
     indexes = {}
     # to figure out column mapping
     for col in header_row:
@@ -38,9 +43,9 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
     if "category" in indexes.values():
         has_categories = True
 
-    for row in file_lines:
+    for row in csvreader:
         # row example = 3/11/2023,3/12/2023,THIS IS A DESCRIPTION,3000,Food,1000000
-        split_row = row.split(",")
+        split_row = row
         new_transaction = {}
         for index, column_name in indexes.items():
             try:
