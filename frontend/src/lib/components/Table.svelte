@@ -3,7 +3,6 @@
 	import Back from '$lib/assets/Back.svg.svelte';
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
-
 	import { enhance } from '$app/forms';
 	// import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -84,6 +83,21 @@
 		const valueString = event.target.value;
 		const value = JSON.parse(valueString);
 		console.log(value);
+	};
+
+	const updateTableData: SubmitFunction = ({ data }) => {
+		data.set('pageNumber', pageNumber);
+		return async ({ result, update }) => {
+			// console.log('here3', result);
+			if (result.type !== 'failure') {
+				if (result.data) {
+					tableData = result.data['transactions'];
+					dataLength = tableData.length;
+					console.log('transactions from action', tableData);
+				}
+			}
+			update({ reset: false });
+		};
 	};
 </script>
 
