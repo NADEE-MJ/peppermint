@@ -1,15 +1,13 @@
 <script lang="ts">
 	import Table from '$lib/components/Table.svelte';
-	import type { PageData } from './$types';
+	import {page} from '$app/stores';
 
-	export let data: PageData;
-
-	let tableData = data.transactions;
-	let pageNumber = 1;
+	// let tableData = data.transactions;
+	// let totalPages = data.totalPages;
 	let headers = ['Amount', 'Date', 'Desc'];
 	let title = 'Transactions';
-	let actionURL = "?/getTransactionsByBudget"
+	let getRequestURL = $page.url.toString();
 </script>
 
-<Table {title} {headers} bind:pageNumber {tableData} {actionURL}  />
+<Table {title} {headers} {getRequestURL}  />
 

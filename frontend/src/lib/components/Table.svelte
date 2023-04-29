@@ -3,42 +3,57 @@
 	import Back from '$lib/assets/Back.svg.svelte';
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
-	import { enhance } from '$app/forms';
-	// import type { ModalSettings } from '@skeletonlabs/skeleton';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import Textfield from './Textfield.svelte';
-	import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import Plus from '$lib/assets/Plus.svg.svelte';
 	import Close from '$lib/assets/Close.svg.svelte';
 
-	export let pageNumber:number = 1;
-	export let tableData: Array<object>;
+	import Textfield from './Textfield.svelte';
+
+	import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+
 	export let headers: string[];
 	export let title: string;
-	export let actionURL: string;
-	export let rowData = {};
+	export let getRequestURL: string;
+	// export let updateRequestURL: string;
+	// export let deleteRequestURL: string;
+	export let createRequestURL: string = 'test1233';
 
-	// export let lastPageNumber: number;
+	let totalPages: number;
+	let tableData: Array<{[key: string]: any}> = [];
+	let pageNumber: number = 1;
 	let checkedBoxes: Array<{}> = [];
-	//this might need to be a bind
-	let editMode: boolean = false;
-	let dataLength: number = tableData.length;
 
-	// ! this might be a problem if the data is a perfect multiple of 10
+	onMount(async () => {
+		//set loading to true before mount or use placeholders
+		await getTableData();
+	});
 
-	const pageUp = () => {
-		if (dataLength >= 10) {
+	const getTableData = async () => {
+		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, {method: 'GET'});
+		const data = await response.json();
+		tableData = data['transactions'];
+		totalPages = data['totalPages'];
+	};
+
+	const nextPage = async () => {
+		// modalStore.trigger(d);
+
+		if (pageNumber < totalPages) {
 			pageNumber++;
 			checkedBoxes = [];
+			await getTableData();
 		}
 	};
 
-	const pageDown = () => {
+	const previousPage = async () => {
 		if (pageNumber > 1) {
 			pageNumber--;
 			checkedBoxes = [];
+			await getTableData();
 		}
 	};
+
+
 
 	function addSelected(event: any) {
 		const valueString = event.target.value;
@@ -53,10 +68,9 @@
 	}
 
 	const deleteModal = () => {
-		console.log("Files being deleted: ",checkedBoxes);
+		// console.log("Files being deleted: ",checkedBoxes);
 		const confirmDeletion: ModalSettings = {
 			type: 'confirm',
-			// Data
 			title: 'Please Confirm',
 			body: 'Are you sure you want to delete this?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
@@ -65,141 +79,119 @@
 		modalStore.trigger(confirmDeletion);
 	};
 
-	const updateTableData: SubmitFunction = ({ data }) => {
-		data.set('pageNumber', pageNumber.toString());
-		return async ({ result, update }) => {
-			if (result.type === 'success') {
-				if (result.data) {
-					tableData = result.data['transactions'];
-				}
+	const startEditModal = (e: Event) => {
+		let target = e.target as HTMLInputElement;
+		if (target) {
+			if (target.tagName !== 'BUTTON') {
+				target.closest('button')?.click();
 			}
-			update({ reset: false });
+		}
+		if (!target?.value) {
+			return;
+		}
+
+		//figure out what data to pass
+		//prob just need headers, and row data, then can have
+		const editModal: ModalSettings = {
+			type: 'component',
+			component: 'editModal',
+			meta: {rowData: target.value},
+			title: "Edit"
 		};
+		modalStore.trigger(editModal);
 	};
 
-	const editRowData = (event: any) => {
-		editMode = true;
-		console.log(event.target.value);
-		const valueString = event.target.value;
-		const value = JSON.parse(valueString);
-		console.log(value);
+	const startCreateModal = (e: Event) => {
+		let target = e.target as HTMLInputElement;
+		if (!target?.value) {
+			return;
+		}
+		if (target) {
+			if (target.tagName !== 'BUTTON') {
+				target.closest('button')?.click();
+			}
+		}
+
+		//figure out what data to pass
+		//prob just need headers, and row data, then can have
+		const createModal: ModalSettings = {
+			type: 'component',
+			component: 'createModal',
+			meta: {rowData: target.value},
+			title: "Create"
+		};
+		modalStore.trigger(createModal);
 	};
 </script>
 
-{#if !(editMode)}
-	<form class="card p-4" method="POST" action={actionURL} use:enhance={updateTableData}>
-		<div class="card-header grid grid-cols-2">
-			<strong class="text-5xl">{title}</strong>
-			<div class="btn-group justify-end">
-				<button type="button"
-					class='btn btn-sm variant-filled-primary'
-					on:click={() => editMode = true}>
-					<Plus classOverride="w-6 h-6" />
-				</button>
-				<button type="button"
-					disabled={checkedBoxes.length < 1}
-					class={checkedBoxes.length < 1 ? 'btn btn-sm variant-ghost-primary' : 'btn btn-sm variant-filled-primary'}
-					on:click={deleteModal}>
-					<Trash classOverride="w-6 h-6" />
-				</button>
-			</div>
-		</div>
-		<div class="table-container p-4">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th />
-						{#each headers as header}
-							<th>{header}</th>
-						{/each}
-						<th>Edit</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each tableData as row, i}
-						<tr>
-							<td>
-								<input type="checkbox" checked={checkedBoxes.includes(row)} class="checkbox" value={JSON.stringify(row)} on:change={addSelected} />
-							</td>
-							{#each headers as header}
-								<td>{row[header.toLowerCase()]}</td>
-							{/each}
-							<td>
-								<!-- Doesn't work -->
-								<button type="button"
-									class="btn btn-sm variant-filled-surface"
-									value={JSON.stringify(row)}
-									on:click={editRowData}>
-									<Edit classOverride="w-6 h-6" />
-								</button>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<div class="card-footer grid grid-cols-2">
-			<strong class="text-lg p-2">Page {pageNumber}</strong>
-			<div class="flex justify-end space-x-4">
-				<button
-					class={pageNumber === 1 ? 'btn btn-lg  variant-ghost-surface' : 'btn btn-lg variant-filled-surface'}
-					type="submit"
-					on:click={pageDown}>
-					<Back classOverride="w-6 h-6" />
-				</button>
-				<button
-					class={dataLength < 10 ? 'btn btn-lg  variant-ghost-surface' : 'btn btn-lg variant-filled-surface'}
-					type="submit"
-					on:click={pageUp}>
-						<Next classOverride="w-6 h-6" />
-				</button>
-			</div>
-		</div>
-	</form>
-{:else}
-<form class="card p-4">
+<div class="card p-4" >
 	<div class="card-header grid grid-cols-2">
-		<strong class="text-3xl">Add/Edit {title}</strong>
-		<div class="flex h-12 justify-end">
-			<button
-				class="btn btn-sm variant-filled-primary"
-				on:click={() => editMode = false}>
-				<Close
-					classOverride="w-6 h-6" />
+		<strong class="text-5xl">{title}</strong>
+		<div class="btn-group justify-end">
+			<button type="button"
+				class='btn btn-sm variant-filled-primary'
+				value={createRequestURL}
+				on:click|preventDefault={(e) => startCreateModal(e)}>
+				<Plus classOverride="w-6 h-6" />
+			</button>
+			<button type="button"
+				disabled={checkedBoxes.length < 1}
+				class={checkedBoxes.length < 1 ? 'btn btn-sm variant-ghost-primary' : 'btn btn-sm variant-filled-primary'}
+				on:click={deleteModal}>
+				<Trash classOverride="w-6 h-6" />
 			</button>
 		</div>
 	</div>
-	<div class="grid grid-cols-2 gap-4 p-6">
-		<div class="grid-cols-[auto_1fr_auto]">
-			<Textfield
-				label="Amount"
-				name="amount"
-				type="text"
-				placeholder="Amount"
-				errorMessages={[""]}
-			/>
-		</div>
-		<div class="grid-cols-[auto_1fr_auto]">
-			<label class="label">
-				<span>Date</span>
-				<input class="input" type="date" placeholder="01/01/2002" />
-			</label>
-		</div>
-		<div class="grid-cols-[auto_1fr_auto]">
-			<Textfield
-					label="Description"
-					name="description"
-					type="text"
-					placeholder="Amount"
-					errorMessages={[""]}
-				/>
-		</div>
+	<div class="table-container p-4">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th />
+					{#each headers as header}
+						<th>{header}</th>
+					{/each}
+					<th>Edit</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each tableData as row}
+					<tr>
+						<!-- need to figure out how to remove item from list when deselected -->
+						<td>
+							<input type="checkbox" checked={checkedBoxes.includes(row)} class="checkbox" value={JSON.stringify(row)} on:change={addSelected} />
+						</td>
+						{#each headers as header}
+							<td>{row[header.toLowerCase()]}</td>
+						{/each}
+						<td>
+							<button type="button"
+								class="btn btn-sm variant-filled-surface"
+								value={JSON.stringify(row)}
+								on:click|preventDefault={(e) => {startEditModal(e)}}>
+								<Edit classOverride="w-6 h-6" />
+							</button>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
-	<div class="card-footer grid grid-cols-1">
+
+	<div class="card-footer grid grid-cols-2">
+		<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
 		<div class="flex justify-end space-x-4">
-			<button class="btn variant-filled-secondary">Submit</button>
+			<button
+				class={`btn btn-lg variant-${pageNumber === 1 ? 'ghost-surface' : 'filled-surface'}`}
+				type={pageNumber === 1 ? 'button' : 'submit'}
+				on:click={previousPage}>
+				<Back classOverride="w-6 h-6" />
+			</button>
+			<button
+				class={`btn btn-lg variant-${pageNumber >= totalPages ? 'ghost-surface' : 'filled-surface'}`}
+				type={pageNumber >= totalPages ? 'button' : 'submit'}
+				on:click={nextPage}>
+					<Next classOverride="w-6 h-6" />
+			</button>
 		</div>
 	</div>
-</form>
-{/if}
+</div>
