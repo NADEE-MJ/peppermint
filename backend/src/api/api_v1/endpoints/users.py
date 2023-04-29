@@ -12,7 +12,7 @@ from src.utils import send_new_account_email
 router = APIRouter()
 
 
-@router.post("/", response_model=UserResponse)
+@router.post("", response_model=UserResponse)
 async def create_user(
     *,
     db: AsyncSession = Depends(get_session),

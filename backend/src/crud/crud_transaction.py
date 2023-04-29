@@ -8,45 +8,64 @@ from src.models.transaction import Transaction, TransactionCreate, TransactionUp
 
 
 class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate]):
-    async def get_all_transactions_for_user(self, db: AsyncSession, *, user_id: int) -> Optional[list[Transaction]]:
-        result = await db.execute(select(Transaction).filter(Transaction.user_id == user_id))
+    async def get_all_transactions_for_user(
+        self, db: AsyncSession, *, user_id: int, page: int = 0, limit: int = 10
+    ) -> Optional[list[Transaction]]:
+        page *= limit
+        result = await db.execute(select(Transaction).filter(Transaction.user_id == user_id).offset(page).limit(limit))
         return result.scalars().all()
 
     async def get_all_transactions_for_budget(
-        self, db: AsyncSession, *, user_id: int, budget_id: int
+        self, db: AsyncSession, *, user_id: int, budget_id: int, page: int = 0, limit: int = 10
     ) -> Optional[list[Transaction]]:
+        page *= limit
         result = await db.execute(
-            select(Transaction).filter(Transaction.user_id == user_id).filter(Transaction.budget_id == budget_id)
+            select(Transaction)
+            .filter(Transaction.user_id == user_id)
+            .filter(Transaction.budget_id == budget_id)
+            .offset(page)
+            .limit(limit)
         )
         return result.scalars().all()
 
     async def get_all_transactions_for_category_in_budget(
-        self, db: AsyncSession, *, user_id: int, category_id: int, budget_id: int
+        self, db: AsyncSession, *, user_id: int, category_id: int, budget_id: int, page: int = 0, limit: int = 10
     ) -> Optional[list[Transaction]]:
+        page *= limit
         result = await db.execute(
             select(Transaction)
             .filter(Transaction.user_id == user_id)
             .filter(Transaction.budget_id == budget_id)
             .filter(Transaction.category_id == category_id)
+            .offset(page)
+            .limit(limit)
         )
         return result.scalars().all()
 
     async def get_all_transactions_for_category_in_account(
-        self, db: AsyncSession, *, user_id: int, category_id: int, account_id: int
+        self, db: AsyncSession, *, user_id: int, category_id: int, account_id: int, page: int = 0, limit: int = 10
     ) -> Optional[list[Transaction]]:
+        page *= limit
         result = await db.execute(
             select(Transaction)
             .filter(Transaction.user_id == user_id)
             .filter(Transaction.account_id == account_id)
             .filter(Transaction.category_id == category_id)
+            .offset(page)
+            .limit(limit)
         )
         return result.scalars().all()
 
     async def get_all_transactions_for_account(
-        self, db: AsyncSession, *, user_id: int, account_id: int
+        self, db: AsyncSession, *, user_id: int, account_id: int, page: int = 0, limit: int = 10
     ) -> Optional[list[Transaction]]:
+        page *= limit
         result = await db.execute(
-            select(Transaction).filter(Transaction.user_id == user_id).filter(Transaction.account_id == account_id)
+            select(Transaction)
+            .filter(Transaction.user_id == user_id)
+            .filter(Transaction.account_id == account_id)
+            .offset(page)
+            .limit(limit)
         )
         return result.scalars().all()
 

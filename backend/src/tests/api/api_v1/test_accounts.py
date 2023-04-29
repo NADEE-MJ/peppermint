@@ -11,7 +11,7 @@ from src.tests.utils.user import get_auth_header
 async def test_get_all_accounts(db: AsyncSession, client: TestClient, test_user: User) -> None:
     headers = get_auth_header(client)
     await create_test_account(db, user_id=test_user.id)
-    response = client.get(f"{settings.API_VERSION_STR}/accounts/", headers=headers)
+    response = client.get(f"{settings.API_VERSION_STR}/accounts", headers=headers)
     accounts = response.json()
 
     assert len(accounts) == 1
@@ -32,7 +32,7 @@ async def test_get_account(db: AsyncSession, client: TestClient, test_user: User
 async def test_create_account(db: AsyncSession, client: TestClient, test_user: User) -> None:
     headers = get_auth_header(client)
     data = {"name": "test", "account_type": "checking"}
-    response = client.post(f"{settings.API_VERSION_STR}/accounts/", headers=headers, json=data)
+    response = client.post(f"{settings.API_VERSION_STR}/accounts", headers=headers, json=data)
     account = response.json()
 
     assert account["user_id"] == test_user.id
@@ -60,7 +60,7 @@ async def test_remove_account(db: AsyncSession, client: TestClient, test_user: U
 
     assert account["user_id"] == test_user.id
 
-    response = client.get(f"{settings.API_VERSION_STR}/accounts/", headers=headers)
+    response = client.get(f"{settings.API_VERSION_STR}/accounts", headers=headers)
     accounts = response.json()
 
     assert len(accounts) == 0

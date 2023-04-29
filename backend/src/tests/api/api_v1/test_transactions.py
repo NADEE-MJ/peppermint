@@ -180,7 +180,7 @@ async def test_parse_transactions_from_csv_with_no_categories(
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
 
-    assert len(transactions) == 21
+    assert len(transactions) == 10
 
 
 @pytest.mark.asyncio
@@ -207,4 +207,4 @@ async def test_parse_transactions_from_csv_with_categories(
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
     transactions = response.json()
 
-    assert len(transactions) == 21
+    assert len(transactions) == 10

@@ -42,7 +42,7 @@ async def test_create_user_new_email(db: AsyncSession, client: TestClient, test_
     password = random_lower_string()
     data = {"full_name": full_name, "email": email, "password": password}
     response = client.post(
-        f"{settings.API_VERSION_STR}/users/",
+        f"{settings.API_VERSION_STR}/users",
         json=data,
         headers=headers,
     )
@@ -61,7 +61,7 @@ async def test_create_user_existing_email(db: AsyncSession, client: TestClient, 
     password = random_lower_string()
     data = {"full_name": full_name, "email": email, "password": password}
     response = client.post(
-        f"{settings.API_VERSION_STR}/users/",
+        f"{settings.API_VERSION_STR}/users",
         json=data,
         headers=headers,
     )
