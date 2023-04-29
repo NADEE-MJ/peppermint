@@ -1,7 +1,7 @@
-import { fail, type Actions } from '@sveltejs/kit';
+// import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { UpdateUserValidator } from '$lib/zodValidators';
-import { fast } from '$lib/fast';
+// import { UpdateUserValidator } from '$lib/zodValidators';
+// import { fast } from '$lib/fast';
 import { userStore } from '$lib/stores';
 import { get } from 'svelte/store';
 
@@ -17,6 +17,7 @@ export const load = (async () => {
 // export const actions: Actions = {
 // 	//! this is not working
 // 	//! need to update with admin route
+// 	//! this was copied from client profile
 // 	updateUser: async ({ request, cookies }) => {
 // 		const data = Object.fromEntries(await request.formData());
 // 		let password: FormDataEntryValue | null = data.password;
