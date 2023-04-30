@@ -113,6 +113,21 @@ export class fast {
 		const response = await fast.post(`transactions/${transactionId}`, JSON.stringify(transactionCreate), token);
 		return response;
 	}
+
+	static async getAllBudgetsForUser(token: string): Promise<Response> {
+		const response = await fast.get('budgets', token);
+		return response;
+	}
+
+	static async getAllAccountsForUser(token: string): Promise<Response> {
+		const response = await fast.get('accounts?limit=-1', token);
+		return response;
+	}
+
+	static async getAllCategoriesForUser(token: string): Promise<Response> {
+		const response = await fast.get('categories?limit=-1', token);
+		return response;
+	}
 }
 
 type UserUpdate = {

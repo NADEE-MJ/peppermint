@@ -2,10 +2,15 @@
 	import Textfield from './Textfield.svelte';
 	import { modalStore } from '@skeletonlabs/skeleton';
     import { z } from 'zod';
+	import SelectForeignKey from './SelectForeignKey.svelte';
 
     export let parent: any;
 
     const formData: { [key: string]: any } = {};
+	const foreignKeyOptions: Array<string> | null = $modalStore[0].meta.foreignKeyOptions;
+	const foreignKeyOptionsSelected = foreignKeyOptions ? foreignKeyOptions.map((option) => {
+		return { value: -1, tableName: option };
+	}) : null;
     const rowHeaders: Array<string> = $modalStore[0].meta.rowHeaders;
     const fullHeaders: Array<string> = $modalStore[0].meta.fullHeaders;
     let combineHeaders: Array<{[key: string]: string }> = [];
@@ -49,11 +54,24 @@
             return;
         }
 
-		if ($modalStore[0].response) $modalStore[0].response(formData);
+		if (foreignKeyOptions) {
+			for (const foreignKeyOption of foreignKeyOptions) {
+				const foreignKey = foreignKeyOptionsSelected ? foreignKeyOptionsSelected[foreignKeyOptions.indexOf(foreignKeyOption)].value : -1
+				if (foreignKeyOption === 'budget') {
+					validatedData['budget_id'] = foreignKey ;
+				} else if (foreignKeyOption === 'category') {
+					validatedData['category_id'] = foreignKey;
+				} else if (foreignKeyOption === 'account') {
+					validatedData['account_id'] = foreignKey;
+				}
+			}
+		}
+
+		if ($modalStore[0].response) $modalStore[0].response(validatedData);
 		modalStore.close();
 	}
 
-	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
+	const cBase = 'card p-4 w-modal shadow-xl space-y-4 overflow-y-auto h-4/5';
 	const cHeader = 'text-4xl font-bold';
 	const cForm = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 </script>
@@ -63,16 +81,25 @@
 		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
 		<form class="space-y-4">
             <div class={cForm}>
-                {#each combineHeaders as combineHeader}
-                <Textfield
-                    label={combineHeader.full}
-                    type={combineHeader.row}
-                    bind:value={formData[combineHeader.row]}
-                    placeholder={combineHeader.full}
-                    name={combineHeader.row}
-                    errorMessages={formErrors[combineHeader.row]}
-                    />
-                {/each}
+                <div>
+					{#each combineHeaders as combineHeader}
+					<Textfield
+						label={combineHeader.full}
+						type={combineHeader.row}
+						bind:value={formData[combineHeader.row]}
+						placeholder={combineHeader.full}
+						name={combineHeader.row}
+						errorMessages={formErrors[combineHeader.row]}
+						/>
+					{/each}
+				</div>
+				<div class='space-y-2'>
+					{#if foreignKeyOptionsSelected}
+						 {#each foreignKeyOptionsSelected as foreignKeyOptionSelected}
+							  <SelectForeignKey foreignKeyOption={foreignKeyOptionSelected.tableName} label={foreignKeyOptionSelected.tableName} bind:selectedOptionId={foreignKeyOptionSelected.value}/>
+						 {/each}
+					{/if}
+				</div>
             </div>
             <footer class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>

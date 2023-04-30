@@ -6,6 +6,7 @@
 	let fullHeaders = ['Description', 'Amount', 'Date', ];
 	let title = 'Transactions';
 	let requestURL = $page.url.pathname.toString();
+	let foreignKeyOptions = ["budget", "category", "account"];
 </script>
 
-<Table {title} {rowHeaders} {requestURL} {fullHeaders} />
+<Table {title} {rowHeaders} {requestURL} {fullHeaders} {foreignKeyOptions} />

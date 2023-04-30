@@ -17,6 +17,7 @@
 	export let fullHeaders: string[];
 	export let title: string;
 	export let requestURL: string;
+	export let foreignKeyOptions: Array<string> | undefined = undefined;
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
@@ -153,7 +154,7 @@
 		const createModal: ModalSettings = {
 			type: 'component',
 			component: 'createModal',
-			meta: { rowHeaders, fullHeaders },
+			meta: { rowHeaders, fullHeaders, foreignKeyOptions: (foreignKeyOptions ? foreignKeyOptions : null) },
 			title: 'Create Row',
 			response: (res: { [key: string]: any }) => (res ? console.log(res) : null)
 		};
