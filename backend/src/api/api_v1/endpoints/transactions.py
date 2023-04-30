@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -62,6 +62,34 @@ async def get_all_transactions_by_budget(
         )
 
         return data
+
+
+@router.get("/budget/{budget_id}/months/{num_months}", response_model=list[TransactionResponse])
+async def get_all_transactions_by_budget_and_months(
+    budget_id: int,
+    num_months: int,
+    *,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get all transactions for current user by budget.
+    """
+    if current_user.id is not None:
+        # check if budget belongs to that user
+        budget = await crud.budget.get(db, id=budget_id)
+
+        if budget is None:
+            raise HTTPException(status_code=404, detail="That budget does not exist.")
+
+        if budget.user_id != current_user.id:
+            raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
+
+        data = await crud.transaction.get_all_transactions_for_budget_and_num_months(
+            db, user_id=current_user.id, budget_id=budget_id, num_months=num_months
+        )
+
+        return data if data else []
 
 
 @router.get("/account/{account_id}", response_model=dict[str, int | list[TransactionResponse]])
