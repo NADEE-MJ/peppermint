@@ -7,7 +7,8 @@
 	let rowHeaders = ['desc', 'amount', 'date'];
 	let fullHeaders = ['Description', 'Amount', 'Date'];
 	let title = 'Transactions';
-	let requestURL = '';
+	let getRequestURL = '';
+	let postPutDeleteRequestURL = '/api/transaction';
 	let foreignKeyOptions = ['budget', 'category', 'account'];
 
 	onMount(async () => {
@@ -19,9 +20,9 @@
 			if (data['error']) {
 				return;
 			}
-			requestURL = `/api/transaction/${data['budgets'][0].id}`;
+			getRequestURL = `/api/transaction/budget/${data['budgets'][0].id}`;
 		} else {
-			requestURL = `/api/transaction/${budgetId}`;
+			getRequestURL = `/api/transaction/budget/${budgetId}`;
 		}
 		loading = false;
 	});
@@ -30,5 +31,5 @@
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table {title} {rowHeaders} {requestURL} {fullHeaders} {foreignKeyOptions} />
+	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
 {/if}

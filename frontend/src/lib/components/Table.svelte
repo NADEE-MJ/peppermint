@@ -16,7 +16,8 @@
 	export let rowHeaders: string[];
 	export let fullHeaders: string[];
 	export let title: string;
-	export let requestURL: string;
+	export let getRequestURL: string;
+	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
 
 	let totalPages: number;
@@ -27,7 +28,7 @@
 
 	const getTableData = async () => {
 		loading = true;
-		const response = await fetch(`${requestURL}?page=${pageNumber}`, { method: 'GET' });
+		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
 		tableData = data['transactions'];
 		totalPages = data['totalPages'];
@@ -73,7 +74,7 @@
 
 	const deleteTableData = async (jsonData: object) => {
 		loading = true;
-		const response = await fetch(`${requestURL}`, {
+		const response = await fetch(`${postPutDeleteRequestURL}`, {
 			method: 'DELETE',
 			body: JSON.stringify(jsonData),
 			headers: { 'Content-Type': 'application/json' }
@@ -102,7 +103,7 @@
 
 	const updateTableData = async (jsonData: object, id: number) => {
 		loading = true;
-		const response = await fetch(`${requestURL}`, {
+		const response = await fetch(`${postPutDeleteRequestURL}`, {
 			method: 'PUT',
 			body: JSON.stringify({ ...jsonData, id }),
 			headers: { 'Content-Type': 'application/json' }
@@ -142,7 +143,7 @@
 
 	const addTableData = async (jsonData: { [key: string]: any }) => {
 		loading = true;
-		const response = await fetch(`${requestURL}`, {
+		const response = await fetch(`${postPutDeleteRequestURL}`, {
 			method: 'POST',
 			body: JSON.stringify(jsonData),
 			headers: { 'Content-Type': 'application/json' }
@@ -185,7 +186,12 @@
 		<div class="card-header grid grid-cols-2">
 			<strong class="text-5xl">{title}</strong>
 			<div class="flex justify-end space-x-4">
-				<button type="button" class="btn btn-lg variant-filled-primary" value={requestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
+				<button
+					type="button"
+					class="btn btn-lg variant-filled-primary"
+					value={postPutDeleteRequestURL}
+					on:click|preventDefault={(e) => startCreateModal(e)}
+				>
 					<Plus classOverride="w-6 h-6" />
 				</button>
 				<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
