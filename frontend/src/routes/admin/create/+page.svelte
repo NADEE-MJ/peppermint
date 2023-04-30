@@ -39,28 +39,29 @@
 	};
 </script>
 
-<div class="container p-10 mx-auto w-3/4">
-	<form class="card p-4 grid grid-cols-2" action="?/createUserOrAdmin" method="POST" use:focusTrap={true} use:enhance={validateCreateUserOrAdmin}>
-
-		<div>
-			<header class="card-header text-center p-2">
-				<strong class="text-7xl">Create new user or admin</strong>
-			</header>
-
-			<div class="p-6 space-y-4">
+<form class="card p-4 m-auto w-4/5" action="?/createUserOrAdmin" method="POST" use:focusTrap={true} use:enhance={validateCreateUserOrAdmin}>
+	<div class="card-body">
+		<header class="card-header text-center">
+			<strong class="text-5xl">Create new user or admin</strong>
+		</header>
+		<div class="p-10">
+			<div class="pt-5 grid grid-cols-2 gap-4">
 				<div class="space-y-4">
-					<SlideToggle name="slider-label" bind:checked={isAdmin}>(Admin)</SlideToggle>
-					<Textfield name="full_name" type="full_name" placeholder="Full Name" errorMessages={validationErrors?.name} />
-					<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
-					<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
-					<Textfield name="passwordConfirm" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
+					<Textfield name="email" label="Email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
+					<Textfield name="full_name" label="Full Name" type="full_name" placeholder="Full Name" errorMessages={validationErrors?.name} />
+				</div>
+				<div class="space-y-4">
+					<Textfield name="password" label="New Password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
+					<Textfield name="passwordConfirm" label="Confirm New Password" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
 				</div>
 				<div class="space-y-10">
-					<div class="grid grid-cols-2">
-						<button type="submit" class="btn btn-xl variant-filled-primary card-hover ">Create User/Admin</button>
-					</div>
-				</div>
 			</div>
 		</div>
-	</form>
-</div>
+		<div class="grid grid-cols-3">
+			<div>
+				<SlideToggle name="slider-label" bind:checked={isAdmin}>(Admin)</SlideToggle></div>
+			<button type="submit" class="btn btn-lg variant-filled-primary card-hover ">Create</button>
+			<div></div>
+		</div>
+	</div>
+</form>
