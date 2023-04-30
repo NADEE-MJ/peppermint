@@ -16,7 +16,6 @@
 		if (budgetId === 'all') {
 			const response = await fetch(`/api/budget`, { method: 'GET' });
 			const data = await response.json();
-			console.log(data);
 			if (data['error']) {
 				return;
 			}

@@ -73,7 +73,7 @@ async def main() -> None:
             created_at=now,
             user_id=users[1].id,
             budget_id=budgets[0].id,
-            amount=1000,
+            amount=250,
         ),
         Category(
             name="Shopping",
@@ -81,7 +81,7 @@ async def main() -> None:
             created_at=now,
             user_id=users[1].id,
             budget_id=budgets[0].id,
-            amount=1000,
+            amount=100,
         ),
         Category(
             name="Entertainment",
@@ -89,7 +89,7 @@ async def main() -> None:
             created_at=now,
             user_id=users[1].id,
             budget_id=budgets[0].id,
-            amount=2000,
+            amount=150,
         ),
     ]
 
@@ -124,7 +124,7 @@ async def main() -> None:
             desc="Macy's Trans#lk2341g3",
             created_at=now,
             user_id=users[1].id,
-            category_id=categories[1].id,
+            category_id=categories[2].id,
             budget_id=budgets[0].id,
             account_id=accounts[0].id,
         ),
@@ -134,7 +134,7 @@ async def main() -> None:
             desc="Regal Entertainment LKJ3123",
             created_at=now,
             user_id=users[1].id,
-            category_id=categories[2].id,
+            category_id=categories[3].id,
             budget_id=budgets[0].id,
             account_id=accounts[1].id,
         ),

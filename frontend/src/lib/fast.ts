@@ -99,6 +99,17 @@ export class fast {
 		return response;
 	}
 
+	static async getTransactionsByBudgetAndCategory(token: string, budgetId: string, categoryId: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`transactions/budget/${budgetId}/category/${categoryId}/?page=${page}`, token);
+		return response;
+	}
+
+	static async getTransactionsByBudgetAndNumMonths(token: string, budgetId: string, numMonths: number): Promise<Response> {
+		const response = await fast.get(`transactions/budget/${budgetId}/months/${numMonths}`, token);
+		return response;
+	}
+
 	static async deleteTransaction(token: string, transactionId: string): Promise<Response> {
 		const response = await fast.delete(`transactions/${transactionId}`, token);
 		return response;
