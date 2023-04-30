@@ -92,7 +92,7 @@
 		</div>
 		<div class="grid grid-cols-3 mt-6">
 			<div></div>
-			<button type="submit" class="btn btn-lg variant-filled-primary card-hover">Update Account Info</button>
+			<button type="submit" class="btn btn-lg variant-filled-primary card-hover">Update Profile</button>
 			<div></div>
 		</div>
 	</div>
