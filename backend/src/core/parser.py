@@ -1,4 +1,6 @@
 import base64
+import csv
+from io import StringIO
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -13,7 +15,11 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
     # Example Header row from a csv file
     # Transaction Date,Clear Date,Description,Category,Amount,Current Balance
 
-    filters = await crud.filter.get_all_filters_for_user(db, user_id=user_id)
+    data = await crud.filter.get_all_filters_for_user(db, user_id=user_id, limit=-1)
+    if data is not None:
+        filters = data["paginated_results"]
+    else:
+        filters = None
     categories = await crud.category.get_all_categories_for_user(db, user_id=user_id)
     default_category = await crud.category.get_unsorted_category_for_budget(db, user_id=user_id, budget_id=budget_id)
     if default_category:
@@ -24,9 +30,12 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
         default_category_id = new_category.id
 
     decoded_data = base64.b64decode(file.split(",")[1])
-    lines = decoded_data.decode("utf-8").splitlines()
-    file_lines = iter(lines)
-    header_row = next(file_lines).split(",")
+    lines = decoded_data.decode("utf-8")
+
+    csvfile = StringIO(lines)
+    csvreader = csv.reader(csvfile)
+    file_lines = iter(csvreader)
+    header_row = next(file_lines)
     indexes = {}
     # to figure out column mapping
     for col in header_row:
@@ -38,9 +47,9 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
     if "category" in indexes.values():
         has_categories = True
 
-    for row in file_lines:
+    for row in csvreader:
         # row example = 3/11/2023,3/12/2023,THIS IS A DESCRIPTION,3000,Food,1000000
-        split_row = row.split(",")
+        split_row = row
         new_transaction = {}
         for index, column_name in indexes.items():
             try:
@@ -67,7 +76,7 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
                 category_id = new_category.id
 
         # new_transaction {"date": "3/11/2023", "desc": "THIS IS A DESCRIPTION", "amnt": "3000"}
-        if filters is not None:
+        if filters is not None and type(filters) == list:
             for filter in filters:
                 if filter.filter_by.lower() in new_transaction["desc"].lower():
                     category_id = filter.category_id

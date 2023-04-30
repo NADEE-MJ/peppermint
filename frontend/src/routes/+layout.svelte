@@ -2,12 +2,13 @@
 	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup, Toast, Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import AccountOptions from '$lib/components/AccountOptions.svelte';
 	import ImportantLinks from '$lib/components/ImportantLinks.svelte';
 	import { page } from '$app/stores';
+	import { modalComponentRegistry } from '$lib/modalComponentRegistry';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -41,7 +42,7 @@
 </svelte:head>
 
 <!-- singletons must be imported in the root layout -->
-<Modal />
+<Modal components={modalComponentRegistry} />
 <Toast position="bl" max={5} />
 
 {#if isAdminPage || isClientPage}

@@ -12,6 +12,17 @@
 
 	let passwordHidden = true;
 
+	const formattedDate = (date: string) => {
+		const dateObj = new Date(date);
+		const month = `${dateObj.getUTCMonth()}`.padStart(2, '0');
+		const day = `${dateObj.getUTCDate()}`.padStart(2, '0');
+		const year = dateObj.getFullYear();
+		return `${year}-${month}-${day}`;
+	};
+	if (type === 'date' && typeof value == 'string') {
+		value = formattedDate(value);
+	}
+
 	function togglePasswordVisibility() {
 		passwordHidden = !passwordHidden;
 	}
@@ -40,6 +51,8 @@
 				{/if}
 			</button>
 		</div>
+	{:else if type === 'date'}
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="date" {placeholder} {name} bind:value />
 	{:else}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="text" {placeholder} {name} bind:value />
 	{/if}

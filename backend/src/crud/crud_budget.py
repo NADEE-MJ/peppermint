@@ -14,7 +14,7 @@ class CRUDBudget(CRUDBase[Budget, BudgetCreate, BudgetUpdate]):
 
     async def create(self, db: AsyncSession, *, obj_in: BudgetCreate, user_id: int) -> Budget:  # type: ignore
         db_obj = Budget(name=obj_in.name, amount=obj_in.amount, created_at=datetime.now(), user_id=user_id)
-        return await super().create(db, obj_in=db_obj)  # type: ignore
+        return await super().create(db, obj_in=db_obj)
 
 
 budget = CRUDBudget(Budget)

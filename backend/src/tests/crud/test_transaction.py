@@ -45,10 +45,13 @@ async def test_get_all_transactions_for_user(db: AsyncSession) -> None:
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    transactions = await crud.transaction.get_all_transactions_for_user(db, user_id=user.id)
+    data = await crud.transaction.get_all_transactions_for_user(db, user_id=user.id)
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0].user_id == user.id
 
 
@@ -61,11 +64,32 @@ async def test_get_all_transactions_for_budget(db: AsyncSession) -> None:
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    transactions = await crud.transaction.get_all_transactions_for_budget(db, user_id=user.id, budget_id=budget.id)
+    data = await crud.transaction.get_all_transactions_for_budget(db, user_id=user.id, budget_id=budget.id)
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0].user_id == user.id
+
+
+@pytest.mark.asyncio
+async def test_get_all_transactions_for_budget_and_num_months(db: AsyncSession) -> None:
+    user = await create_random_user(db)
+    budget = await create_test_budget(db, user_id=user.id)
+    category = await create_test_category(db, user_id=user.id, budget_id=budget.id)
+    account = await create_test_account(db, user_id=user.id)
+    await create_test_transaction(
+        db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
+    )
+    data = await crud.transaction.get_all_transactions_for_budget_and_num_months(
+        db, user_id=user.id, budget_id=budget.id
+    )
+
+    await crud.user.remove(db, id=user.id)
+    assert len(data) == 1
+    assert data[0].user_id == user.id
 
 
 @pytest.mark.asyncio
@@ -77,12 +101,15 @@ async def test_get_all_transactions_for_category_in_budget(db: AsyncSession) -> 
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    transactions = await crud.transaction.get_all_transactions_for_category_in_budget(
+    data = await crud.transaction.get_all_transactions_for_category_in_budget(
         db, user_id=user.id, budget_id=budget.id, category_id=category.id
     )
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0].user_id == user.id
 
 
@@ -95,12 +122,15 @@ async def test_get_all_transactions_for_category_in_account(db: AsyncSession) ->
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    transactions = await crud.transaction.get_all_transactions_for_category_in_account(
+    data = await crud.transaction.get_all_transactions_for_category_in_account(
         db, user_id=user.id, account_id=account.id, category_id=category.id
     )
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0].user_id == user.id
 
 
@@ -113,10 +143,13 @@ async def test_get_all_transactions_for_account(db: AsyncSession) -> None:
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    transactions = await crud.transaction.get_all_transactions_for_account(db, user_id=user.id, account_id=account.id)
+    data = await crud.transaction.get_all_transactions_for_account(db, user_id=user.id, account_id=account.id)
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0].user_id == user.id
 
 

@@ -24,10 +24,50 @@ async def test_get_all_transactions(db: AsyncSession, client: TestClient, test_u
         db, user_id=test_user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0]["user_id"] == test_user.id
+
+
+@pytest.mark.asyncio
+async def test_get_all_transactions_by_budget(db: AsyncSession, client: TestClient, test_user: User) -> None:
+    headers = get_auth_header(client)
+    budget = await create_test_budget(db, user_id=test_user.id)
+    category = await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
+    account = await create_test_account(db, user_id=test_user.id)
+    await create_test_transaction(
+        db, user_id=test_user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
+    )
+    response = client.get(f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}", headers=headers)
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
+
+    assert len(transactions) == 1
+    assert total_pages == 1
+    assert transactions[0]["user_id"] == test_user.id
+
+
+@pytest.mark.asyncio
+async def test_get_all_transactions_by_budget_and_num_months(
+    db: AsyncSession, client: TestClient, test_user: User
+) -> None:
+    headers = get_auth_header(client)
+    budget = await create_test_budget(db, user_id=test_user.id)
+    category = await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
+    account = await create_test_account(db, user_id=test_user.id)
+    await create_test_transaction(
+        db, user_id=test_user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
+    )
+    response = client.get(f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/months/1", headers=headers)
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["user_id"] == test_user.id
 
 
 @pytest.mark.asyncio
@@ -55,9 +95,12 @@ async def test_get_all_transactions_by_account(db: AsyncSession, client: TestCli
         db, user_id=test_user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
     response = client.get(f"{settings.API_VERSION_STR}/transactions/account/{account.id}", headers=headers)
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0]["user_id"] == test_user.id
 
 
@@ -75,9 +118,12 @@ async def test_get_all_transactions_by_budget_and_category(
     response = client.get(
         f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/category/{category.id}", headers=headers
     )
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0]["user_id"] == test_user.id
 
 
@@ -95,9 +141,12 @@ async def test_get_all_transactions_by_account_and_category(
     response = client.get(
         f"{settings.API_VERSION_STR}/transactions/account/{account.id}/category/{category.id}", headers=headers
     )
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 1
+    assert total_pages == 1
     assert transactions[0]["user_id"] == test_user.id
 
 
@@ -151,9 +200,12 @@ async def test_remove_transaction(db: AsyncSession, client: TestClient, test_use
     assert transaction["user_id"] == test_user.id
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 0
+    assert total_pages == 0
 
 
 @pytest.mark.asyncio
@@ -178,9 +230,12 @@ async def test_parse_transactions_from_csv_with_no_categories(
     assert res["success"] is True
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 10
+    assert total_pages == 3
 
 
 @pytest.mark.asyncio
@@ -205,6 +260,9 @@ async def test_parse_transactions_from_csv_with_categories(
     assert res["success"] is True
 
     response = client.get(f"{settings.API_VERSION_STR}/transactions/", headers=headers)
-    transactions = response.json()
+    data = response.json()
+    transactions = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(transactions) == 10
+    assert total_pages == 3

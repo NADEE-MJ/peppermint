@@ -1,6 +1,9 @@
 from datetime import datetime
+from math import ceil
 from typing import Any, Dict, Optional
 
+from dateutil.relativedelta import relativedelta  # type: ignore
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.crud.base import CRUDBase
@@ -10,64 +13,191 @@ from src.models.transaction import Transaction, TransactionCreate, TransactionUp
 class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate]):
     async def get_all_transactions_for_user(
         self, db: AsyncSession, *, user_id: int, page: int = 0, limit: int = 10
-    ) -> Optional[list[Transaction]]:
+    ) -> Optional[dict[str, int | list[Transaction]]]:
         page *= limit
-        result = await db.execute(select(Transaction).filter(Transaction.user_id == user_id).offset(page).limit(limit))
-        return result.scalars().all()
+        paginated_results = (
+            (await db.execute(select(Transaction).filter(Transaction.user_id == user_id).offset(page).limit(limit)))
+            .scalars()
+            .all()
+        )
+
+        count = (
+            (await db.execute(select(func.count(Transaction.id)).filter(Transaction.user_id == user_id)))
+            .scalars()
+            .first()
+        )
+        if count is not None:
+            total_pages = ceil(count / limit)
+        else:
+            total_pages = 0
+
+        return {"paginated_results": paginated_results, "total_pages": total_pages}
 
     async def get_all_transactions_for_budget(
         self, db: AsyncSession, *, user_id: int, budget_id: int, page: int = 0, limit: int = 10
-    ) -> Optional[list[Transaction]]:
+    ) -> Optional[dict[str, int | list[Transaction]]]:
         page *= limit
-        result = await db.execute(
-            select(Transaction)
-            .filter(Transaction.user_id == user_id)
-            .filter(Transaction.budget_id == budget_id)
-            .offset(page)
-            .limit(limit)
+        paginated_results = (
+            (
+                await db.execute(
+                    select(Transaction)
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.budget_id == budget_id)
+                    .offset(page)
+                    .limit(limit)
+                )
+            )
+            .scalars()
+            .all()
         )
-        return result.scalars().all()
+
+        count = (
+            (
+                await db.execute(
+                    select(func.count(Transaction.id))
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.budget_id == budget_id)
+                )
+            )
+            .scalars()
+            .first()
+        )
+        if count is not None:
+            total_pages = ceil(count / limit)
+        else:
+            total_pages = 0
+
+        return {"paginated_results": paginated_results, "total_pages": total_pages}
+
+    async def get_all_transactions_for_budget_and_num_months(
+        self, db: AsyncSession, *, user_id: int, budget_id: int, num_months: int = 1
+    ) -> Optional[list[Transaction]]:
+        results = (
+            (
+                await db.execute(
+                    select(Transaction)
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.budget_id == budget_id)
+                    .filter(Transaction.date >= datetime.now() - relativedelta(months=num_months))
+                )
+            )
+            .scalars()
+            .all()
+        )
+
+        return results
 
     async def get_all_transactions_for_category_in_budget(
         self, db: AsyncSession, *, user_id: int, category_id: int, budget_id: int, page: int = 0, limit: int = 10
-    ) -> Optional[list[Transaction]]:
+    ) -> Optional[dict[str, int | list[Transaction]]]:
         page *= limit
-        result = await db.execute(
-            select(Transaction)
-            .filter(Transaction.user_id == user_id)
-            .filter(Transaction.budget_id == budget_id)
-            .filter(Transaction.category_id == category_id)
-            .offset(page)
-            .limit(limit)
+        paginated_results = (
+            (
+                await db.execute(
+                    select(Transaction)
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.budget_id == budget_id)
+                    .filter(Transaction.category_id == category_id)
+                    .offset(page)
+                    .limit(limit)
+                )
+            )
+            .scalars()
+            .all()
         )
-        return result.scalars().all()
+
+        count = (
+            (
+                await db.execute(
+                    select(func.count(Transaction.id))
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.budget_id == budget_id)
+                    .filter(Transaction.category_id == category_id)
+                )
+            )
+            .scalars()
+            .first()
+        )
+        if count is not None:
+            total_pages = ceil(count / limit)
+        else:
+            total_pages = 0
+
+        return {"paginated_results": paginated_results, "total_pages": total_pages}
 
     async def get_all_transactions_for_category_in_account(
         self, db: AsyncSession, *, user_id: int, category_id: int, account_id: int, page: int = 0, limit: int = 10
-    ) -> Optional[list[Transaction]]:
+    ) -> Optional[dict[str, int | list[Transaction]]]:
         page *= limit
-        result = await db.execute(
-            select(Transaction)
-            .filter(Transaction.user_id == user_id)
-            .filter(Transaction.account_id == account_id)
-            .filter(Transaction.category_id == category_id)
-            .offset(page)
-            .limit(limit)
+        paginated_results = (
+            (
+                await db.execute(
+                    select(Transaction)
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.account_id == account_id)
+                    .filter(Transaction.category_id == category_id)
+                    .offset(page)
+                    .limit(limit)
+                )
+            )
+            .scalars()
+            .all()
         )
-        return result.scalars().all()
+
+        count = (
+            (
+                await db.execute(
+                    select(func.count(Transaction.id))
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.account_id == account_id)
+                    .filter(Transaction.category_id == category_id)
+                )
+            )
+            .scalars()
+            .first()
+        )
+        if count is not None:
+            total_pages = ceil(count / limit)
+        else:
+            total_pages = 0
+
+        return {"paginated_results": paginated_results, "total_pages": total_pages}
 
     async def get_all_transactions_for_account(
         self, db: AsyncSession, *, user_id: int, account_id: int, page: int = 0, limit: int = 10
-    ) -> Optional[list[Transaction]]:
+    ) -> Optional[dict[str, int | list[Transaction]]]:
         page *= limit
-        result = await db.execute(
-            select(Transaction)
-            .filter(Transaction.user_id == user_id)
-            .filter(Transaction.account_id == account_id)
-            .offset(page)
-            .limit(limit)
+        paginated_results = (
+            (
+                await db.execute(
+                    select(Transaction)
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.account_id == account_id)
+                    .offset(page)
+                    .limit(limit)
+                )
+            )
+            .scalars()
+            .all()
         )
-        return result.scalars().all()
+
+        count = (
+            (
+                await db.execute(
+                    select(func.count(Transaction.id))
+                    .filter(Transaction.user_id == user_id)
+                    .filter(Transaction.account_id == account_id)
+                )
+            )
+            .scalars()
+            .first()
+        )
+        if count is not None:
+            total_pages = ceil(count / limit)
+        else:
+            total_pages = 0
+
+        return {"paginated_results": paginated_results, "total_pages": total_pages}
 
     async def create(  # type: ignore
         self,
@@ -82,14 +212,18 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         db_obj = Transaction(
             amount=obj_in.amount,
             desc=obj_in.desc,
-            date=datetime.strptime(obj_in.date, "%m/%d/%Y"),
+            date=(
+                datetime.fromisoformat(obj_in.date).replace(tzinfo=None)
+                if "T" in obj_in.date
+                else datetime.strptime(obj_in.date, "%m/%d/%Y")
+            ),
             created_at=datetime.now(),
             user_id=user_id,
             category_id=category_id,
             budget_id=budget_id,
             account_id=account_id,
         )
-        return await super().create(db, obj_in=db_obj)  # type: ignore
+        return await super().create(db, obj_in=db_obj)
 
     async def update(
         self, db: AsyncSession, *, db_obj: Transaction, obj_in: TransactionUpdate | Dict[str, Any]

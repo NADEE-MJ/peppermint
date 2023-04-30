@@ -11,7 +11,7 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("", response_model=list[FilterResponse])
+@router.get("", response_model=dict[str, int | list[FilterResponse]])
 async def get_all_filters(
     page: int = 0,
     limit: int = 10,
@@ -23,12 +23,12 @@ async def get_all_filters(
     Get all filters for current user.
     """
     if current_user.id is not None:
-        filters = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id, page=page, limit=limit)
+        data = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id, page=page, limit=limit)
 
-        return filters
+        return data
 
 
-@router.get("/category/{category_id}", response_model=list[FilterResponse])
+@router.get("/category/{category_id}", response_model=dict[str, int | list[FilterResponse]])
 async def get_all_filters_by_category(
     category_id: int,
     page: int = 0,
@@ -50,11 +50,11 @@ async def get_all_filters_by_category(
         if category.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a filter to this category")
 
-        filters = await crud.filter.get_all_filters_for_category(
+        data = await crud.filter.get_all_filters_for_category(
             db, user_id=current_user.id, category_id=category_id, page=page, limit=limit
         )
 
-        return filters
+        return data
 
 
 @router.get("/{filter_id}", response_model=FilterResponse)
@@ -97,15 +97,17 @@ async def create_filter(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a filter to this category")
 
         # check if filter filter_by already exists
-        filters = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id)
+        data = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id, limit=-1)
 
-        if filters is not None:
-            for filter in filters:
-                if filter.filter_by == filter_create.filter_by:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="A filter with that filter_by already exists in the system.",
-                    )
+        if data is not None:
+            filters = data["paginated_results"]
+            if filters is not None and type(filters) == list:
+                for filter in filters:
+                    if filter.filter_by == filter_create.filter_by:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="A filter with that filter_by already exists in the system.",
+                        )
 
         filter = await crud.filter.create(db, obj_in=filter_create, user_id=current_user.id, category_id=category_id)
 
@@ -130,15 +132,17 @@ async def update_filter(
     if filter_from_db.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this filter")
 
-    filters = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id)
+    data = await crud.filter.get_all_filters_for_user(db, user_id=current_user.id, limit=-1)
 
-    if filters is not None:
-        for filter in filters:
-            if filter.filter_by == filter_update.filter_by:
-                raise HTTPException(
-                    status_code=400,
-                    detail="A filter with that filter_by already exists in the system.",
-                )
+    if data is not None:
+        filters = data["paginated_results"]
+        if filters is not None and type(filters) == list:
+            for filter in filters:
+                if filter.filter_by == filter_update.filter_by:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="A filter with that filter_by already exists in the system.",
+                    )
 
     filter = await crud.filter.update(db, db_obj=filter_from_db, obj_in=filter_update)
 

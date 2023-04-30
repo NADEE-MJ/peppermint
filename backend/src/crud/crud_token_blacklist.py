@@ -16,7 +16,7 @@ class CRUDTokenBlackList(CRUDBase[TokenBlacklist, TokenBlacklistCreate, TokenBla
         self, db: AsyncSession, *, obj_in: TokenBlacklistCreate, user_id: int
     ) -> TokenBlacklist:
         db_obj = TokenBlacklist(token=obj_in.token, created_at=datetime.now(), user_id=user_id)
-        return await super().create(db, obj_in=db_obj)  # type: ignore
+        return await super().create(db, obj_in=db_obj)
 
     async def get_by_token(self, db: AsyncSession, *, token: str) -> Optional[TokenBlacklist]:
         result = await db.execute(select(TokenBlacklist).filter(TokenBlacklist.token == token))

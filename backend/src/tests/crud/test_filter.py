@@ -29,10 +29,13 @@ async def test_get_all_filters_for_user(db: AsyncSession) -> None:
     budget = await create_test_budget(db, user_id=user.id)
     category = await create_test_category(db, user_id=user.id, budget_id=budget.id)
     await create_test_filter(db, user_id=user.id, category_id=category.id)
-    filters = await crud.filter.get_all_filters_for_user(db, user_id=user.id)
+    data = await crud.filter.get_all_filters_for_user(db, user_id=user.id)
+    filters = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(filters) == 1
+    assert total_pages == 1
     assert filters[0].user_id == user.id
 
 
@@ -42,8 +45,11 @@ async def test_get_all_filters_for_category(db: AsyncSession) -> None:
     budget = await create_test_budget(db, user_id=user.id)
     category = await create_test_category(db, user_id=user.id, budget_id=budget.id)
     await create_test_filter(db, user_id=user.id, category_id=category.id)
-    filters = await crud.filter.get_all_filters_for_category(db, user_id=user.id, category_id=category.id)
+    data = await crud.filter.get_all_filters_for_category(db, user_id=user.id, category_id=category.id)
+    filters = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     await crud.user.remove(db, id=user.id)
     assert len(filters) == 1
+    assert total_pages == 1
     assert filters[0].user_id == user.id
