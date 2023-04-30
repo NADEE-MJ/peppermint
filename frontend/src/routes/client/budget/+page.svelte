@@ -1,31 +1,28 @@
 <script lang="ts">
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Chart from 'chart.js/auto';
-	import type { string } from 'zod';
-
 
 	let categoryData: Array<{ [key: string]: any }>;
 	let budgetData: { [key: string]: any };
-	let budgetName: string = "";
+	let budgetName = '';
 	let transactionData: Array<{ [key: string]: any }>;
 	let categoryNames: Array<string> = [];
 	let categoryAmountSpent: Array<number> = [];
 	let categoryAmountBudgeted: Array<number> = [];
 
 	let portfolio: any;
-	let budgetActual: Array<number> = [25, 39, 100, 250];
 
-	onMount(async ()=> {
+	onMount(async () => {
 		await getBudgetData();
 		await getCategoryData();
 		await getTransactionData();
 
 		processTransactionData();
 
-		let ctx = portfolio.getContext('2d'); 
-		var myChart = new Chart(ctx, config); 
-	})
+		let ctx = portfolio.getContext('2d');
+		new Chart(ctx, config);
+	});
 
 	const getBudgetData = async () => {
 		let response = await fetch(`/api/budget`, { method: 'GET' });
@@ -35,7 +32,7 @@
 		}
 		budgetData = data['budgets'][0];
 		budgetName = budgetData.name;
-	}
+	};
 
 	const getCategoryData = async () => {
 		const response = await fetch(`/api/category`, { method: 'GET' });
@@ -44,7 +41,7 @@
 			return;
 		}
 		categoryData = data['categories'];
-	}
+	};
 
 	const getTransactionData = async () => {
 		const response = await fetch(`/api/transaction/budget/${budgetData.id}/months/1`, { method: 'GET' });
@@ -53,11 +50,11 @@
 			return;
 		}
 		transactionData = data['transactions'];
-	}
+	};
 
 	const processTransactionData = () => {
 		let categoryMap: { [key: number]: number } = {}; // category_id: amount
-		
+
 		categoryData.forEach((category) => {
 			categoryNames.push(category.name);
 			if (category.amount === -1) {
@@ -68,7 +65,6 @@
 		});
 
 		transactionData.forEach((transaction) => {
-			console.log(transaction.category_id)
 			if (categoryMap[transaction.category_id]) {
 				categoryMap[transaction.category_id] += transaction.amount;
 			} else {
@@ -79,16 +75,17 @@
 		for (const category of categoryData) {
 			categoryAmountSpent.push(categoryMap[category.id]);
 		}
-	}
+	};
 
 	const data = {
 		labels: categoryNames,
-			datasets: [{
+		datasets: [
+			{
 				label: 'Amount Budgeted',
 				backgroundColor: 'rgba(255, 99, 132, 0.2)',
 				borderColor: 'rgba(255, 99, 132, 1)',
 				borderWidth: 1,
-				data: categoryAmountBudgeted,
+				data: categoryAmountBudgeted
 			},
 			{
 				label: 'Amount Spent',
@@ -96,22 +93,22 @@
 				borderColor: 'rgba(54, 162, 235, 1)',
 				borderWidth: 1,
 				data: categoryAmountSpent
-			}]
-		};
+			}
+		]
+	};
 	const options = {
-		onClick: function(event: any, elements: any) {
-				if (elements.length > 0) {
-					const label = data.labels[elements[0].index];
-					const category = categoryData.find((category) => {
-						if (category.name === label) {
-							return true
-						}
-					});
-					console.log('Clicked label:', label, category);
-					goto(`/client/budget/${budgetData.id}/category/${category?.id}?categoryName=${category?.name}`);
-				}
-			},
-		indexAxis: 'y',
+		onClick: function (event: any, elements: any) {
+			if (elements.length > 0) {
+				const label = data.labels[elements[0].index];
+				const category = categoryData.find((category) => {
+					if (category.name === label) {
+						return true;
+					}
+				});
+				goto(`/client/budget/${budgetData.id}/category/${category?.id}?categoryName=${category?.name}`);
+			}
+		},
+		indexAxis: 'y'
 	};
 	const config: any = {
 		type: 'bar',

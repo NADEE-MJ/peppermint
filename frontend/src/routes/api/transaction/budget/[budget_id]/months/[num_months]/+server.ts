@@ -1,14 +1,14 @@
 import { fast } from '$lib/fast';
 import { redirect, type RequestHandler, json } from '@sveltejs/kit';
 
-export const GET = (async ({ cookies, params, url }) => {
+export const GET = (async ({ cookies, params }) => {
 	if (params.budget_id === undefined) {
 		throw new Error('No budget id provided');
-    }
+	}
 
-    let numMonths: number = 1;
-    if (params.num_months !== undefined) {
-        numMonths = parseInt(params.num_months);
+	let numMonths = 1;
+	if (params.num_months !== undefined) {
+		numMonths = parseInt(params.num_months);
 	}
 
 	const token = cookies.get('access_token');

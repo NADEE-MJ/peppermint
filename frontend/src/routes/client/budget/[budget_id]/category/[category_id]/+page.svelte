@@ -26,5 +26,5 @@
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table  {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
+	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
 {/if}
