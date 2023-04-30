@@ -53,9 +53,9 @@ export class fast {
 		return response;
 	}
 
-	static async createUserOrAdmin(is_admin: boolean, email: string, password: string, full_name: string): Promise<Response> {
-		const body =  JSON.stringify({ is_admin, email, password, full_name });
-		const response = await fast.post("admin", body);
+	static async createUserOrAdmin(token: string, userOrAdminCreate: UserOrAdminCreate): Promise<Response> {
+		const body = JSON.stringify({ email: userOrAdminCreate.email, password: userOrAdminCreate.password, full_name: userOrAdminCreate.full_name });
+		const response = await fast.post(`admin?is_admin=${userOrAdminCreate.isAdmin}`, body, token);
 		return response;
 	}
 
@@ -69,7 +69,7 @@ export class fast {
 		return response;
 	}
 
-	static async updateCurrentUser(token: string, userUpdate: userUpdate): Promise<Response> {
+	static async updateCurrentUser(token: string, userUpdate: UserUpdate): Promise<Response> {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
 		return response;
 	}
@@ -86,9 +86,16 @@ export class fast {
 	}
 }
 
-type userUpdate = {
+type UserUpdate = {
 	email: string | null;
 	full_name: string | null;
 	password: string | null;
 	passwordConfirm: string | null;
+};
+
+type UserOrAdminCreate = {
+	isAdmin: boolean;
+	email: string;
+	password: string;
+	full_name: string;
 };

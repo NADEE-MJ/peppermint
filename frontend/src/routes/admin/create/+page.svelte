@@ -12,10 +12,11 @@
 		name: Array<string> | null;
 	}
 
-	let is_admin: boolean = false;
+	let isAdmin: boolean = false;
 	let validationErrors: Errors | null;
 
-	const validateCreateUserOrAdmin: SubmitFunction = () => {
+	const validateCreateUserOrAdmin: SubmitFunction = ({data}) => {
+		data.append('isAdmin', isAdmin.toString());
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
 				if (result.data) {
@@ -48,7 +49,7 @@
 
 			<div class="p-6 space-y-4">
 				<div class="space-y-4">
-					<SlideToggle name="slider-label" bind:checked={is_admin}>(Admin)</SlideToggle>
+					<SlideToggle name="slider-label" bind:checked={isAdmin}>(Admin)</SlideToggle>
 					<Textfield name="full_name" type="full_name" placeholder="Full Name" errorMessages={validationErrors?.name} />
 					<Textfield name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} />
 					<Textfield name="password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
