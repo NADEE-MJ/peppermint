@@ -21,7 +21,7 @@
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
-	let pageNumber: number = 1;
+	let pageNumber = 1;
 	let checkedBoxes: Array<{ [key: string]: any }> = [];
 	let loading = true;
 
@@ -69,7 +69,7 @@
 			checkedBoxes.splice(firstOccurrence, 1);
 		}
 		checkedBoxes = checkedBoxes;
-	}
+	};
 
 	const deleteTableData = async (jsonData: object) => {
 		loading = true;
@@ -104,7 +104,7 @@
 		loading = true;
 		const response = await fetch(`${requestURL}`, {
 			method: 'PUT',
-			body: JSON.stringify({...jsonData, id}),
+			body: JSON.stringify({ ...jsonData, id }),
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const data = await response.json();
@@ -140,7 +140,7 @@
 		modalStore.trigger(editModal);
 	};
 
-	const addTableData = async (jsonData:  {[key: string]: any} ) => {
+	const addTableData = async (jsonData: { [key: string]: any }) => {
 		loading = true;
 		const response = await fetch(`${requestURL}`, {
 			method: 'POST',
@@ -172,7 +172,7 @@
 		const createModal: ModalSettings = {
 			type: 'component',
 			component: 'createModal',
-			meta: { rowHeaders, fullHeaders, foreignKeyOptions: (foreignKeyOptions ? foreignKeyOptions : null) },
+			meta: { rowHeaders, fullHeaders, foreignKeyOptions: foreignKeyOptions ? foreignKeyOptions : null },
 			title: 'Create Row',
 			response: (res: { [key: string]: any }) => (res ? addTableData(res) : null)
 		};
@@ -221,7 +221,7 @@
 								{#if rowHeader === 'date'}
 									<td>{formattedDate(rowData[rowHeader])}</td>
 								{:else}
-									 <td>{rowData[rowHeader]}</td>
+									<td>{rowData[rowHeader]}</td>
 								{/if}
 							{/each}
 							<td>
