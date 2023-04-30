@@ -16,7 +16,6 @@
 		if (budgetId === 'all') {
 			const response = await fetch(`/api/budget`, { method: 'GET' });
 			const data = await response.json();
-			console.log(data);
 			if (data['error']) {
 				return;
 			}
@@ -31,5 +30,5 @@
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
+	<Table  {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
 {/if}
