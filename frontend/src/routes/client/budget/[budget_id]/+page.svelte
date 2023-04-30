@@ -6,7 +6,7 @@
 	// let totalPages = data.totalPages;
 	let headers = ['Amount', 'Date', 'Desc'];
 	let title = 'Transactions';
-	let getRequestURL = $page.url.toString();
+	let requestURL = $page.url.toString();
 </script>
 
-<Table {title} {headers} {getRequestURL} />
+<Table {title} {headers} {requestURL} />

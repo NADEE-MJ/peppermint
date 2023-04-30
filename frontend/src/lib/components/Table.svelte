@@ -4,75 +4,84 @@
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
 	import Plus from '$lib/assets/Plus.svg.svelte';
-	import Close from '$lib/assets/Close.svg.svelte';
 
-	import Textfield from './Textfield.svelte';
-
-	import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { modalStore, type ModalSettings, ProgressRadial } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { toast } from '$lib/toasts';
+
+	onMount(async () => {
+		await getTableData();
+	});
 
 	export let headers: string[];
 	export let title: string;
-	export let getRequestURL: string;
-	// export let updateRequestURL: string;
-	// export let deleteRequestURL: string;
-	export let createRequestURL: string = 'test1233';
+	export let requestURL: string;
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
 	let pageNumber: number = 1;
 	let checkedBoxes: Array<{}> = [];
-
-	onMount(async () => {
-		//set loading to true before mount or use placeholders
-		await getTableData();
-	});
+	let loading = true;
 
 	const getTableData = async () => {
-		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
+		loading = true
+		const response = await fetch(`${requestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
 		tableData = data['transactions'];
 		totalPages = data['totalPages'];
+		loading = false
 	};
 
+	$: nextPageDisabled = pageNumber >= totalPages;
 	const nextPage = async () => {
-		// modalStore.trigger(d);
-
-		if (pageNumber < totalPages) {
-			pageNumber++;
-			checkedBoxes = [];
-			await getTableData();
-		}
+		pageNumber++;
+		checkedBoxes = [];
+		await getTableData();
 	};
 
+	$: previousPageDisabled = pageNumber === 1;
 	const previousPage = async () => {
-		if (pageNumber > 1) {
-			pageNumber--;
-			checkedBoxes = [];
-			await getTableData();
-		}
+		pageNumber--;
+		checkedBoxes = [];
+		await getTableData();
 	};
 
-	function addRemoveSelected(event: any) {
-		const valueString = event.target.value;
+	$: deleteDisabled = checkedBoxes.length < 1;
+	function addRemoveSelected(e: Event) {
+		const target = e.target as HTMLInputElement;
+		const valueString = target.value;
 		const value = JSON.parse(valueString);
-		if (event.target.checked) {
+		if (target.checked) {
 			checkedBoxes = [...checkedBoxes, value];
 		} else {
 			let item = checkedBoxes.indexOf((item: any) => item === value);
+			console.log(item)
 			checkedBoxes.splice(item, 1);
 		}
-		console.log(checkedBoxes, checkedBoxes.length);
+		checkedBoxes = checkedBoxes;
 	}
 
-	const deleteModal = () => {
-		// console.log("Files being deleted: ",checkedBoxes);
+	const deleteTableData = async (jsonData: object) => {
+		loading = true
+		const response = await fetch(`${requestURL}`, { method: 'DELETE', body: JSON.stringify(jsonData), headers: { 'Content-Type': 'application/json' } });
+		const data = await response.json();
+		if (data['success']) {
+			checkedBoxes = [];
+			toast.success('Successfully deleted selected rows');
+			await getTableData()
+		} else {
+			toast.error('Unable to delete rows');
+		}
+		loading = false
+	};
+
+	const startDeleteModal = () => {
 		const confirmDeletion: ModalSettings = {
 			type: 'confirm',
 			title: 'Please Confirm',
-			body: 'Are you sure you want to delete this?',
+			body: 'Are you sure you want to delete the selected rows?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
-			response: (r: boolean) => console.log('response:', r)
+			response: (res: boolean) => res ? deleteTableData(checkedBoxes) : null
 		};
 		modalStore.trigger(confirmDeletion);
 	};
@@ -123,23 +132,25 @@
 	};
 </script>
 
+{#if !loading}
 <div class="card p-4">
 	<div class="card-header grid grid-cols-2">
 		<strong class="text-5xl">{title}</strong>
 		<div class="flex justify-end space-x-4">
-			<button type="button" class="btn btn-lg variant-filled-primary" value={createRequestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
+			<button type="button" class="btn btn-lg variant-filled-primary" value={requestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
 				<Plus classOverride="w-6 h-6" />
 			</button>
 			<button
 				type="button"
-				disabled={checkedBoxes.length < 1}
-				class={`btn btn-lg variant-${checkedBoxes.length < 1 ? 'ghost-primary' : 'filled-primary'}`}
-				on:click={deleteModal}
+				disabled={deleteDisabled}
+				class={'btn btn-lg variant-filled-primary'}
+				on:click={startDeleteModal}
 			>
 				<Trash classOverride="w-6 h-6" />
 			</button>
 		</div>
 	</div>
+
 	<div class="table-container p-4">
 		<table class="table table-hover">
 			<thead>
@@ -154,7 +165,6 @@
 			<tbody>
 				{#each tableData as row}
 					<tr>
-						<!-- need to figure out how to remove item from list when deselected -->
 						<td>
 							<input
 								type="checkbox"
@@ -189,15 +199,15 @@
 		<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
 		<div class="flex justify-end space-x-4">
 			<button
-				class={`btn btn-lg variant-${pageNumber === 1 ? 'ghost-surface' : 'filled-surface'}`}
-				type={pageNumber === 1 ? 'button' : 'submit'}
+				class="btn btn-lg variant-filled-surface"
+				disabled={previousPageDisabled}
 				on:click={previousPage}
 			>
 				<Back classOverride="w-6 h-6" />
 			</button>
 			<button
-				class={`btn btn-lg variant-${pageNumber >= totalPages ? 'ghost-surface' : 'filled-surface'}`}
-				type={pageNumber >= totalPages ? 'button' : 'submit'}
+				class="btn btn-lg variant-filled-surface"
+				disabled={nextPageDisabled}
 				on:click={nextPage}
 			>
 				<Next classOverride="w-6 h-6" />
@@ -205,3 +215,13 @@
 		</div>
 	</div>
 </div>
+{:else}
+	<div class='card p-4'>
+		<div class="card-header">
+			<strong class="text-5xl">{title}</strong>
+		</div>
+		<div class="flex justify-center">
+			<ProgressRadial width='w-96' />
+		</div>
+	</div>
+{/if}

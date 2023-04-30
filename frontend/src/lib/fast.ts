@@ -30,6 +30,15 @@ export class fast {
 		return response;
 	}
 
+	static async delete(url: string, token: string | null = null): Promise<Response> {
+		const headers = { Authorization: 'Bearer null' };
+		if (token) {
+			headers.Authorization = `Bearer ${token}`;
+		}
+		const response = await fetch(`${fast.fastURL}/${url}`, { method: 'DELETE', headers: headers });
+		return response;
+	}
+
 	static async login(email: string, password: string): Promise<Response> {
 		const body = new URLSearchParams({ username: email, password: password });
 		const headers = { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: 'Bearer null' };
@@ -87,6 +96,11 @@ export class fast {
 	static async getTransactionsByBudget(token: string, budgetId: string, page: number): Promise<Response> {
 		page = page - 1;
 		const response = await fast.get(`transactions/budget/${budgetId}?page=${page}`, token);
+		return response;
+	}
+
+	static async deleteTransaction(token: string, transactionId: string): Promise<Response> {
+		const response = await fast.delete(`transactions/${transactionId}`, token);
 		return response;
 	}
 }

@@ -33,3 +33,22 @@ export const GET = (async ({ cookies, params, url }) => {
 		throw redirect(303, '/login');
 	}
 }) satisfies RequestHandler;
+
+export const DELETE = (async ({ cookies, request }) => {
+	const token = cookies.get('access_token');
+	const toDelete = await request.json();
+	if (token) {
+		for (const transaction of toDelete) {
+			const response = await fast.deleteTransaction(token, transaction.id);
+			const data = await response.json();
+			if (!data?.id) {
+				throw new Error(`Unable to delete transaction with description: ${transaction.description}`);
+			}
+		}
+
+		return json({ success: true });
+	} else {
+		//! user is not logged in
+		throw redirect(303, '/login');
+	}
+}) satisfies RequestHandler;
