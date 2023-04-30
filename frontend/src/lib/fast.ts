@@ -62,6 +62,12 @@ export class fast {
 		return response;
 	}
 
+	static async createUserOrAdmin(token: string, userOrAdminCreate: UserOrAdminCreate): Promise<Response> {
+		const body = JSON.stringify({ email: userOrAdminCreate.email, password: userOrAdminCreate.password, full_name: userOrAdminCreate.full_name });
+		const response = await fast.post(`admin?is_admin=${userOrAdminCreate.isAdmin}`, body, token);
+		return response;
+	}
+
 	static async getCurrentUser(token: string): Promise<Response> {
 		const response = await fast.get('users/me', token);
 		return response;
@@ -156,6 +162,13 @@ type UserUpdate = {
 	full_name: string | null;
 	password: string | null;
 	passwordConfirm: string | null;
+};
+
+type UserOrAdminCreate = {
+	isAdmin: boolean;
+	email: string;
+	password: string;
+	full_name: string;
 };
 
 type TransactionUpdate = {

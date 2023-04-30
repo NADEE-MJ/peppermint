@@ -53,12 +53,12 @@
 	};
 </script>
 
-<form class="card p-4" method="POST" action={actionRoute} use:focusTrap={true} use:enhance={validateUpdateUser}>
+<form class="card p-4 m-auto w-4/5" method="POST" action={actionRoute} use:focusTrap={true} use:enhance={validateUpdateUser}>
 	<header class="card-header text-center">
-		<strong class="text-7xl">{title}</strong>
+		<strong class="text-5xl">{title}</strong>
 	</header>
 
-	<div class="p-6 space-y-4">
+	<div class="p-10">
 		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-4">
 				<Textfield label="Email" name="email" type="email" placeholder="Email" errorMessages={validationErrors?.email} value={userFormData.email} />
@@ -90,8 +90,10 @@
 				/>
 			</div>
 		</div>
-		<div class="grid grid-cols-3 gap-10">
-			<button type="submit" class="btn btn-xl variant-filled-primary card-hover">Update Account Info</button>
+		<div class="grid grid-cols-3 mt-6">
+			<div />
+			<button type="submit" class="btn btn-lg variant-filled-primary card-hover">Update Profile</button>
+			<div />
 		</div>
 	</div>
 </form>
