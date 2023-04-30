@@ -81,7 +81,7 @@
 </script>
 
 {#if loading}
-     <div class="placeholder" />
+     <div class="placeholder animate-pulse" />
 {:else}
     <div class="space-y-2">
         {#if label}
