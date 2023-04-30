@@ -20,7 +20,7 @@
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
 	let pageNumber: number = 1;
-	let checkedBoxes: Array<{}> = [];
+	let checkedBoxes: Array<{ [key: string]: any }> = [];
 	let loading = true;
 
 	const getTableData = async () => {
@@ -46,17 +46,17 @@
 		await getTableData();
 	};
 
-	$: deleteDisabled = checkedBoxes.length < 1;
 	function addRemoveSelected(e: Event) {
 		const target = e.target as HTMLInputElement;
 		const valueString = target.value;
 		const value = JSON.parse(valueString);
 		if (target.checked) {
-			checkedBoxes = [...checkedBoxes, value];
+			checkedBoxes.push(value);
 		} else {
-			let item = checkedBoxes.indexOf((item: any) => item === value);
-			console.log(item)
-			checkedBoxes.splice(item, 1);
+			let filteredCheckedBoxes = checkedBoxes.filter((item: any) => (item.id === value.id) ? item : null);
+			const firstOccurrence = checkedBoxes.indexOf(filteredCheckedBoxes[0]);
+
+			checkedBoxes.splice(firstOccurrence, 1);
 		}
 		checkedBoxes = checkedBoxes;
 	}
@@ -75,12 +75,12 @@
 		loading = false
 	};
 
+	$: deleteDisabled = checkedBoxes.length < 1;
 	const startDeleteModal = () => {
 		const confirmDeletion: ModalSettings = {
 			type: 'confirm',
 			title: 'Please Confirm',
 			body: 'Are you sure you want to delete the selected rows?',
-			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (res: boolean) => res ? deleteTableData(checkedBoxes) : null
 		};
 		modalStore.trigger(confirmDeletion);

@@ -31,7 +31,7 @@
 
 	let validationErrors: Errors | null;
 
-	export const validateUpdateUser: SubmitFunction = () => {
+	const validateUpdateUser: SubmitFunction = () => {
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
 				if (result.data) {
