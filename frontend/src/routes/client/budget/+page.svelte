@@ -20,8 +20,7 @@
 
 		processTransactionData();
 
-		let ctx = portfolio.getContext('2d');
-		new Chart(ctx, config);
+		new Chart(portfolio.getContext('2d'), config);
 	});
 
 	const getBudgetData = async () => {
