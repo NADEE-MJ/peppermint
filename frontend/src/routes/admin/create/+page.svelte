@@ -12,10 +12,10 @@
 		name: Array<string> | null;
 	}
 
-	let isAdmin: boolean = false;
+	let isAdmin = false;
 	let validationErrors: Errors | null;
 
-	const validateCreateUserOrAdmin: SubmitFunction = ({data}) => {
+	const validateCreateUserOrAdmin: SubmitFunction = ({ data }) => {
 		data.append('isAdmin', isAdmin.toString());
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
@@ -52,16 +52,23 @@
 				</div>
 				<div class="space-y-4">
 					<Textfield name="password" label="New Password" type="password" placeholder="Password" errorMessages={validationErrors?.password} />
-					<Textfield name="passwordConfirm" label="Confirm New Password" type="password" placeholder="Confirm Password" errorMessages={validationErrors?.password} />
+					<Textfield
+						name="passwordConfirm"
+						label="Confirm New Password"
+						type="password"
+						placeholder="Confirm Password"
+						errorMessages={validationErrors?.password}
+					/>
 				</div>
-				<div class="space-y-10">
+				<div class="space-y-10" />
 			</div>
-		</div>
-		<div class="grid grid-cols-3">
-			<div>
-				<SlideToggle name="slider-label" bind:checked={isAdmin}>(Admin)</SlideToggle></div>
-			<button type="submit" class="btn btn-lg variant-filled-primary card-hover ">Create</button>
-			<div></div>
+			<div class="grid grid-cols-3">
+				<div>
+					<SlideToggle name="slider-label" bind:checked={isAdmin}>(Admin)</SlideToggle>
+				</div>
+				<button type="submit" class="btn btn-lg variant-filled-primary card-hover">Create</button>
+				<div />
+			</div>
 		</div>
 	</div>
 </form>
