@@ -13,7 +13,8 @@
 		await getTableData();
 	});
 
-	export let headers: string[];
+	export let rowHeaders: string[];
+	export let fullHeaders: string[];
 	export let title: string;
 	export let requestURL: string;
 
@@ -24,12 +25,12 @@
 	let loading = true;
 
 	const getTableData = async () => {
-		loading = true
+		loading = true;
 		const response = await fetch(`${requestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
 		tableData = data['transactions'];
 		totalPages = data['totalPages'];
-		loading = false
+		loading = false;
 	};
 
 	$: nextPageDisabled = pageNumber >= totalPages;
@@ -46,14 +47,22 @@
 		await getTableData();
 	};
 
-	function addRemoveSelected(e: Event) {
+	const formattedDate = (date: string) => {
+		const dateObj = new Date(date);
+		const month = dateObj.toLocaleString('default', { month: 'long' });
+		const day = dateObj.getDate();
+		const year = dateObj.getFullYear();
+		return `${month} ${day}, ${year}`;
+	};
+
+	const addRemoveSelected = (e: Event) => {
 		const target = e.target as HTMLInputElement;
 		const valueString = target.value;
 		const value = JSON.parse(valueString);
 		if (target.checked) {
 			checkedBoxes.push(value);
 		} else {
-			let filteredCheckedBoxes = checkedBoxes.filter((item: any) => (item.id === value.id) ? item : null);
+			let filteredCheckedBoxes = checkedBoxes.filter((item: any) => (item.id === value.id ? item : null));
 			const firstOccurrence = checkedBoxes.indexOf(filteredCheckedBoxes[0]);
 
 			checkedBoxes.splice(firstOccurrence, 1);
@@ -62,17 +71,21 @@
 	}
 
 	const deleteTableData = async (jsonData: object) => {
-		loading = true
-		const response = await fetch(`${requestURL}`, { method: 'DELETE', body: JSON.stringify(jsonData), headers: { 'Content-Type': 'application/json' } });
+		loading = true;
+		const response = await fetch(`${requestURL}`, {
+			method: 'DELETE',
+			body: JSON.stringify(jsonData),
+			headers: { 'Content-Type': 'application/json' }
+		});
 		const data = await response.json();
 		if (data['success']) {
 			checkedBoxes = [];
 			toast.success('Successfully deleted selected rows');
-			await getTableData()
+			await getTableData();
 		} else {
 			toast.error('Unable to delete rows');
 		}
-		loading = false
+		loading = false;
 	};
 
 	$: deleteDisabled = checkedBoxes.length < 1;
@@ -81,9 +94,27 @@
 			type: 'confirm',
 			title: 'Please Confirm',
 			body: 'Are you sure you want to delete the selected rows?',
-			response: (res: boolean) => res ? deleteTableData(checkedBoxes) : null
+			response: (res: boolean) => (res ? deleteTableData(checkedBoxes) : null)
 		};
 		modalStore.trigger(confirmDeletion);
+	};
+
+	const updateTableData = async (jsonData: object, id: number) => {
+		loading = true;
+		const response = await fetch(`${requestURL}`, {
+			method: 'PUT',
+			body: JSON.stringify({...jsonData, id}),
+			headers: { 'Content-Type': 'application/json' }
+		});
+		const data = await response.json();
+		if (data['success']) {
+			checkedBoxes = [];
+			toast.success('Successfully updated selected row');
+			await getTableData();
+		} else {
+			toast.error('Unable to update row');
+		}
+		loading = false;
 	};
 
 	const startEditModal = (e: Event) => {
@@ -97,131 +128,120 @@
 			return;
 		}
 
-		//figure out what data to pass
-		//prob just need headers, and row data, then can have
 		const value = JSON.parse(target.value);
 		const editModal: ModalSettings = {
 			type: 'component',
 			component: 'editModal',
-			meta: { rowData: value, headers: headers },
-			title: 'Edit'
+			meta: { rowData: value, rowHeaders, fullHeaders },
+			title: 'Edit Row',
+			response: (res: { [key: string]: any }) => (res ? updateTableData(res, value.id) : null)
 		};
 		modalStore.trigger(editModal);
 	};
 
 	const startCreateModal = (e: Event) => {
 		let target = e.target as HTMLInputElement;
-		if (!target?.value) {
-			return;
-		}
 		if (target) {
 			if (target.tagName !== 'BUTTON') {
 				target.closest('button')?.click();
 			}
 		}
+		if (!target?.value) {
+			return;
+		}
 
-		//figure out what data to pass
-		//prob just need headers, and row data, then can have
 		const createModal: ModalSettings = {
 			type: 'component',
 			component: 'createModal',
-			meta: { rowData: target.value, headers: headers },
-			title: 'Create'
+			meta: { rowHeaders, fullHeaders },
+			title: 'Create Row',
+			response: (res: { [key: string]: any }) => (res ? console.log(res) : null)
 		};
 		modalStore.trigger(createModal);
 	};
 </script>
 
 {#if !loading}
-<div class="card p-4">
-	<div class="card-header grid grid-cols-2">
-		<strong class="text-5xl">{title}</strong>
-		<div class="flex justify-end space-x-4">
-			<button type="button" class="btn btn-lg variant-filled-primary" value={requestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
-				<Plus classOverride="w-6 h-6" />
-			</button>
-			<button
-				type="button"
-				disabled={deleteDisabled}
-				class={'btn btn-lg variant-filled-primary'}
-				on:click={startDeleteModal}
-			>
-				<Trash classOverride="w-6 h-6" />
-			</button>
+	<div class="card p-4">
+		<div class="card-header grid grid-cols-2">
+			<strong class="text-5xl">{title}</strong>
+			<div class="flex justify-end space-x-4">
+				<button type="button" class="btn btn-lg variant-filled-primary" value={requestURL} on:click|preventDefault={(e) => startCreateModal(e)}>
+					<Plus classOverride="w-6 h-6" />
+				</button>
+				<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
+					<Trash classOverride="w-6 h-6" />
+				</button>
+			</div>
 		</div>
-	</div>
 
-	<div class="table-container p-4">
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th />
-					{#each headers as header}
-						<th>{header}</th>
-					{/each}
-					<th>Edit</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each tableData as row}
+		<div class="table-container p-4">
+			<table class="table table-hover">
+				<thead>
 					<tr>
-						<td>
-							<input
-								type="checkbox"
-								checked={checkedBoxes.includes(row)}
-								class="checkbox"
-								value={JSON.stringify(row)}
-								on:change={addRemoveSelected}
-							/>
-						</td>
-						{#each headers as header}
-							<td>{row[header.toLowerCase()]}</td>
+						<th />
+						{#each fullHeaders as fullHeader}
+							<th>{fullHeader}</th>
 						{/each}
-						<td>
-							<button
-								type="button"
-								class="btn btn-sm variant-filled-surface"
-								value={JSON.stringify(row)}
-								on:click|preventDefault={(e) => {
-									startEditModal(e);
-								}}
-							>
-								<Edit classOverride="w-6 h-6" />
-							</button>
-						</td>
+						<th>Edit</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+				</thead>
+				<tbody>
+					{#each tableData as rowData}
+						<tr>
+							<td>
+								<input
+									type="checkbox"
+									checked={checkedBoxes.includes(rowData)}
+									class="checkbox"
+									value={JSON.stringify(rowData)}
+									on:change={addRemoveSelected}
+								/>
+							</td>
+							{#each rowHeaders as rowHeader}
+								{#if rowHeader === 'date'}
+									<td>{formattedDate(rowData[rowHeader])}</td>
+								{:else}
+									 <td>{rowData[rowHeader]}</td>
+								{/if}
+							{/each}
+							<td>
+								<button
+									type="button"
+									class="btn btn-sm variant-filled-surface"
+									value={JSON.stringify(rowData)}
+									on:click|preventDefault={(e) => {
+										startEditModal(e);
+									}}
+								>
+									<Edit classOverride="w-6 h-6" />
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
 
-	<div class="card-footer grid grid-cols-2">
-		<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
-		<div class="flex justify-end space-x-4">
-			<button
-				class="btn btn-lg variant-filled-surface"
-				disabled={previousPageDisabled}
-				on:click={previousPage}
-			>
-				<Back classOverride="w-6 h-6" />
-			</button>
-			<button
-				class="btn btn-lg variant-filled-surface"
-				disabled={nextPageDisabled}
-				on:click={nextPage}
-			>
-				<Next classOverride="w-6 h-6" />
-			</button>
+		<div class="card-footer grid grid-cols-2">
+			<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
+			<div class="flex justify-end space-x-4">
+				<button class="btn btn-lg variant-filled-surface" disabled={previousPageDisabled} on:click={previousPage}>
+					<Back classOverride="w-6 h-6" />
+				</button>
+				<button class="btn btn-lg variant-filled-surface" disabled={nextPageDisabled} on:click={nextPage}>
+					<Next classOverride="w-6 h-6" />
+				</button>
+			</div>
 		</div>
 	</div>
-</div>
 {:else}
-	<div class='card p-4'>
+	<div class="card p-4">
 		<div class="card-header">
 			<strong class="text-5xl">{title}</strong>
 		</div>
 		<div class="flex justify-center">
-			<ProgressRadial width='w-96' />
+			<ProgressRadial width="w-96" />
 		</div>
 	</div>
 {/if}

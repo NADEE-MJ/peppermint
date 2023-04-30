@@ -72,12 +72,12 @@ export class fast {
 		return response;
 	}
 
-	static async updateCurrentUser(token: string, userUpdate: userUpdate): Promise<Response> {
+	static async updateCurrentUser(token: string, userUpdate: UserUpdate): Promise<Response> {
 		const response = await fast.put('users/me', JSON.stringify(userUpdate), token);
 		return response;
 	}
 
-	static async updateCurrentAdmin(token: string, userUpdate: userUpdate): Promise<Response> {
+	static async updateCurrentAdmin(token: string, userUpdate: UserUpdate): Promise<Response> {
 		const response = await fast.put('admin', JSON.stringify(userUpdate), token);
 		return response;
 	}
@@ -103,11 +103,33 @@ export class fast {
 		const response = await fast.delete(`transactions/${transactionId}`, token);
 		return response;
 	}
+
+	static async updateTransaction(token: string, transactionId: string, transactionUpdate: TransactionUpdate): Promise<Response> {
+		const response = await fast.put(`transactions/${transactionId}`, JSON.stringify(transactionUpdate), token);
+		return response;
+	}
+
+	static async createTransaction(token: string, transactionId: string, transactionCreate: TransactionCreate): Promise<Response> {
+		const response = await fast.post(`transactions/${transactionId}`, JSON.stringify(transactionCreate), token);
+		return response;
+	}
 }
 
-type userUpdate = {
+type UserUpdate = {
 	email: string | null;
 	full_name: string | null;
 	password: string | null;
 	passwordConfirm: string | null;
+};
+
+type TransactionUpdate = {
+	amount: number | null;
+	date: string | null;
+	desc: string | null;
+};
+
+type TransactionCreate = {
+	amount: number | null;
+	date: string | null;
+	desc: string | null;
 };

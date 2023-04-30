@@ -1,101 +1,88 @@
 <script lang="ts">
-	// Props
-	/** Exposes parent props to this component. */
-	export let parent: any;
-
-	// Stores
-	import { modalStore } from '@skeletonlabs/skeleton';
 	import Textfield from './Textfield.svelte';
+	import { modalStore } from '@skeletonlabs/skeleton';
+    import { z } from 'zod';
 
-	// Form Data
-	const formData: { [key: string]: any } = {
-	};
+    export let parent: any;
 
-    const allHeaders: Array<string> = Object.keys($modalStore[0].meta.rowData);
-    const userHeaders: Array<string> = $modalStore[0].meta.headers;
-    for (let i = 0; i < allHeaders.length; i++) {
-        formData[allHeaders[i]] = $modalStore[0].meta.rowData[allHeaders[i]];
-    } 
-	// We've created a custom submit function to pass the response and close the modal.
+    const formData: { [key: string]: any } = {};
+    const rowData: { [key: string]: any } = $modalStore[0].meta.rowData;
+    const rowHeaders: Array<string> = $modalStore[0].meta.rowHeaders;
+    const fullHeaders: Array<string> = $modalStore[0].meta.fullHeaders;
+    let combineHeaders: Array<{[key: string]: string }> = [];
+    rowHeaders.forEach((item, index) => {
+        combineHeaders.push({row: item, full: fullHeaders[index]});
+    });
+
+    for (let i = 0; i < rowHeaders.length; i++) {
+        formData[rowHeaders[i]] = rowData[rowHeaders[i]];
+    }
+
+    const buildValidator = () => {
+        const validationRules: { [key: string]: any } = {};
+        for (const combineHeader of combineHeaders) {
+            if (combineHeader.row === 'date') {
+                validationRules[combineHeader.row] = z.coerce.date().min(new Date("1900-01-01"), { message: "Too old" }).max(new Date(), { message: "Too young!" });
+            } else if (combineHeader.row === 'amount') {
+                validationRules[combineHeader.row] = z.coerce.number();
+            } else {
+                validationRules[combineHeader.row] = z.string().min(1, `${combineHeader.full} must be at least 1 character`);
+            }
+        }
+        return z.object(validationRules)
+    }
+
+    const formValidation = () => {
+        const validator = buildValidator();
+        const validatedBody = validator.safeParse(formData);
+		if (!validatedBody.success) {
+			const { fieldErrors: errors } = validatedBody.error.flatten();
+            for (const [key, value] of Object.entries(errors)) {
+                formErrors[key] = value;
+            }
+			return false;
+		}
+		const body = validatedBody.data;
+        return body;
+    }
+
+    let formErrors: { [key: string]: any } = {};
+
 	function onFormSubmit(): void {
+        const validatedData = formValidation();
+        if (!validatedData) {
+            return;
+        }
+
 		if ($modalStore[0].response) $modalStore[0].response(formData);
 		modalStore.close();
 	}
-	// Base Classes
+
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
-	const cHeader = 'text-2xl font-bold';
+	const cHeader = 'text-4xl font-bold';
 	const cForm = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 </script>
-
-<!-- @component This example creates a simple form modal. -->
 
 {#if $modalStore[0]}
 	<div class={cBase}>
 		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
-		<article>{$modalStore[0].body ?? '(body missing)'}</article>
-		<article>{$modalStore[0].meta?.rowData}</article>
-		<!-- Enable for debugging: -->
-		<!-- <pre>{JSON.stringify(formData, null, 2)}</pre> -->
-		<form class=" {cForm}">
-            {#each userHeaders as header}
-            <Textfield
-                label={header}
-                type={header}
-                value={formData[header.toLowerCase()]}
-                name={header}
-                errorMessages={[""]}
-                />
-            {/each}
+		<form class="space-y-4">
+            <div class={cForm}>
+                {#each combineHeaders as combineHeader}
+                <Textfield
+                    label={combineHeader.full}
+                    type={combineHeader.row}
+                    bind:value={formData[combineHeader.row]}
+                    placeholder={combineHeader.full}
+                    name={combineHeader.row}
+                    errorMessages={formErrors[combineHeader.row]}
+                    />
+                {/each}
+            </div>
+            <footer class="{parent.regionFooter}">
+                <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
+                <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Update Row</button>
+            </footer>
 		</form>
-		<!-- prettier-ignore -->
-		<footer class="{parent.regionFooter}">
-        <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit Form</button>
-    </footer>
 	</div>
 {/if}
-
-<!-- <form class="card p-4">
-    <div class="card-header grid grid-cols-2">
-        <strong class="text-3xl">Add/Edit {title}</strong>
-        <div class="flex h-12 justify-end">
-            <button
-                class="btn btn-sm variant-filled-primary"
-                on:click={() => editMode = false}>
-                <Close
-                    classOverride="w-6 h-6" />
-            </button>
-        </div>
-    </div>
-    <div class="grid grid-cols-2 gap-4 p-6">
-        <div class="grid-cols-[auto_1fr_auto]">
-            <Textfield
-                label="Amount"
-                name="amount"
-                type="text"
-                placeholder="Amount"
-                errorMessages={[""]}
-            />
-        </div>
-        <div class="grid-cols-[auto_1fr_auto]">
-            <label class="label">
-                <span>Date</span>
-                <input class="input" type="date" placeholder="01/01/2002" />
-            </label>
-        </div>
-        <div class="grid-cols-[auto_1fr_auto]">
-            <Textfield
-                    label="Description"
-                    name="description"
-                    type="text"
-                    placeholder="Amount"
-                    errorMessages={[""]}
-                />
-        </div>
-    </div>
-    <div class="card-footer grid grid-cols-1">
-        <div class="flex justify-end space-x-4">
-            <button class="btn variant-filled-secondary">Submit</button>
-        </div>
-    </div>
-</form> -->
