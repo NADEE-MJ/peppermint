@@ -72,14 +72,13 @@ export const PUT = (async ({ cookies, request }) => {
 
 export const POST = (async ({ cookies, request }) => {
 	const token = cookies.get('access_token');
-	const toDelete = await request.json();
+	const toAdd = await request.json();
+	const transaction = { desc: toAdd.desc, amount: toAdd.amount, date: toAdd.date };
 	if (token) {
-		for (const transaction of toDelete) {
-			const response = await fast.createTransaction(token, transaction.id);
-			const data = await response.json();
-			if (!data?.id) {
-				throw new Error(`Unable to delete transaction with description: ${transaction.description}`);
-			}
+		const response = await fast.createTransaction(token, transaction, toAdd.account, toAdd.budget, toAdd.category);
+		const data = await response.json();
+		if (!data?.id) {
+			throw new Error(`Unable to add transaction with description: ${toAdd.desc}`);
 		}
 
 		return json({ success: true });

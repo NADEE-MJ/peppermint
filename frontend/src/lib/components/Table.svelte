@@ -140,6 +140,24 @@
 		modalStore.trigger(editModal);
 	};
 
+	const addTableData = async (jsonData:  {[key: string]: any} ) => {
+		loading = true;
+		const response = await fetch(`${requestURL}`, {
+			method: 'POST',
+			body: JSON.stringify(jsonData),
+			headers: { 'Content-Type': 'application/json' }
+		});
+		const data = await response.json();
+		if (data['success']) {
+			checkedBoxes = [];
+			toast.success('Successfully added selected row');
+			await getTableData();
+		} else {
+			toast.error('Unable to add row');
+		}
+		loading = false;
+	};
+
 	const startCreateModal = (e: Event) => {
 		let target = e.target as HTMLInputElement;
 		if (target) {
@@ -156,7 +174,7 @@
 			component: 'createModal',
 			meta: { rowHeaders, fullHeaders, foreignKeyOptions: (foreignKeyOptions ? foreignKeyOptions : null) },
 			title: 'Create Row',
-			response: (res: { [key: string]: any }) => (res ? console.log(res) : null)
+			response: (res: { [key: string]: any }) => (res ? addTableData(res) : null)
 		};
 		modalStore.trigger(createModal);
 	};

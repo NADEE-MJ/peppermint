@@ -109,8 +109,18 @@ export class fast {
 		return response;
 	}
 
-	static async createTransaction(token: string, transactionId: string, transactionCreate: TransactionCreate): Promise<Response> {
-		const response = await fast.post(`transactions/${transactionId}`, JSON.stringify(transactionCreate), token);
+	static async createTransaction(
+		token: string,
+		transactionCreate: TransactionCreate,
+		accountId: number,
+		budgetId: number,
+		categoryId: number
+	): Promise<Response> {
+		const response = await fast.post(
+			`transactions/budget/${budgetId}/category/${categoryId}/account/${accountId}`,
+			JSON.stringify(transactionCreate),
+			token
+		);
 		return response;
 	}
 

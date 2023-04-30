@@ -8,9 +8,6 @@
 
     const formData: { [key: string]: any } = {};
 	const foreignKeyOptions: Array<string> | null = $modalStore[0].meta.foreignKeyOptions;
-	const foreignKeyOptionsSelected = foreignKeyOptions ? foreignKeyOptions.map((option) => {
-		return { value: -1, tableName: option };
-	}) : null;
     const rowHeaders: Array<string> = $modalStore[0].meta.rowHeaders;
     const fullHeaders: Array<string> = $modalStore[0].meta.fullHeaders;
     let combineHeaders: Array<{[key: string]: string }> = [];
@@ -29,10 +26,16 @@
                 validationRules[combineHeader.row] = z.string().min(1, `${combineHeader.full} must be at least 1 character`);
             }
         }
+		if (foreignKeyOptions) {
+			for (const foreignKeyOption of foreignKeyOptions) {
+				validationRules[foreignKeyOption] = z.number().int().positive();
+			}
+		}
         return z.object(validationRules)
     }
 
     const formValidation = () => {
+		formErrors = {};
         const validator = buildValidator();
         const validatedBody = validator.safeParse(formData);
 		if (!validatedBody.success) {
@@ -53,19 +56,6 @@
         if (!validatedData) {
             return;
         }
-
-		if (foreignKeyOptions) {
-			for (const foreignKeyOption of foreignKeyOptions) {
-				const foreignKey = foreignKeyOptionsSelected ? foreignKeyOptionsSelected[foreignKeyOptions.indexOf(foreignKeyOption)].value : -1
-				if (foreignKeyOption === 'budget') {
-					validatedData['budget_id'] = foreignKey ;
-				} else if (foreignKeyOption === 'category') {
-					validatedData['category_id'] = foreignKey;
-				} else if (foreignKeyOption === 'account') {
-					validatedData['account_id'] = foreignKey;
-				}
-			}
-		}
 
 		if ($modalStore[0].response) $modalStore[0].response(validatedData);
 		modalStore.close();
@@ -94,16 +84,16 @@
 					{/each}
 				</div>
 				<div class='space-y-2'>
-					{#if foreignKeyOptionsSelected}
-						 {#each foreignKeyOptionsSelected as foreignKeyOptionSelected}
-							  <SelectForeignKey foreignKeyOption={foreignKeyOptionSelected.tableName} label={foreignKeyOptionSelected.tableName} bind:selectedOptionId={foreignKeyOptionSelected.value}/>
+					{#if foreignKeyOptions}
+						 {#each foreignKeyOptions as foreignKeyOption}
+							  <SelectForeignKey errorMessages={formErrors[foreignKeyOption]} foreignKeyOption={foreignKeyOption} label={foreignKeyOption} bind:selectedOptionId={formData[foreignKeyOption]}/>
 						 {/each}
 					{/if}
 				</div>
             </div>
             <footer class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-                <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Update Row</button>
+                <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Add Row</button>
             </footer>
 		</form>
 	</div>

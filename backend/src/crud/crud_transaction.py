@@ -193,7 +193,11 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
         db_obj = Transaction(
             amount=obj_in.amount,
             desc=obj_in.desc,
-            date=datetime.strptime(obj_in.date, "%m/%d/%Y"),
+            date=(
+                datetime.fromisoformat(obj_in.date).replace(tzinfo=None)
+                if "T" in obj_in.date
+                else datetime.strptime(obj_in.date, "%m/%d/%Y")
+            ),
             created_at=datetime.now(),
             user_id=user_id,
             category_id=category_id,
