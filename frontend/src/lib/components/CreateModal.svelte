@@ -5,13 +5,14 @@
 
 	// Stores
 	import { modalStore } from '@skeletonlabs/skeleton';
+	import Textfield from './Textfield.svelte';
 
 	// Form Data
 	const formData = {
-		name: 'Jane Doe',
-		tel: '214-555-1234',
-		email: 'jdoe@email.com'
 	};
+
+	const allHeaders = Object.keys($modalStore[0].meta.rowData);
+	const userHeaders = $modalStore[0].meta.headers;
 
 	// We've created a custom submit function to pass the response and close the modal.
 	function onFormSubmit(): void {
@@ -35,18 +36,16 @@
 		<!-- Enable for debugging: -->
 		<!-- <pre>{JSON.stringify(formData, null, 2)}</pre> -->
 		<form class="modal-form {cForm}">
-			<label class="label">
-				<span>Name</span>
-				<input class="input" type="text" bind:value={formData.name} placeholder="Enter name..." />
-			</label>
-			<label class="label">
-				<span>Phone Number</span>
-				<input class="input" type="tel" bind:value={formData.tel} placeholder="Enter phone..." />
-			</label>
-			<label class="label">
-				<span>Email</span>
-				<input class="input" type="email" bind:value={formData.email} placeholder="Enter email address..." />
-			</label>
+			{#each userHeaders as header}
+				<Textfield
+					label={header}
+					type={header}
+					value={""}
+					placeholder={header}
+					name={header}
+					errorMessages={[""]}
+					/>
+            {/each}
 		</form>
 		<!-- prettier-ignore -->
 		<footer class="modal-footer {parent.regionFooter}">

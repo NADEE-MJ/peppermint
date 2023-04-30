@@ -90,10 +90,11 @@
 
 		//figure out what data to pass
 		//prob just need headers, and row data, then can have
+		const value = JSON.parse(target.value);
 		const editModal: ModalSettings = {
 			type: 'component',
 			component: 'editModal',
-			meta: { rowData: target.value },
+			meta: { rowData: value, headers: headers },
 			title: 'Edit'
 		};
 		modalStore.trigger(editModal);
@@ -115,7 +116,7 @@
 		const createModal: ModalSettings = {
 			type: 'component',
 			component: 'createModal',
-			meta: { rowData: target.value },
+			meta: { rowData: target.value, headers: headers },
 			title: 'Create'
 		};
 		modalStore.trigger(createModal);

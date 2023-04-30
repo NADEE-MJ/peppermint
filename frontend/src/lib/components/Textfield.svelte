@@ -6,11 +6,23 @@
 	export let errorMessages: Array<string> | null | undefined;
 	export let type: string;
 	export let label: string | null | undefined = null;
-	export let placeholder: string;
+	export let placeholder: string = "default";
 	export let name: string;
 	export let value: string | null | undefined = undefined;
 
+	let date: string =  "";
+	let time: string = "";
 	let passwordHidden = true;
+
+	function formatDate() {
+		if (value === null || value === undefined) {
+			return;
+		}
+		date = value.slice(0, 10);
+		time = value.slice(11, 16);
+		value = date;
+	}
+	if (type === "Date") { formatDate(); }
 
 	function togglePasswordVisibility() {
 		passwordHidden = !passwordHidden;
@@ -40,6 +52,8 @@
 				{/if}
 			</button>
 		</div>
+	{:else if type === "Date"}
+		<input class="input {errorMessages ? 'input-invalid' : ''}" type="date" {placeholder} {name} bind:value />
 	{:else}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="text" {placeholder} {name} bind:value />
 	{/if}

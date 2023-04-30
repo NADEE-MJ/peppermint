@@ -5,20 +5,22 @@
 
 	// Stores
 	import { modalStore } from '@skeletonlabs/skeleton';
+	import Textfield from './Textfield.svelte';
 
 	// Form Data
-	const formData = {
-		name: 'Jane Doe',
-		tel: '214-555-1234',
-		email: $modalStore[0].meta.rowData
+	const formData: { [key: string]: any } = {
 	};
 
+    const allHeaders: Array<string> = Object.keys($modalStore[0].meta.rowData);
+    const userHeaders: Array<string> = $modalStore[0].meta.headers;
+    for (let i = 0; i < allHeaders.length; i++) {
+        formData[allHeaders[i]] = $modalStore[0].meta.rowData[allHeaders[i]];
+    } 
 	// We've created a custom submit function to pass the response and close the modal.
 	function onFormSubmit(): void {
 		if ($modalStore[0].response) $modalStore[0].response(formData);
 		modalStore.close();
 	}
-
 	// Base Classes
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
 	const cHeader = 'text-2xl font-bold';
@@ -35,18 +37,15 @@
 		<!-- Enable for debugging: -->
 		<!-- <pre>{JSON.stringify(formData, null, 2)}</pre> -->
 		<form class=" {cForm}">
-			<label class="label">
-				<span>Name</span>
-				<input class="input" type="text" bind:value={formData.name} placeholder="Enter name..." />
-			</label>
-			<label class="label">
-				<span>Phone Number</span>
-				<input class="input" type="tel" bind:value={formData.tel} placeholder="Enter phone..." />
-			</label>
-			<label class="label">
-				<span>Email</span>
-				<input class="input" type="email" bind:value={formData.email} placeholder="Enter email address..." />
-			</label>
+            {#each userHeaders as header}
+            <Textfield
+                label={header}
+                type={header}
+                value={formData[header.toLowerCase()]}
+                name={header}
+                errorMessages={[""]}
+                />
+            {/each}
 		</form>
 		<!-- prettier-ignore -->
 		<footer class="{parent.regionFooter}">
