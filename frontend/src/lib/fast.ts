@@ -99,6 +99,12 @@ export class fast {
 		return response;
 	}
 
+	static async getAllTransactionsForUser(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`transactions?page=${page}`, token);
+		return response;
+	}
+
 	static async getTransactionsByBudget(token: string, budgetId: string, page: number): Promise<Response> {
 		page = page - 1;
 		const response = await fast.get(`transactions/budget/${budgetId}?page=${page}`, token);
@@ -149,6 +155,16 @@ export class fast {
 
 	static async getAllBudgetsForUser(token: string): Promise<Response> {
 		const response = await fast.get('budgets', token);
+		return response;
+	}
+
+	static async updateBudget(token: string, budgetId: string, budgetUpdate: BudgetUpdate): Promise<Response> {
+		const response = await fast.put(`budgets/${budgetId}`, JSON.stringify(budgetUpdate), token);
+		return response;
+	}
+
+	static async createBudget(token: string, budgetCreate: BudgetCreate): Promise<Response> {
+		const response = await fast.post(`budgets`, JSON.stringify(budgetCreate), token);
 		return response;
 	}
 
@@ -303,4 +319,14 @@ type CategoryCreate = {
 	name: string;
 	amount: number;
 	desc: string;
+};
+
+type BudgetUpdate = {
+	name: string | null;
+	amount: number | null;
+};
+
+type BudgetCreate = {
+	name: string;
+	amount: number;
 };

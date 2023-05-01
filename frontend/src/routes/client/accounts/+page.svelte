@@ -6,7 +6,7 @@
 	let title = 'Accounts';
 	let getRequestURL = '/api/accounts';
 	let postPutDeleteRequestURL = '/api/account';
-	let dataIndex = 'accounts';
+	let dataKey = 'accounts';
 </script>
 
-<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {dataIndex} />
+<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {dataKey} />

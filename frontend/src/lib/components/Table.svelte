@@ -27,7 +27,7 @@
 	export let getRequestURL: string;
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
-	export let dataIndex = 'transactions';
+	export let dataKey = 'transactions';
 	export let uploadModal: any | undefined = undefined;
 	export let addButton = true;
 
@@ -41,14 +41,14 @@
 	const getTableData = async () => {
 		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
-		tableData = data[dataIndex];
+		tableData = data[dataKey];
 		totalPages = data['totalPages'];
 	};
 
 	const getAllCategories = async () => {
 		const response = await fetch(`/api/category`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return [];
 		}
 		return data['categories'];
@@ -96,8 +96,22 @@
 		checkedBoxes = checkedBoxes;
 	};
 
-	const deleteTableData = async (jsonData: object) => {
+	const deleteTableData = async (jsonData: Array<object>) => {
 		loading = true;
+		if (title === 'Categories') {
+			//do not allow Unsorted Category to be deleted
+			const Unsorted = jsonData.find((item: any) => {
+				if (item.name === 'Unsorted') {
+					return true;
+				}
+			});
+			if (Unsorted) {
+				toast.error('Cannot delete Unsorted category');
+				loading = false;
+				return;
+			}
+		}
+
 		const response = await fetch(`${postPutDeleteRequestURL}`, {
 			method: 'DELETE',
 			body: JSON.stringify(jsonData),
@@ -238,102 +252,108 @@
 						<Plus classOverride="w-6 h-6" />
 					</button>
 				{/if}
-				<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
-					<Trash classOverride="w-6 h-6" />
-				</button>
+				{#if totalPages > 0}
+					<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
+						<Trash classOverride="w-6 h-6" />
+					</button>
+				{/if}
 			</div>
 		</div>
 
-		<div class="table-container p-4">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th />
-						{#each fullHeaders as fullHeader}
-							{#if fullHeader !== 'Password'}
-								<th>{fullHeader}</th>
-							{/if}
-						{/each}
-						{#if title === 'Accounts'}
-							<th>Transactions</th>
-						{:else if title === 'Filters'}
-							<th>Category</th>
-						{/if}
-						<th>Edit</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each tableData as rowData}
+		{#if totalPages > 0}
+			<div class="table-container p-4">
+				<table class="table table-hover">
+					<thead>
 						<tr>
-							<td>
-								<input
-									type="checkbox"
-									checked={checkedBoxes.includes(rowData)}
-									class="checkbox"
-									value={JSON.stringify(rowData)}
-									on:change={addRemoveSelected}
-								/>
-							</td>
-							{#each rowHeaders as rowHeader}
-								{#if rowHeader === 'date' || rowHeader === 'last_login'}
-									<td>{formattedDate(rowData[rowHeader])}</td>
-								{:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
-									{#if rowData[rowHeader]}
-										<td><Check classOverride="w-4 h-4" /></td>
-									{:else}
-										<td>-</td>
-									{/if}
-								{:else if rowHeader === 'password'}
-									<!-- skip password -->
-								{:else}
-									<td>{rowData[rowHeader]}</td>
+							<th />
+							{#each fullHeaders as fullHeader}
+								{#if fullHeader !== 'Password'}
+									<th>{fullHeader}</th>
 								{/if}
 							{/each}
 							{#if title === 'Accounts'}
+								<th>Transactions</th>
+							{:else if title === 'Filters'}
+								<th>Category</th>
+							{/if}
+							<th>Edit</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each tableData as rowData}
+							<tr>
+								<td>
+									<input
+										type="checkbox"
+										checked={checkedBoxes.includes(rowData)}
+										class="checkbox"
+										value={JSON.stringify(rowData)}
+										on:change={addRemoveSelected}
+									/>
+								</td>
+								{#each rowHeaders as rowHeader}
+									{#if rowHeader === 'date' || rowHeader === 'last_login'}
+										<td>{formattedDate(rowData[rowHeader])}</td>
+									{:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
+										{#if rowData[rowHeader]}
+											<td><Check classOverride="w-4 h-4" /></td>
+										{:else}
+											<td>-</td>
+										{/if}
+									{:else if rowHeader === 'password'}
+										<!-- skip password -->
+									{:else}
+										<td>{rowData[rowHeader]}</td>
+									{/if}
+								{/each}
+								{#if title === 'Accounts'}
+									<td>
+										<button
+											type="button"
+											class="btn btn-sm variant-filled-surface"
+											value={JSON.stringify(rowData)}
+											on:click|preventDefault={(e) => {
+												redirectToTransactionsPage(e);
+											}}
+										>
+											<ArrowRightCircle classOverride="w-6 h-6" />
+										</button>
+									</td>
+								{:else if title === 'Filters'}
+									<td>{getCategoryForTransaction(rowData['category_id'])}</td>
+								{/if}
 								<td>
 									<button
 										type="button"
 										class="btn btn-sm variant-filled-surface"
 										value={JSON.stringify(rowData)}
 										on:click|preventDefault={(e) => {
-											redirectToTransactionsPage(e);
+											startEditModal(e);
 										}}
 									>
-										<ArrowRightCircle classOverride="w-6 h-6" />
+										<Edit classOverride="w-6 h-6" />
 									</button>
 								</td>
-							{:else if title === 'Filters'}
-								<td>{getCategoryForTransaction(rowData['category_id'])}</td>
-							{/if}
-							<td>
-								<button
-									type="button"
-									class="btn btn-sm variant-filled-surface"
-									value={JSON.stringify(rowData)}
-									on:click|preventDefault={(e) => {
-										startEditModal(e);
-									}}
-								>
-									<Edit classOverride="w-6 h-6" />
-								</button>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<div class="card-footer grid grid-cols-2">
-			<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
-			<div class="flex justify-end space-x-4">
-				<button class="btn btn-lg variant-filled-surface" disabled={previousPageDisabled} on:click={previousPage}>
-					<Back classOverride="w-6 h-6" />
-				</button>
-				<button class="btn btn-lg variant-filled-surface" disabled={nextPageDisabled} on:click={nextPage}>
-					<Next classOverride="w-6 h-6" />
-				</button>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
 			</div>
-		</div>
+		{/if}
+
+		{#if totalPages > 0}
+			<div class="card-footer grid grid-cols-2">
+				<strong class="text-lg p-2">Page {pageNumber} / {totalPages}</strong>
+				<div class="flex justify-end space-x-4">
+					<button class="btn btn-lg variant-filled-surface" disabled={previousPageDisabled} on:click={previousPage}>
+						<Back classOverride="w-6 h-6" />
+					</button>
+					<button class="btn btn-lg variant-filled-surface" disabled={nextPageDisabled} on:click={nextPage}>
+						<Next classOverride="w-6 h-6" />
+					</button>
+				</div>
+			</div>
+		{/if}
 	</div>
 {:else}
 	<div class="card p-4">

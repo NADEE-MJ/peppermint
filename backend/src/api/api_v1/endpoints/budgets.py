@@ -101,15 +101,15 @@ async def update_budget(
     if budget_from_db.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this budget")
 
-    budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
+    # budgets = await crud.budget.get_all_budgets_for_user(db, user_id=current_user.id)
 
-    if budgets is not None:
-        for budget in budgets:
-            if budget.name == budget_update.name:
-                raise HTTPException(
-                    status_code=400,
-                    detail="A budget with the name already exists in the system.",
-                )
+    # if budgets is not None:
+    #     for budget in budgets:
+    #         if budget.name == budget_update.name:
+    #             raise HTTPException(
+    #                 status_code=400,
+    #                 detail="A budget with the name already exists in the system.",
+    #             )
 
     budget = await crud.budget.update(db, db_obj=budget_from_db, obj_in=budget_update)
 

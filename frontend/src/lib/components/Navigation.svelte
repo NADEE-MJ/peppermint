@@ -6,9 +6,10 @@
 	<nav class="list-nav p-4">
 		<ul>
 			<li><a href="/client/accounts">Accounts</a></li>
-			<li><a href="/client/budget/all">All Transactions</a></li>
-			<li><a href="/client/budget">Budget</a></li>
+			<li><a href="/client/transactions">All Transactions</a></li>
+			<li><a href="/client/budget/manage">Budget</a></li>
 			<li><a href="/client/categories">Categories</a></li>
+			<li><a href="/client/budget">Dashboard</a></li>
 			<li><a href="/client/filters">Filters</a></li>
 		</ul>
 	</nav>
