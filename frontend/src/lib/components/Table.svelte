@@ -206,7 +206,7 @@
 			<strong class="text-5xl">{title}</strong>
 			<div class="flex justify-end space-x-4">
 				{#if uploadModal}
-					 <button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
+					<button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
 				{/if}
 
 				<button

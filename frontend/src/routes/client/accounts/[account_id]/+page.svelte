@@ -26,7 +26,7 @@
 			type: 'component',
 			component: 'uploadModal',
 			meta: { accountId: $page.params.account_id },
-			title: `Upload CSV File for ${title}`,
+			title: `Upload CSV File for ${title}`
 		};
 		modalStore.trigger(uploadModal);
 	};
@@ -35,5 +35,5 @@
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} uploadModal={startUploadModal}/>
+	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} uploadModal={startUploadModal} />
 {/if}

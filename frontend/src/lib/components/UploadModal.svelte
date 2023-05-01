@@ -72,7 +72,8 @@
 			</div>
 			{#if needsToMap}
 				<footer class="grid grid-cols-2">
-						<button class="btn btn-lg variant-filled-secondary justify-self-start" type="button" on:click={cancelUpload}>Select a different file</button>
+					<button class="btn btn-lg variant-filled-secondary justify-self-start" type="button" on:click={cancelUpload}>Select a different file</button
+					>
 					<button class="btn {parent.buttonNeutral} justify-self-end" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
 				</footer>
 			{:else}
