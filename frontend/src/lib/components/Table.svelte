@@ -22,6 +22,7 @@
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
 	export let dataIndex = 'transactions';
+	export let uploadModal: any | undefined = undefined;
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
@@ -204,6 +205,10 @@
 		<div class="card-header grid grid-cols-2">
 			<strong class="text-5xl">{title}</strong>
 			<div class="flex justify-end space-x-4">
+				{#if uploadModal}
+					 <button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
+				{/if}
+
 				<button
 					type="button"
 					class="btn btn-lg variant-filled-primary"

@@ -2,6 +2,7 @@
 	import Table from '$lib/components/Table.svelte';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 
 	let loading = true;
 	let rowHeaders = ['desc', 'amount', 'date'];
@@ -19,10 +20,20 @@
 
 		loading = false;
 	});
+
+	const startUploadModal = () => {
+		const uploadModal: ModalSettings = {
+			type: 'component',
+			component: 'uploadModal',
+			meta: { accountId: $page.params.account_id },
+			title: `Upload CSV File for ${title}`,
+		};
+		modalStore.trigger(uploadModal);
+	};
 </script>
 
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
+	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} uploadModal={startUploadModal}/>
 {/if}

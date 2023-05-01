@@ -3,7 +3,7 @@ import { toast } from './toasts';
 export const uploadFile = async (file: File, mapping: object, URL: string) => {
 	if (!mapping) {
 		toast.error('Please enter a mapping');
-		return;
+		return false;
 	}
 
 	const headers = { 'Content-Type': 'application/json' };
@@ -12,6 +12,7 @@ export const uploadFile = async (file: File, mapping: object, URL: string) => {
 	const result = await res.json();
 
 	result?.success ? toast.success('File uploaded successfully ✅') : toast.error('File upload failed ❌');
+	return true;
 };
 
 export const fileToBase64 = (file: File): Promise<string | null> => {
