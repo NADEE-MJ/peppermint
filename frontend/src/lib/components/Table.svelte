@@ -13,6 +13,10 @@
 
 	onMount(async () => {
 		await getTableData();
+		if (title === 'Filters') {
+			categoryData = await getAllCategories();
+		}
+		loading = false;
 	});
 
 	export let rowHeaders: string[];
@@ -24,6 +28,7 @@
 	export let dataIndex = 'transactions';
 	export let uploadModal: any | undefined = undefined;
 
+	let categoryData: Array<{ [key: string]: any }> = [];
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
 	let pageNumber = 1;
@@ -31,12 +36,24 @@
 	let loading = true;
 
 	const getTableData = async () => {
-		loading = true;
 		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
 		tableData = data[dataIndex];
 		totalPages = data['totalPages'];
-		loading = false;
+	};
+
+	const getAllCategories = async () => {
+		const response = await fetch(`/api/category`, { method: 'GET' });
+		const data = await response.json();
+		if (data['error']) {
+			return [];
+		}
+		return data['categories'];
+	};
+
+	const getCategoryForTransaction = (categoryId: number) => {
+		const category = categoryData.find((category) => category.id === categoryId);
+		return category ? category.name : '';
 	};
 
 	$: nextPageDisabled = pageNumber >= totalPages;
@@ -233,6 +250,8 @@
 						{/each}
 						{#if title === 'Accounts'}
 							<th>Transactions</th>
+						{:else if title === 'Filters'}
+							<th>Category</th>
 						{/if}
 						<th>Edit</th>
 					</tr>
@@ -269,6 +288,8 @@
 										<ArrowRightCircle classOverride="w-6 h-6" />
 									</button>
 								</td>
+							{:else if title === 'Filters'}
+								<td>{getCategoryForTransaction(rowData['category_id'])}</td>
 							{/if}
 							<td>
 								<button

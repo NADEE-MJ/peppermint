@@ -178,6 +178,27 @@ export class fast {
 		return response;
 	}
 
+	static async getFiltersForUser(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`filters?page=${page}`, token);
+		return response;
+	}
+
+	static async deleteFilter(token: string, filterId: string): Promise<Response> {
+		const response = await fast.delete(`filters/${filterId}`, token);
+		return response;
+	}
+
+	static async updateFilter(token: string, filterId: string, filterUpdate: FilterUpdate): Promise<Response> {
+		const response = await fast.put(`filters/${filterId}`, JSON.stringify(filterUpdate), token);
+		return response;
+	}
+
+	static async createFilter(token: string, filterCreate: FilterCreate, categoryId: number): Promise<Response> {
+		const response = await fast.post(`filters/category/${categoryId}`, JSON.stringify(filterCreate), token);
+		return response;
+	}
+
 	static async getAllCategoriesForUser(token: string): Promise<Response> {
 		const response = await fast.get('categories?limit=-1', token);
 		return response;
@@ -218,4 +239,12 @@ type AccountUpdate = {
 type AccountCreate = {
 	name: string;
 	account_type: 'savings' | 'checking' | 'credit';
+};
+
+type FilterUpdate = {
+	filter_by: string | null;
+};
+
+type FilterCreate = {
+	filter_by: string;
 };
