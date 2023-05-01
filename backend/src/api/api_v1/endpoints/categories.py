@@ -11,8 +11,10 @@ from src.models.user import User
 router = APIRouter()
 
 
-@router.get("", response_model=list[CategoryResponse])
+@router.get("", response_model=dict[str, int | list[CategoryResponse]])
 async def get_all_categories(
+    page: int = 0,
+    limit: int = 10,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -21,7 +23,9 @@ async def get_all_categories(
     Get all categories for current user.
     """
     if current_user.id is not None:
-        categories = await crud.category.get_all_categories_for_user(db, user_id=current_user.id)
+        categories = await crud.category.get_all_categories_for_user(
+            db, user_id=current_user.id, page=page, limit=limit
+        )
 
         return categories
 
@@ -91,15 +95,17 @@ async def create_category(
             raise HTTPException(status_code=401, detail="You are unauthorized to add a category to this budget")
 
         # check if category name already exists
-        categories = await crud.category.get_all_categories_for_user(db, user_id=current_user.id)
+        data = await crud.category.get_all_categories_for_user(db, user_id=current_user.id, limit=-1)
 
-        if categories is not None:
-            for category in categories:
-                if category.name == category_create.name:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="A category with the name already exists in the system.",
-                    )
+        if data is not None:
+            categories = data["paginated_results"]
+            if categories is not None and isinstance(categories, list):
+                for category in categories:
+                    if category.name == category_create.name:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="A category with the name already exists in the system.",
+                        )
 
         category = await crud.category.create(db, obj_in=category_create, user_id=current_user.id, budget_id=budget_id)
 
@@ -124,15 +130,19 @@ async def update_category(
     if category_from_db.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to update this category")
 
-    categories = await crud.category.get_all_categories_for_user(db, user_id=current_user.id)
+    data = await crud.category.get_all_categories_for_user(db, user_id=current_user.id, limit=-1)
 
-    if categories is not None:
-        for category in categories:
-            if category.name == category_update.name:
-                raise HTTPException(
-                    status_code=400,
-                    detail="A category with the name already exists in the system.",
-                )
+    if data is not None:
+        categories = data["paginated_results"]
+
+    if categories is not None and category_update.name is not None and category_update.name != category_from_db.name:
+        if isinstance(categories, list):
+            for category in categories:
+                if category.name == category_update.name:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="A category with the name already exists in the system.",
+                    )
 
     category = await crud.category.update(db, db_obj=category_from_db, obj_in=category_update)
 

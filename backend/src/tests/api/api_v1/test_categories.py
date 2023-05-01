@@ -14,9 +14,12 @@ async def test_get_all_categories(db: AsyncSession, client: TestClient, test_use
     budget = await create_test_budget(db, user_id=test_user.id)
     await create_test_category(db, user_id=test_user.id, budget_id=budget.id)
     response = client.get(f"{settings.API_VERSION_STR}/categories/", headers=headers)
-    categories = response.json()
+    data = response.json()
+    categories = data["paginated_results"]
+    total_pages = data["total_pages"]
 
     assert len(categories) == 2
+    assert total_pages == 1
     assert categories[0]["user_id"] == test_user.id
 
 
@@ -79,6 +82,7 @@ async def test_remove_category(db: AsyncSession, client: TestClient, test_user: 
     assert category["user_id"] == test_user.id
 
     response = client.get(f"{settings.API_VERSION_STR}/categories/", headers=headers)
-    categories = response.json()
+    data = response.json()
+    categories = data["paginated_results"]
 
     assert len(categories) == 1

@@ -15,12 +15,16 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
     # Example Header row from a csv file
     # Transaction Date,Clear Date,Description,Category,Amount,Current Balance
 
-    data = await crud.filter.get_all_filters_for_user(db, user_id=user_id, limit=-1)
-    if data is not None:
-        filters = data["paginated_results"]
+    filterData = await crud.filter.get_all_filters_for_user(db, user_id=user_id, limit=-1)
+    if filterData is not None:
+        filters = filterData["paginated_results"]
     else:
         filters = None
-    categories = await crud.category.get_all_categories_for_user(db, user_id=user_id)
+    categoryData = await crud.category.get_all_categories_for_user(db, user_id=user_id, limit=-1)
+    if categoryData is not None:
+        categories = categoryData["paginated_results"]
+    else:
+        categories = None
     default_category = await crud.category.get_unsorted_category_for_budget(db, user_id=user_id, budget_id=budget_id)
     if default_category:
         default_category_id = default_category.id
@@ -59,7 +63,7 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
                 return False
         category_id = None
         if has_categories and new_transaction["category"] is not None:
-            if categories is not None:
+            if categories is not None and isinstance(categories, list):
                 for category in categories:
                     if category.name.lower() == new_transaction["category"].lower():
                         category_id = category.id
@@ -72,7 +76,9 @@ async def parser(db: AsyncSession, *, mapping: dict, file: str, user_id: int, ac
                 new_category = await crud.category.create(
                     db, obj_in=categoryCreate, user_id=user_id, budget_id=budget_id
                 )
-                categories = await crud.category.get_all_categories_for_user(db, user_id=user_id)
+                categoryData = await crud.category.get_all_categories_for_user(db, user_id=user_id)
+                if categoryData is not None:
+                    categories = categoryData["paginated_results"]
                 category_id = new_category.id
 
         # new_transaction {"date": "3/11/2023", "desc": "THIS IS A DESCRIPTION", "amnt": "3000"}

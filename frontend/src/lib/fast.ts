@@ -204,7 +204,7 @@ export class fast {
 		return response;
 	}
 
-	static async getAllUsers (token: string, page: number): Promise<Response> {
+	static async getAllUsers(token: string, page: number): Promise<Response> {
 		page = page - 1;
 		const response = await fast.get(`admin/users?page=${page}`, token);
 		return response;
@@ -217,6 +217,27 @@ export class fast {
 
 	static async updateUserAsAdmin(token: string, id: string, userUpdate: UserAdminUpdate): Promise<Response> {
 		const response = await fast.put(`admin/user/${id}`, JSON.stringify(userUpdate), token);
+		return response;
+	}
+
+	static async getCategoriesForUser(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`categories?page=${page}`, token);
+		return response;
+	}
+
+	static async deleteCategory(token: string, categoryId: string): Promise<Response> {
+		const response = await fast.delete(`categories/${categoryId}`, token);
+		return response;
+	}
+
+	static async updateCategory(token: string, categoryId: string, categoryUpdate: CategoryUpdate): Promise<Response> {
+		const response = await fast.put(`categories/${categoryId}`, JSON.stringify(categoryUpdate), token);
+		return response;
+	}
+
+	static async createCategory(token: string, categoryCreate: CategoryCreate, budgetId: number): Promise<Response> {
+		const response = await fast.post(`categories/budget/${budgetId}`, JSON.stringify(categoryCreate), token);
 		return response;
 	}
 }
@@ -233,7 +254,7 @@ type UserAdminUpdate = {
 	full_name: string | null;
 	password: string | null;
 	is_active: boolean | null;
-}
+};
 
 type UserOrAdminCreate = {
 	isAdmin: boolean;
@@ -270,4 +291,16 @@ type FilterUpdate = {
 
 type FilterCreate = {
 	filter_by: string;
+};
+
+type CategoryUpdate = {
+	name: string | null;
+	amount: number | null;
+	desc: string | null;
+};
+
+type CategoryCreate = {
+	name: string;
+	amount: number;
+	desc: string;
 };
