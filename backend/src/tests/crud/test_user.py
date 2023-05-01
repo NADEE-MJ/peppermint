@@ -20,6 +20,26 @@ async def test_create_user(db: AsyncSession) -> None:
 
 
 @pytest.mark.asyncio
+async def test_get_all_users(db: AsyncSession) -> None:
+    data = await crud.user.get_all(db)
+    users = data["paginated_results"]
+
+    for user in users:
+        await crud.user.remove(db, id=user.id)
+
+    user = await create_random_user(db)
+
+    data = await crud.user.get_all(db)
+    users = data["paginated_results"]
+    total_pages = data["total_pages"]
+
+    await crud.user.remove(db, id=user.id)
+
+    assert len(users) == 1
+    assert total_pages == 1
+
+
+@pytest.mark.asyncio
 async def test_authenticate_user(db: AsyncSession) -> None:
     password = random_lower_string()
     user = await create_random_user(db, password)

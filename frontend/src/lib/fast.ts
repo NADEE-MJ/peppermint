@@ -204,6 +204,22 @@ export class fast {
 		return response;
 	}
 
+	static async getAllUsers(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`admin/users?page=${page}`, token);
+		return response;
+	}
+
+	static async deleteUser(token: string, userId: string): Promise<Response> {
+		const response = await fast.delete(`admin/user/${userId}`, token);
+		return response;
+	}
+
+	static async updateUserAsAdmin(token: string, userId: string, userUpdate: UserAdminUpdate): Promise<Response> {
+		const response = await fast.put(`admin/user/${userId}`, JSON.stringify(userUpdate), token);
+		return response;
+	}
+
 	static async getCategoriesForUser(token: string, page: number): Promise<Response> {
 		page = page - 1;
 		const response = await fast.get(`categories?page=${page}`, token);
@@ -231,6 +247,13 @@ type UserUpdate = {
 	full_name: string | null;
 	password: string | null;
 	passwordConfirm: string | null;
+};
+
+type UserAdminUpdate = {
+	email: string | null;
+	full_name: string | null;
+	password: string | null;
+	is_active: boolean | null;
 };
 
 type UserOrAdminCreate = {

@@ -4,6 +4,7 @@
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
 	import Plus from '$lib/assets/Plus.svg.svelte';
+	import Check from '$lib/assets/Check.svg.svelte';
 	import ArrowRightCircle from '$lib/assets/ArrowRightCircle.svg.svelte';
 
 	import { modalStore, type ModalSettings, ProgressRadial } from '@skeletonlabs/skeleton';
@@ -21,12 +22,14 @@
 
 	export let rowHeaders: string[];
 	export let fullHeaders: string[];
+	export let excludeUpdateHeaders: string[] | undefined = undefined;
 	export let title: string;
 	export let getRequestURL: string;
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
 	export let dataIndex = 'transactions';
 	export let uploadModal: any | undefined = undefined;
+	export let addButton = true;
 
 	let categoryData: Array<{ [key: string]: any }> = [];
 	let totalPages: number;
@@ -155,7 +158,7 @@
 		const editModal: ModalSettings = {
 			type: 'component',
 			component: 'editModal',
-			meta: { rowData: value, rowHeaders, fullHeaders },
+			meta: { rowData: value, rowHeaders, fullHeaders, excludeUpdateHeaders },
 			title: 'Edit Row',
 			response: (res: { [key: string]: any }) => (res ? updateTableData(res, value.id) : null)
 		};
@@ -225,15 +228,16 @@
 				{#if uploadModal}
 					<button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
 				{/if}
-
-				<button
-					type="button"
-					class="btn btn-lg variant-filled-primary"
-					value={postPutDeleteRequestURL}
-					on:click|preventDefault={(e) => startCreateModal(e)}
-				>
-					<Plus classOverride="w-6 h-6" />
-				</button>
+				{#if addButton}
+					<button
+						type="button"
+						class="btn btn-lg variant-filled-primary"
+						value={postPutDeleteRequestURL}
+						on:click|preventDefault={(e) => startCreateModal(e)}
+					>
+						<Plus classOverride="w-6 h-6" />
+					</button>
+				{/if}
 				<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
 					<Trash classOverride="w-6 h-6" />
 				</button>
@@ -246,7 +250,9 @@
 					<tr>
 						<th />
 						{#each fullHeaders as fullHeader}
-							<th>{fullHeader}</th>
+							{#if fullHeader !== 'Password'}
+								<th>{fullHeader}</th>
+							{/if}
 						{/each}
 						{#if title === 'Accounts'}
 							<th>Transactions</th>
@@ -269,8 +275,16 @@
 								/>
 							</td>
 							{#each rowHeaders as rowHeader}
-								{#if rowHeader === 'date'}
+								{#if rowHeader === 'date' || rowHeader === 'last_login'}
 									<td>{formattedDate(rowData[rowHeader])}</td>
+								{:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
+									{#if rowData[rowHeader]}
+										<td><Check classOverride="w-4 h-4" /></td>
+									{:else}
+										<td>-</td>
+									{/if}
+								{:else if rowHeader === 'password'}
+									<!-- skip password -->
 								{:else}
 									<td>{rowData[rowHeader]}</td>
 								{/if}

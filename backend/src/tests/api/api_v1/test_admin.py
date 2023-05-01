@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.core.config import settings
 from src.models.user import User
-from src.tests.utils.user import get_admin_auth_header
+from src.tests.utils.user import create_random_user, get_admin_auth_header
 from src.tests.utils.utils import random_email, random_lower_string, random_name
 
 
@@ -31,6 +31,28 @@ async def test_create_new_admin(db: AsyncSession, client: TestClient, test_admin
     assert user
     assert user.email == email
     assert user.is_admin == is_admin
+
+
+@pytest.mark.asyncio
+async def test_get_all_users(db: AsyncSession, client: TestClient, test_admin: User) -> None:
+    headers = get_admin_auth_header(client)
+    data = await crud.user.get_all(db)
+    users = data["paginated_results"]
+
+    for user in users:
+        await crud.user.remove(db, id=user.id)
+
+    user = await create_random_user(db)
+
+    response = client.get(f"{settings.API_VERSION_STR}/admin/users", headers=headers)
+    data = response.json()
+    users = data["paginated_results"]
+    total_pages = data["total_pages"]
+
+    await crud.user.remove(db, id=user.id)
+
+    assert len(users) == 1
+    assert total_pages == 1
 
 
 @pytest.mark.asyncio

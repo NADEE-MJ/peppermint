@@ -33,8 +33,10 @@
 						toast.warning(message);
 					}
 				}
+			} else {
+				toast.success('User created successfully');
 			}
-			update({ reset: false });
+			update({ reset: true });
 		};
 	};
 </script>
