@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Textfield from './Textfield.svelte';
 	import { modalStore } from '@skeletonlabs/skeleton';
-	import { z } from 'zod';
 	import SelectForeignKey from './SelectForeignKey.svelte';
+	import SkeletonSelect from './SkeletonSelect.svelte';
+	import { z } from 'zod';
 
 	export let parent: any;
 
@@ -14,6 +15,7 @@
 	rowHeaders.forEach((item, index) => {
 		combineHeaders.push({ row: item, full: fullHeaders[index] });
 	});
+	let formErrors: { [key: string]: any } = {};
 
 	const buildValidator = () => {
 		const validationRules: { [key: string]: any } = {};
@@ -25,6 +27,8 @@
 					.max(new Date(), { message: 'Too young!' });
 			} else if (combineHeader.row === 'amount') {
 				validationRules[combineHeader.row] = z.coerce.number();
+			} else if (combineHeader.row === 'account_type') {
+				validationRules[combineHeader.row] = z.union([z.literal('checking'), z.literal('savings'), z.literal('credit')]);
 			} else {
 				validationRules[combineHeader.row] = z.string().min(1, `${combineHeader.full} must be at least 1 character`);
 			}
@@ -37,7 +41,7 @@
 		return z.object(validationRules);
 	};
 
-	const formValidation = () => {
+	export const formValidation = () => {
 		formErrors = {};
 		const validator = buildValidator();
 		const validatedBody = validator.safeParse(formData);
@@ -52,8 +56,6 @@
 		return body;
 	};
 
-	let formErrors: { [key: string]: any } = {};
-
 	function onFormSubmit(): void {
 		const validatedData = formValidation();
 		if (!validatedData) {
@@ -64,7 +66,7 @@
 		modalStore.close();
 	}
 
-	const cBase = 'card p-4 w-modal shadow-xl space-y-4 overflow-y-auto h-4/5';
+	const cBase = 'card p-4 w-modal shadow-xl space-y-4 overflow-y-auto max-h-[80%]';
 	const cHeader = 'text-4xl font-bold';
 	const cForm = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 </script>
@@ -76,14 +78,23 @@
 			<div class={cForm}>
 				<div>
 					{#each combineHeaders as combineHeader}
-						<Textfield
-							label={combineHeader.full}
-							type={combineHeader.row}
-							bind:value={formData[combineHeader.row]}
-							placeholder={combineHeader.full}
-							name={combineHeader.row}
-							errorMessages={formErrors[combineHeader.row]}
-						/>
+						{#if combineHeader.row === 'account_type'}
+							<SkeletonSelect
+								label={combineHeader.full}
+								selectType="account_type"
+								bind:value={formData[combineHeader.row]}
+								errorMessages={formErrors[combineHeader.row]}
+							/>
+						{:else}
+							<Textfield
+								label={combineHeader.full}
+								type={combineHeader.row}
+								bind:value={formData[combineHeader.row]}
+								placeholder={combineHeader.full}
+								name={combineHeader.row}
+								errorMessages={formErrors[combineHeader.row]}
+							/>
+						{/if}
 					{/each}
 				</div>
 				<div class="space-y-2">

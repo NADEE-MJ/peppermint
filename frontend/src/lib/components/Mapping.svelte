@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { SlideToggle, Step, Stepper, ProgressRadial } from '@skeletonlabs/skeleton';
 
 	type mappingOption = 'Date' | 'Description' | 'Amount' | 'Category' | 'Final';
@@ -115,7 +114,6 @@
 		loading = true;
 		await uploadFile(mapping);
 		loading = false;
-		goto('/client/profile');
 	};
 </script>
 

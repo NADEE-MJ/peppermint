@@ -4,10 +4,12 @@
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
 	import Plus from '$lib/assets/Plus.svg.svelte';
+	import ArrowRightCircle from '$lib/assets/ArrowRightCircle.svg.svelte';
 
 	import { modalStore, type ModalSettings, ProgressRadial } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { toast } from '$lib/toasts';
+	import { goto } from '$app/navigation';
 
 	onMount(async () => {
 		await getTableData();
@@ -19,6 +21,8 @@
 	export let getRequestURL: string;
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
+	export let dataIndex = 'transactions';
+	export let uploadModal: any | undefined = undefined;
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
@@ -30,7 +34,7 @@
 		loading = true;
 		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
-		tableData = data['transactions'];
+		tableData = data[dataIndex];
 		totalPages = data['totalPages'];
 		loading = false;
 	};
@@ -179,6 +183,21 @@
 		};
 		modalStore.trigger(createModal);
 	};
+
+	const redirectToTransactionsPage = (e: Event) => {
+		let target = e.target as HTMLInputElement;
+		if (target) {
+			if (target.tagName !== 'BUTTON') {
+				target.closest('button')?.click();
+			}
+		}
+		if (!target?.value) {
+			return;
+		}
+
+		const account = JSON.parse(target.value);
+		goto(`/client/accounts/${account.id}?accountName=${account.name}`);
+	};
 </script>
 
 {#if !loading}
@@ -186,6 +205,10 @@
 		<div class="card-header grid grid-cols-2">
 			<strong class="text-5xl">{title}</strong>
 			<div class="flex justify-end space-x-4">
+				{#if uploadModal}
+					<button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
+				{/if}
+
 				<button
 					type="button"
 					class="btn btn-lg variant-filled-primary"
@@ -208,6 +231,9 @@
 						{#each fullHeaders as fullHeader}
 							<th>{fullHeader}</th>
 						{/each}
+						{#if title === 'Accounts'}
+							<th>Transactions</th>
+						{/if}
 						<th>Edit</th>
 					</tr>
 				</thead>
@@ -230,6 +256,20 @@
 									<td>{rowData[rowHeader]}</td>
 								{/if}
 							{/each}
+							{#if title === 'Accounts'}
+								<td>
+									<button
+										type="button"
+										class="btn btn-sm variant-filled-surface"
+										value={JSON.stringify(rowData)}
+										on:click|preventDefault={(e) => {
+											redirectToTransactionsPage(e);
+										}}
+									>
+										<ArrowRightCircle classOverride="w-6 h-6" />
+									</button>
+								</td>
+							{/if}
 							<td>
 								<button
 									type="button"
