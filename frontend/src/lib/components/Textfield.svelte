@@ -2,6 +2,7 @@
 	import ErrorCircle from '$lib/assets/ErrorCircle.svg.svelte';
 	import EyeClosed from '$lib/assets/EyeClosed.svg.svelte';
 	import EyeOpen from '$lib/assets/EyeOpen.svg.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	export let errorMessages: Array<string> | null | undefined;
 	export let type: string;
@@ -33,6 +34,7 @@
 		<strong class="text-md">{label}</strong>
 	{/if}
 
+
 	{#if type === 'email'}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="email" {placeholder} {name} bind:value />
 	{:else if type === 'password'}
@@ -53,6 +55,8 @@
 		</div>
 	{:else if type === 'date'}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="date" {placeholder} {name} bind:value />
+	{:else if type === 'is_active'}
+		<SlideToggle name="slider-label" checked={value.toString() === "true"}></SlideToggle>
 	{:else}
 		<input class="input {errorMessages ? 'input-invalid' : ''}" type="text" {placeholder} {name} bind:value />
 	{/if}

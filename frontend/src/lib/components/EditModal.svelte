@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { z } from 'zod';
+	import { loginValidator } from '$lib/zodValidators';
 	import Textfield from './Textfield.svelte';
 	import { modalStore } from '@skeletonlabs/skeleton';
 
@@ -10,6 +11,7 @@
 	const rowHeaders: Array<string> = $modalStore[0].meta.rowHeaders;
 	const fullHeaders: Array<string> = $modalStore[0].meta.fullHeaders;
 	const foreignKeyOptions: Array<string> | null = $modalStore[0].meta.foreignKeyOptions;
+	const excludeHeaders: Array<string> = $modalStore[0].meta.excludeHeaders;
 	let combineHeaders: Array<{ [key: string]: string }> = [];
 	rowHeaders.forEach((item, index) => {
 		combineHeaders.push({ row: item, full: fullHeaders[index] });
@@ -80,14 +82,25 @@
 		<form class="space-y-4">
 			<div class={cForm}>
 				{#each combineHeaders as combineHeader}
-					<Textfield
-						label={combineHeader.full}
-						type={combineHeader.row}
-						bind:value={formData[combineHeader.row]}
-						placeholder={combineHeader.full}
-						name={combineHeader.row}
-						errorMessages={formErrors[combineHeader.row]}
-					/>
+					{#if !excludeHeaders.includes(combineHeader.row)}
+						<Textfield
+							label={combineHeader.full}
+							type={combineHeader.row}
+							bind:value={formData[combineHeader.row]}
+							placeholder={combineHeader.full}
+							name={combineHeader.row}
+							errorMessages={formErrors[combineHeader.row]}
+						/>
+					{:else if (combineHeader.row === 'password')}
+						<Textfield
+							label={combineHeader.full}
+							type={combineHeader.row}
+							value={""}
+							placeholder={combineHeader.full}
+							name={combineHeader.row}
+							errorMessages={formErrors[combineHeader.row]}
+						/>
+					{/if}
 				{/each}
 			</div>
 			<footer class={parent.regionFooter}>

@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from '$lib/toasts';
 	import { goto } from '$app/navigation';
+	import Check from '$lib/assets/Check.svg.svelte';
 
 	onMount(async () => {
 		await getTableData();
@@ -21,12 +22,15 @@
 
 	export let rowHeaders: string[];
 	export let fullHeaders: string[];
+	export let excludeHeaders: string[] = [];
 	export let title: string;
 	export let getRequestURL: string;
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
 	export let dataIndex = 'transactions';
 	export let uploadModal: any | undefined = undefined;
+	export let addButton: boolean = true; 
+
 
 	let categoryData: Array<{ [key: string]: any }> = [];
 	let totalPages: number;
@@ -155,7 +159,7 @@
 		const editModal: ModalSettings = {
 			type: 'component',
 			component: 'editModal',
-			meta: { rowData: value, rowHeaders, fullHeaders },
+			meta: { rowData: value, rowHeaders, fullHeaders, excludeHeaders },
 			title: 'Edit Row',
 			response: (res: { [key: string]: any }) => (res ? updateTableData(res, value.id) : null)
 		};
@@ -226,6 +230,7 @@
 					<button class="btn btn-lg variant-filled-secondary" on:click={uploadModal}>Upload CSV</button>
 				{/if}
 
+				{#if addButton}
 				<button
 					type="button"
 					class="btn btn-lg variant-filled-primary"
@@ -234,6 +239,7 @@
 				>
 					<Plus classOverride="w-6 h-6" />
 				</button>
+				{/if}
 				<button type="button" disabled={deleteDisabled} class={'btn btn-lg variant-filled-primary'} on:click={startDeleteModal}>
 					<Trash classOverride="w-6 h-6" />
 				</button>
@@ -246,7 +252,9 @@
 					<tr>
 						<th />
 						{#each fullHeaders as fullHeader}
-							<th>{fullHeader}</th>
+							{#if fullHeader !== 'Password'}
+								<th>{fullHeader}</th>
+							{/if}
 						{/each}
 						{#if title === 'Accounts'}
 							<th>Transactions</th>
@@ -269,9 +277,15 @@
 								/>
 							</td>
 							{#each rowHeaders as rowHeader}
-								{#if rowHeader === 'date'}
+								{#if rowHeader === 'date' || rowHeader === 'created_at' || rowHeader === 'last_login'}
 									<td>{formattedDate(rowData[rowHeader])}</td>
-								{:else}
+								{:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
+									{#if rowData[rowHeader]}
+										<td><Check classOverride="w-4 h-4" /></td>
+									{:else}
+										<td>-</td>
+									{/if}
+								{:else if rowHeader !== 'password'}
 									<td>{rowData[rowHeader]}</td>
 								{/if}
 							{/each}
