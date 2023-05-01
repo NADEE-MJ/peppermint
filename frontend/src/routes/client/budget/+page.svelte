@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Chart from 'chart.js/auto';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
 
 	let categoryData: Array<{ [key: string]: any }>;
 	let budgetData: { [key: string]: any };
-	let budgetName = '';
-	let transactionData: Array<{ [key: string]: any }>;
+	let transactionData: Array<{ [key: string]: any }> = [];
 	let categoryNames: Array<string> = [];
 	let categoryAmountSpent: Array<number> = [];
 	let categoryAmountBudgeted: Array<number> = [];
@@ -30,7 +30,6 @@
 			return;
 		}
 		budgetData = data['budgets'][0];
-		budgetName = budgetData.name;
 	};
 
 	const getCategoryData = async () => {
@@ -117,10 +116,18 @@
 </script>
 
 <div class="p-10 card">
-	<div class="card-header text-center">
-		<strong class="text-5xl uppercase">{budgetName}</strong>
-	</div>
-	<div class="p-6 space-y-4">
-		<canvas bind:this={portfolio} width={400} height={300} />
-	</div>
+	{#if transactionData.length > 0}
+		<div class="card-header text-center grid grid-rows-2">
+			<strong class="text-5xl uppercase">{budgetData.name}</strong>
+			<strong class="text-2xl">Total Budgeting Amount: {budgetData.amount}</strong>
+		</div>
+
+		 <div class="p-6 space-y-4">
+			 <canvas bind:this={portfolio} width={400} height={300} />
+		 </div>
+	{:else}
+		 <div class="flex justify-center">
+			<ProgressRadial width="w-96" />
+		</div>
+	{/if}
 </div>

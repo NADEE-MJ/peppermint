@@ -99,6 +99,12 @@ export class fast {
 		return response;
 	}
 
+	static async getAllTransactionsForUser(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`transactions?page=${page}`, token);
+		return response;
+	}
+
 	static async getTransactionsByBudget(token: string, budgetId: string, page: number): Promise<Response> {
 		page = page - 1;
 		const response = await fast.get(`transactions/budget/${budgetId}?page=${page}`, token);

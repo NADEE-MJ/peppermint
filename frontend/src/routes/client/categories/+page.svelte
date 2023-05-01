@@ -7,7 +7,7 @@
 	let getRequestURL = '/api/categories';
 	let postPutDeleteRequestURL = '/api/category';
 	let foreignKeyOptions = ['budget'];
-	let dataIndex = 'categories';
+	let dataKey = 'categories';
 </script>
 
-<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {dataIndex} {foreignKeyOptions} />
+<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {dataKey} {foreignKeyOptions} />

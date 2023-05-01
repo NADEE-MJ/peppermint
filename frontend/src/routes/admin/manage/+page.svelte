@@ -9,11 +9,11 @@
 	const excludeUpdateHeaders: string[] = ['id', 'last_login'];
 	let getRequestURL = `/api/admin`;
 	let postPutDeleteRequestURL = '/api/admin';
-	let dataIndex = 'users';
+	let dataKey = 'users';
 </script>
 
 {#if loading}
 	<div class="placeholder animate-pulse" />
 {:else}
-	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {addButton} {dataIndex} {excludeUpdateHeaders} />
+	<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {addButton} {dataKey} {excludeUpdateHeaders} />
 {/if}

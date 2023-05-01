@@ -7,7 +7,7 @@
 	let getRequestURL = '/api/filter';
 	let postPutDeleteRequestURL = '/api/filter';
 	let foreignKeyOptions = ['category'];
-	let dataIndex = 'filters';
+	let dataKey = 'filters';
 </script>
 
-<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} {dataIndex} />
+<Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} {dataKey} />

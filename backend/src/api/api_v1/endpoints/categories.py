@@ -163,6 +163,9 @@ async def remove_category(
     if category is None:
         raise HTTPException(status_code=404, detail="That category does not exist.")
 
+    if category.name == "Unsorted":
+        raise HTTPException(status_code=400, detail="You cannot remove the Unsorted category.")
+
     if category.user_id != current_user.id:
         raise HTTPException(status_code=401, detail="You are unauthorized to remove this category")
 
