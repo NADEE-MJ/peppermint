@@ -55,7 +55,7 @@ export const PUT = (async ({ cookies, request }) => {
 		const response = await fast.updateFilter(token, toUpdate.id, { filter_by: toUpdate.filter_by });
 		const data = await response.json();
 		if (!data?.id) {
-			throw new Error(`Unable to update transaction with description: ${toUpdate.description}`);
+			throw new Error(`Unable to update filter with filter by: ${toUpdate.filter_by}`);
 		}
 
 		return json({ success: true });
