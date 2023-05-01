@@ -4,10 +4,12 @@
 	import Trash from '$lib/assets/Trash.svg.svelte';
 	import Edit from '$lib/assets/Edit.svg.svelte';
 	import Plus from '$lib/assets/Plus.svg.svelte';
+	import ArrowRightCircle from '$lib/assets/ArrowRightCircle.svg.svelte';
 
 	import { modalStore, type ModalSettings, ProgressRadial } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { toast } from '$lib/toasts';
+	import { goto } from '$app/navigation';
 
 	onMount(async () => {
 		await getTableData();
@@ -180,6 +182,21 @@
 		};
 		modalStore.trigger(createModal);
 	};
+
+	const redirectToTransactionsPage = (e: Event) => {
+		let target = e.target as HTMLInputElement;
+		if (target) {
+			if (target.tagName !== 'BUTTON') {
+				target.closest('button')?.click();
+			}
+		}
+		if (!target?.value) {
+			return;
+		}
+
+		const account = JSON.parse(target.value);
+		goto(`/client/accounts/${account.id}?accountName=${account.name}`);
+	};
 </script>
 
 {#if !loading}
@@ -209,6 +226,9 @@
 						{#each fullHeaders as fullHeader}
 							<th>{fullHeader}</th>
 						{/each}
+						{#if title === 'Accounts'}
+							<th>Transactions</th>
+						{/if}
 						<th>Edit</th>
 					</tr>
 				</thead>
@@ -231,6 +251,20 @@
 									<td>{rowData[rowHeader]}</td>
 								{/if}
 							{/each}
+							{#if title === 'Accounts'}
+								<td>
+									<button
+										type="button"
+										class="btn btn-sm variant-filled-surface"
+										value={JSON.stringify(rowData)}
+										on:click|preventDefault={(e) => {
+											redirectToTransactionsPage(e);
+										}}
+									>
+										<ArrowRightCircle classOverride="w-6 h-6" />
+									</button>
+								</td>
+							{/if}
 							<td>
 								<button
 									type="button"
