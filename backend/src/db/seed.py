@@ -18,8 +18,8 @@ async def main() -> None:
     session: AsyncSession = [i async for i in get_session()][0]
     users = [
         User(
-            full_name="Admin Admin",
-            email="admin@test.com",
+            full_name="Peppermint Admin",
+            email="admin@peppermint.com",
             password=get_password_hash("Test1234!"),
             is_active=True,
             created_at=now,
@@ -27,8 +27,8 @@ async def main() -> None:
             last_login=datetime.now(),
         ),
         User(
-            full_name="Test User",
-            email="user@test.com",
+            full_name="Peppermint User",
+            email="user@peppermint.com",
             password=get_password_hash("Test1234!"),
             is_active=True,
             created_at=now,
@@ -43,7 +43,7 @@ async def main() -> None:
 
     accounts = [
         Account(name="Wells Fargo", account_type="checking", created_at=now, user_id=users[1].id),
-        Account(name="BOA", account_type="savings", created_at=now, user_id=users[1].id),
+        Account(name="Bank of America", account_type="savings", created_at=now, user_id=users[1].id),
     ]
 
     session.add_all(accounts)
@@ -51,7 +51,7 @@ async def main() -> None:
     await session.commit()
 
     budgets = [
-        Budget(name="my budget", amount=4000, created_at=now, user_id=users[1].id),
+        Budget(name="Peppermint's Budget", amount=4000, created_at=now, user_id=users[1].id),
     ]
 
     session.add_all(budgets)
