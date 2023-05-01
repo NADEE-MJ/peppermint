@@ -96,6 +96,7 @@ async def get_user_by_email(
         raise HTTPException(status_code=404, detail="That user does not exist.")
     return user
 
+
 @router.get("/users", response_model=dict[str, int | list[UserResponse]])
 async def get_all_users(
     page: int = 0,
@@ -111,6 +112,7 @@ async def get_all_users(
     if users is None:
         raise HTTPException(status_code=404, detail="There are no users in the system.")
     return users
+
 
 @router.get("", response_model=UserResponse)
 async def read_user_me(

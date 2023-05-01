@@ -210,13 +210,13 @@ export class fast {
 		return response;
 	}
 
-	static async deleteUser(token: string, id: string): Promise<Response> {
-		const response = await fast.delete(`admin/user/${id}`, token);
+	static async deleteUser(token: string, userId: string): Promise<Response> {
+		const response = await fast.delete(`admin/user/${userId}`, token);
 		return response;
 	}
 
-	static async updateUserAsAdmin(token: string, id: string, userUpdate: UserAdminUpdate): Promise<Response> {
-		const response = await fast.put(`admin/user/${id}`, JSON.stringify(userUpdate), token);
+	static async updateUserAsAdmin(token: string, userId: string, userUpdate: UserAdminUpdate): Promise<Response> {
+		const response = await fast.put(`admin/user/${userId}`, JSON.stringify(userUpdate), token);
 		return response;
 	}
 

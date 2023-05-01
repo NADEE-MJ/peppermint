@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
 from math import ceil
+from typing import Any, Dict, Optional
 
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func
 from src.core.security import get_password_hash, verify_password
 from src.crud.base import CRUDBase
 from src.models.user import User, UserCreate, UserUpdate
@@ -21,16 +21,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             return {"paginated_results": paginated_results, "total_pages": 1}
         page *= limit
         paginated_results = (
-            (await db.execute(select(User).filter(User.is_admin == False).offset(page).limit(limit)))
-            .scalars()
-            .all()
+            (await db.execute(select(User).filter(User.is_admin == False).offset(page).limit(limit))).scalars().all()
         )
 
-        count = (
-            (await db.execute(select(func.count(User.id)).filter(User.is_admin == False)))
-            .scalars()
-            .first()
-        )
+        count = (await db.execute(select(func.count(User.id)).filter(User.is_admin == False))).scalars().first()
         if count is not None:
             total_pages = ceil(count / limit)
         else:

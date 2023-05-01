@@ -18,6 +18,7 @@ async def test_create_user(db: AsyncSession) -> None:
     await crud.user.remove(db, id=user.id)
     assert hasattr(user, "password")
 
+
 @pytest.mark.asyncio
 async def test_get_all_users(db: AsyncSession) -> None:
     data = await crud.user.get_all(db)
@@ -34,8 +35,9 @@ async def test_get_all_users(db: AsyncSession) -> None:
 
     await crud.user.remove(db, id=user.id)
 
-    assert len(users) == 1  
-    assert total_pages == 1  
+    assert len(users) == 1
+    assert total_pages == 1
+
 
 @pytest.mark.asyncio
 async def test_authenticate_user(db: AsyncSession) -> None:

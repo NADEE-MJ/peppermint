@@ -32,11 +32,15 @@ export const PUT = (async ({ cookies, request }) => {
 	const token = cookies.get('access_token');
 	const toUpdate = await request.json();
 	if (token) {
-		const response = await fast.updateUserAsAdmin(token, toUpdate.id, { 
-			email: toUpdate.email, full_name: toUpdate.full_name, password: toUpdate.password, is_active: toUpdate.is_active });
+		const response = await fast.updateUserAsAdmin(token, toUpdate.id, {
+			email: toUpdate.email,
+			full_name: toUpdate.full_name,
+			password: toUpdate.password,
+			is_active: toUpdate.is_active
+		});
 		const data = await response.json();
 		if (!data?.id) {
-			throw new Error(`Unable to update transaction with description: ${toUpdate.description}`);
+			throw new Error(`Unable to update user with full name: ${toUpdate.full_name}`);
 		}
 
 		return json({ success: true });
@@ -54,7 +58,7 @@ export const DELETE = (async ({ cookies, request }) => {
 			const response = await fast.deleteUser(token, user.id);
 			const data = await response.json();
 			if (!data?.id) {
-				throw new Error(`Unable to delete user with description: ${user.description}`);
+				throw new Error(`Unable to delete user with name: ${user.full_name}`);
 			}
 		}
 		return json({ success: true });

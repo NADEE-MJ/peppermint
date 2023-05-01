@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
 from src.core.config import settings
 from src.models.user import User
-from src.tests.utils.user import get_admin_auth_header, create_random_user
+from src.tests.utils.user import create_random_user, get_admin_auth_header
 from src.tests.utils.utils import random_email, random_lower_string, random_name
 
 
@@ -31,6 +31,7 @@ async def test_create_new_admin(db: AsyncSession, client: TestClient, test_admin
     assert user
     assert user.email == email
     assert user.is_admin == is_admin
+
 
 @pytest.mark.asyncio
 async def test_get_all_users(db: AsyncSession, client: TestClient, test_admin: User) -> None:
