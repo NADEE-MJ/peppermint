@@ -158,6 +158,16 @@ export class fast {
 		return response;
 	}
 
+	static async updateBudget(token: string, budgetId: string, budgetUpdate: BudgetUpdate): Promise<Response> {
+		const response = await fast.put(`budgets/${budgetId}`, JSON.stringify(budgetUpdate), token);
+		return response;
+	}
+
+	static async createBudget(token: string, budgetCreate: BudgetCreate): Promise<Response> {
+		const response = await fast.post(`budgets`, JSON.stringify(budgetCreate), token);
+		return response;
+	}
+
 	static async getAllAccountsForUser(token: string): Promise<Response> {
 		const response = await fast.get('accounts?limit=-1', token);
 		return response;
@@ -309,4 +319,14 @@ type CategoryCreate = {
 	name: string;
 	amount: number;
 	desc: string;
+};
+
+type BudgetUpdate = {
+	name: string | null;
+	amount: number | null;
+};
+
+type BudgetCreate = {
+	name: string;
+	amount: number;
 };

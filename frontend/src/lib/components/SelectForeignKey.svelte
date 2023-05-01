@@ -55,7 +55,7 @@
 	const getAllCategories = async () => {
 		const response = await fetch(`/api/category`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return [];
 		}
 		return data['categories'];
@@ -64,7 +64,7 @@
 	const getAllAccounts = async () => {
 		const response = await fetch(`/api/account`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return [];
 		}
 		return data['accounts'];
@@ -73,7 +73,7 @@
 	const getAllBudgets = async () => {
 		const response = await fetch(`/api/budget`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return [];
 		}
 		return data['budgets'];

@@ -30,7 +30,7 @@
 	const getBudgetData = async () => {
 		let response = await fetch(`/api/budget`, { method: 'GET' });
 		let data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return;
 		}
 		const budgetData = data['budgets'][0];

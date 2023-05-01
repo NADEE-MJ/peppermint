@@ -26,7 +26,7 @@
 	const getBudgetData = async () => {
 		let response = await fetch(`/api/budget`, { method: 'GET' });
 		let data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return;
 		}
 		budgetData = data['budgets'][0];
@@ -35,7 +35,7 @@
 	const getCategoryData = async () => {
 		const response = await fetch(`/api/category`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return;
 		}
 		categoryData = data['categories'];
@@ -44,7 +44,7 @@
 	const getTransactionData = async () => {
 		const response = await fetch(`/api/transaction/budget/${budgetData.id}/months/1`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return;
 		}
 		transactionData = data['transactions'];
@@ -122,11 +122,11 @@
 			<strong class="text-2xl">Total Budgeting Amount: {budgetData.amount}</strong>
 		</div>
 
-		 <div class="p-6 space-y-4">
-			 <canvas bind:this={portfolio} width={400} height={300} />
-		 </div>
+		<div class="p-6 space-y-4">
+			<canvas bind:this={portfolio} width={400} height={300} />
+		</div>
 	{:else}
-		 <div class="flex justify-center">
+		<div class="flex justify-center">
 			<ProgressRadial width="w-96" />
 		</div>
 	{/if}

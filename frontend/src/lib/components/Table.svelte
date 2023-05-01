@@ -48,7 +48,7 @@
 	const getAllCategories = async () => {
 		const response = await fetch(`/api/category`, { method: 'GET' });
 		const data = await response.json();
-		if (data['error']) {
+		if (data['message']) {
 			return [];
 		}
 		return data['categories'];
@@ -261,84 +261,84 @@
 		</div>
 
 		{#if totalPages > 0}
-			 <div class="table-container p-4">
-				 <table class="table table-hover">
-					 <thead>
-						 <tr>
-							 <th />
-							 {#each fullHeaders as fullHeader}
-								 {#if fullHeader !== 'Password'}
-									 <th>{fullHeader}</th>
-								 {/if}
-							 {/each}
-							 {#if title === 'Accounts'}
-								 <th>Transactions</th>
-							 {:else if title === 'Filters'}
-								 <th>Category</th>
-							 {/if}
-							 <th>Edit</th>
-						 </tr>
-					 </thead>
-					 <tbody>
-						 {#each tableData as rowData}
-							 <tr>
-								 <td>
-									 <input
-										 type="checkbox"
-										 checked={checkedBoxes.includes(rowData)}
-										 class="checkbox"
-										 value={JSON.stringify(rowData)}
-										 on:change={addRemoveSelected}
-									 />
-								 </td>
-								 {#each rowHeaders as rowHeader}
-									 {#if rowHeader === 'date' || rowHeader === 'last_login'}
-										 <td>{formattedDate(rowData[rowHeader])}</td>
-									 {:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
-										 {#if rowData[rowHeader]}
-											 <td><Check classOverride="w-4 h-4" /></td>
-										 {:else}
-											 <td>-</td>
-										 {/if}
-									 {:else if rowHeader === 'password'}
-										 <!-- skip password -->
-									 {:else}
-										 <td>{rowData[rowHeader]}</td>
-									 {/if}
-								 {/each}
-								 {#if title === 'Accounts'}
-									 <td>
-										 <button
-											 type="button"
-											 class="btn btn-sm variant-filled-surface"
-											 value={JSON.stringify(rowData)}
-											 on:click|preventDefault={(e) => {
-												 redirectToTransactionsPage(e);
-											 }}
-										 >
-											 <ArrowRightCircle classOverride="w-6 h-6" />
-										 </button>
-									 </td>
-								 {:else if title === 'Filters'}
-									 <td>{getCategoryForTransaction(rowData['category_id'])}</td>
-								 {/if}
-								 <td>
-									 <button
-										 type="button"
-										 class="btn btn-sm variant-filled-surface"
-										 value={JSON.stringify(rowData)}
-										 on:click|preventDefault={(e) => {
-											 startEditModal(e);
-										 }}
-									 >
-										 <Edit classOverride="w-6 h-6" />
-									 </button>
-								 </td>
-							 </tr>
-						 {/each}
-					 </tbody>
-				 </table>
-			 </div>
+			<div class="table-container p-4">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th />
+							{#each fullHeaders as fullHeader}
+								{#if fullHeader !== 'Password'}
+									<th>{fullHeader}</th>
+								{/if}
+							{/each}
+							{#if title === 'Accounts'}
+								<th>Transactions</th>
+							{:else if title === 'Filters'}
+								<th>Category</th>
+							{/if}
+							<th>Edit</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each tableData as rowData}
+							<tr>
+								<td>
+									<input
+										type="checkbox"
+										checked={checkedBoxes.includes(rowData)}
+										class="checkbox"
+										value={JSON.stringify(rowData)}
+										on:change={addRemoveSelected}
+									/>
+								</td>
+								{#each rowHeaders as rowHeader}
+									{#if rowHeader === 'date' || rowHeader === 'last_login'}
+										<td>{formattedDate(rowData[rowHeader])}</td>
+									{:else if rowHeader === 'is_admin' || rowHeader === 'is_active'}
+										{#if rowData[rowHeader]}
+											<td><Check classOverride="w-4 h-4" /></td>
+										{:else}
+											<td>-</td>
+										{/if}
+									{:else if rowHeader === 'password'}
+										<!-- skip password -->
+									{:else}
+										<td>{rowData[rowHeader]}</td>
+									{/if}
+								{/each}
+								{#if title === 'Accounts'}
+									<td>
+										<button
+											type="button"
+											class="btn btn-sm variant-filled-surface"
+											value={JSON.stringify(rowData)}
+											on:click|preventDefault={(e) => {
+												redirectToTransactionsPage(e);
+											}}
+										>
+											<ArrowRightCircle classOverride="w-6 h-6" />
+										</button>
+									</td>
+								{:else if title === 'Filters'}
+									<td>{getCategoryForTransaction(rowData['category_id'])}</td>
+								{/if}
+								<td>
+									<button
+										type="button"
+										class="btn btn-sm variant-filled-surface"
+										value={JSON.stringify(rowData)}
+										on:click|preventDefault={(e) => {
+											startEditModal(e);
+										}}
+									>
+										<Edit classOverride="w-6 h-6" />
+									</button>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		{/if}
 
 		{#if totalPages > 0}
@@ -354,7 +354,6 @@
 				</div>
 			</div>
 		{/if}
-
 	</div>
 {:else}
 	<div class="card p-4">

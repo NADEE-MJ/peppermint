@@ -7,7 +7,6 @@
 	let getRequestURL = '/api/transaction';
 	let postPutDeleteRequestURL = '/api/transaction';
 	let foreignKeyOptions = ['budget', 'category', 'account'];
-
 </script>
 
 <Table {title} {rowHeaders} {getRequestURL} {postPutDeleteRequestURL} {fullHeaders} {foreignKeyOptions} />
