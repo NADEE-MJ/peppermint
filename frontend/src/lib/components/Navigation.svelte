@@ -5,11 +5,11 @@
 {#if userType === 'client'}
 	<nav class="list-nav p-4">
 		<ul>
-			<li><a href="/client/upload-csv-test">Upload CSV Test</a></li>
 			<li><a href="/client/budget/all">All Transactions</a></li>
 			<li><a href="/client/accounts">Accounts</a></li>
 			<li><a href="/client/filters">Filters</a></li>
 			<li><a href="/client/budget">Budget</a></li>
+			<li><a href="/client/categoires">Categories</a></li>
 		</ul>
 	</nav>
 {:else if userType === 'admin'}
