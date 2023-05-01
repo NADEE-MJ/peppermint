@@ -89,7 +89,7 @@
 		{/if}
 		<div class="space-y-4">
 			<input class="input" type="search" name="demo" bind:value={selectedOptionName} on:change={selectOptionId} placeholder="Search..." />
-			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto">
+			<div class="card w-full max-h-48 p-4 overflow-y-auto">
 				<Autocomplete bind:input={selectedOptionName} {options} on:selection={onIdSelection} />
 			</div>
 		</div>

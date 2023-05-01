@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { z } from 'zod';
 	import Textfield from './Textfield.svelte';
 	import { modalStore } from '@skeletonlabs/skeleton';
-	import { z } from 'zod';
 
 	export let parent: any;
 
@@ -9,10 +9,12 @@
 	const rowData: { [key: string]: any } = $modalStore[0].meta.rowData;
 	const rowHeaders: Array<string> = $modalStore[0].meta.rowHeaders;
 	const fullHeaders: Array<string> = $modalStore[0].meta.fullHeaders;
+	const foreignKeyOptions: Array<string> | null = $modalStore[0].meta.foreignKeyOptions;
 	let combineHeaders: Array<{ [key: string]: string }> = [];
 	rowHeaders.forEach((item, index) => {
 		combineHeaders.push({ row: item, full: fullHeaders[index] });
 	});
+	let formErrors: { [key: string]: any } = {};
 
 	for (let i = 0; i < rowHeaders.length; i++) {
 		formData[rowHeaders[i]] = rowData[rowHeaders[i]];
@@ -28,14 +30,22 @@
 					.max(new Date(), { message: 'Too young!' });
 			} else if (combineHeader.row === 'amount') {
 				validationRules[combineHeader.row] = z.coerce.number();
+			} else if (combineHeader.row === 'account_type') {
+				validationRules[combineHeader.row] = z.union([z.literal('checking'), z.literal('savings'), z.literal('credit')]);
 			} else {
 				validationRules[combineHeader.row] = z.string().min(1, `${combineHeader.full} must be at least 1 character`);
+			}
+		}
+		if (foreignKeyOptions) {
+			for (const foreignKeyOption of foreignKeyOptions) {
+				validationRules[foreignKeyOption] = z.number().int().positive();
 			}
 		}
 		return z.object(validationRules);
 	};
 
-	const formValidation = () => {
+	export const formValidation = () => {
+		formErrors = {};
 		const validator = buildValidator();
 		const validatedBody = validator.safeParse(formData);
 		if (!validatedBody.success) {
@@ -49,8 +59,6 @@
 		return body;
 	};
 
-	let formErrors: { [key: string]: any } = {};
-
 	function onFormSubmit(): void {
 		const validatedData = formValidation();
 		if (!validatedData) {
@@ -61,7 +69,7 @@
 		modalStore.close();
 	}
 
-	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
+	const cBase = 'card p-4 w-modal shadow-xl space-y-4 overflow-y-auto max-h-[80%]';
 	const cHeader = 'text-4xl font-bold';
 	const cForm = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 </script>

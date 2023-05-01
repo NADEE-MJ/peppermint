@@ -19,6 +19,7 @@
 	export let getRequestURL: string;
 	export let postPutDeleteRequestURL: string;
 	export let foreignKeyOptions: Array<string> | undefined = undefined;
+	export let dataIndex = 'transactions';
 
 	let totalPages: number;
 	let tableData: Array<{ [key: string]: any }> = [];
@@ -30,7 +31,7 @@
 		loading = true;
 		const response = await fetch(`${getRequestURL}?page=${pageNumber}`, { method: 'GET' });
 		const data = await response.json();
-		tableData = data['transactions'];
+		tableData = data[dataIndex];
 		totalPages = data['totalPages'];
 		loading = false;
 	};

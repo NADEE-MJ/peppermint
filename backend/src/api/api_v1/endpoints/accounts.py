@@ -94,7 +94,7 @@ async def update_account(
 
     data = await crud.account.get_all_accounts_for_user(db, user_id=current_user.id, limit=-1)
 
-    if data is not None:
+    if data is not None and account_update.name is not None and account_update.name != account_from_db.name:
         accounts = data["paginated_results"]
         if accounts is not None and type(accounts) == list:
             for account in accounts:

@@ -8,8 +8,8 @@
 			<li><a href="/client/upload-csv-test">Upload CSV Test</a></li>
 			<li><a href="/client/budget/all">All Transactions</a></li>
 			<li><a href="/client/accounts">Accounts</a></li>
+			<li><a href="/client/filters">Filters</a></li>
 			<li><a href="/client/budget">Budget</a></li>
-			<li><a href="/client/skelly">Skelly</a></li>
 		</ul>
 	</nav>
 {:else if userType === 'admin'}
@@ -19,7 +19,6 @@
 			<li><a href="/admin/delete">Delete User</a></li>
 			<li><a href="/admin/update">Update User</a></li>
 			<li><a href="/admin/find">Find User</a></li>
-			<li><a href="/admin/skelly">Skelly</a></li>
 		</ul>
 	</nav>
 {/if}

@@ -151,6 +151,27 @@ export class fast {
 		return response;
 	}
 
+	static async getAccountsForUser(token: string, page: number): Promise<Response> {
+		page = page - 1;
+		const response = await fast.get(`accounts?page=${page}`, token);
+		return response;
+	}
+
+	static async deleteAccount(token: string, accountId: string): Promise<Response> {
+		const response = await fast.delete(`accounts/${accountId}`, token);
+		return response;
+	}
+
+	static async updateAccount(token: string, accountId: string, accountUpdate: AccountUpdate): Promise<Response> {
+		const response = await fast.put(`accounts/${accountId}`, JSON.stringify(accountUpdate), token);
+		return response;
+	}
+
+	static async createAccount(token: string, accountCreate: AccountCreate): Promise<Response> {
+		const response = await fast.post(`accounts`, JSON.stringify(accountCreate), token);
+		return response;
+	}
+
 	static async getAllCategoriesForUser(token: string): Promise<Response> {
 		const response = await fast.get('categories?limit=-1', token);
 		return response;
@@ -178,7 +199,17 @@ type TransactionUpdate = {
 };
 
 type TransactionCreate = {
-	amount: number | null;
-	date: string | null;
-	desc: string | null;
+	amount: number;
+	date: string;
+	desc: string;
+};
+
+type AccountUpdate = {
+	name: string | null;
+	account_type: 'savings' | 'checking' | 'credit' | null;
+};
+
+type AccountCreate = {
+	name: string;
+	account_type: 'savings' | 'checking' | 'credit';
 };
