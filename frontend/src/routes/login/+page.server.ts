@@ -7,7 +7,7 @@ export const load = (async ({ cookies }) => {
 	const token = cookies.get('access_token');
 	if (!token) {
 		//! user is not logged in redirect to login
-		throw redirect(303, '/login');
+		return { loggedIn: false };
 	}
 
 	const res = await fast.getCurrentUser(token);
