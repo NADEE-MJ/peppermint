@@ -42,4 +42,19 @@ def attach() -> None:
     system("docker exec -it -w /home/deploy/peppermint peppermint-app /bin/bash")
 
 
+@app.command()
+def fast() -> None:
+    system(f"docker exec -it -w  /home/deploy/peppermint peppermint-app /usr/bin/poetry run server fast")
+
+
+@app.command()
+def kit() -> None:
+    system(f"docker exec -it -w  /home/deploy/peppermint peppermint-app /usr/bin/poetry run server kit")
+
+
+@app.command()
+def killports() -> None:
+    system(f"docker exec -it -w  /home/deploy/peppermint peppermint-app /home/deploy/.local/bin/killport 5173 8000")
+
+
 app()
