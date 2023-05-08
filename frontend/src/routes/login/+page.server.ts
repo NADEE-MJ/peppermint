@@ -2,12 +2,18 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { loginValidator } from '$lib/zodValidators';
 import { fast } from '$lib/fast';
-import { userStore } from '$lib/stores';
-import { get } from 'svelte/store';
 
-export const load = (async () => {
-	const user = get(userStore);
-	if (user) {
+export const load = (async ({ cookies }) => {
+	const token = cookies.get('access_token');
+	if (!token) {
+		//! user is not logged in redirect to login
+		return { loggedIn: false };
+	}
+
+	const res = await fast.getCurrentUser(token);
+	const user = await res.json();
+
+	if (user?.id) {
 		throw redirect(303, '/client/profile');
 	}
 }) satisfies PageServerLoad;
@@ -23,7 +29,7 @@ export const actions: Actions = {
 		}
 		const { email, password } = validatedBody.data;
 
-		let res = await fast.login(email, password);
+		const res = await fast.login(email, password);
 		const data = await res.json();
 		if (data?.access_token) {
 			const token = data?.access_token;
@@ -36,15 +42,6 @@ export const actions: Actions = {
 			});
 
 			if (data?.is_admin) {
-				res = await fast.getCurrentAdmin(token);
-			} else {
-				res = await fast.getCurrentUser(token);
-			}
-
-			const user = await res.json();
-			userStore.set({ id: user.id, full_name: user.full_name, email: user.email, is_admin: user.is_admin });
-
-			if (user?.is_admin) {
 				throw redirect(303, '/admin/profile');
 			}
 			throw redirect(303, '/client/profile');

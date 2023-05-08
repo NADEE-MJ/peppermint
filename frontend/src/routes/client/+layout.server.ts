@@ -1,17 +1,24 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { userStore } from '$lib/stores';
-import { get } from 'svelte/store';
+import { fast } from '$lib/fast';
 
-export const load = (async () => {
-	const user = get(userStore);
-
-	if (user?.is_admin) {
-		throw redirect(303, '/admin/profile');
-	} else if (user) {
-		return { loggedIn: true };
-	} else {
+export const load = (async ({ cookies }) => {
+	const token = cookies.get('access_token');
+	if (!token) {
 		//! user is not logged in
 		throw redirect(303, '/login');
 	}
+
+	const res = await fast.getCurrentUser(token);
+	const user = await res.json();
+
+	if (!user?.id) {
+		throw fail(400, { message: 'Invalid Token' });
+	}
+
+	if (user?.is_admin) {
+		throw redirect(303, '/admin/profile');
+	}
+
+	return { loggedIn: true };
 }) satisfies LayoutServerLoad;

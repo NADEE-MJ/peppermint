@@ -119,6 +119,9 @@
 		});
 		const data = await response.json();
 		if (data['success']) {
+			if (tableData.length === checkedBoxes.length && pageNumber > 1) {
+				pageNumber--;
+			}
 			checkedBoxes = [];
 			toast.success('Successfully deleted selected rows');
 			await getTableData();

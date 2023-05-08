@@ -1,17 +1,23 @@
-import { fail, type Actions } from '@sveltejs/kit';
+import { fail, type Actions, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { userStore } from '$lib/stores';
-import { get } from 'svelte/store';
 import { fast } from '$lib/fast';
 import { UpdateUserValidator } from '$lib/zodValidators';
 
-export const load = (async () => {
-	const user = get(userStore);
-	if (user) {
-		return { email: user.email, full_name: user.full_name };
-	} else {
-		//! let user know they are not logged in
+export const load = (async ({ cookies }) => {
+	const token = cookies.get('access_token');
+	if (!token) {
+		//! user is not logged in redirect to login
+		throw redirect(303, '/login');
 	}
+
+	const res = await fast.getCurrentUser(token);
+	const user = await res.json();
+
+	if (!user?.id) {
+		throw fail(400, { message: 'Invalid Token' });
+	}
+
+	return { email: user.email, full_name: user.full_name };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -50,8 +56,6 @@ export const actions: Actions = {
 			if (response.status != 200) {
 				return fail(500, { message: data });
 			}
-
-			userStore.set({ id: data.id, full_name: data.full_name, email: data.email, is_admin: data.is_admin });
 
 			return { success: true };
 		} else {
