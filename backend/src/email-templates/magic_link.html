@@ -1,21 +1,27 @@
 <html>
-  <head>
-    <title>{{ project_name }} - Magic Link</title>
-    <style>
-      /* Optional CSS */
-    </style>
-  </head>
-  <body style="background-color:#fff;">
-    <div style="border:1px solid #555;">
-      <h1 style="font-size:20px; color:#555; font-family:Helvetica;">{{ project_name }} - Magic Link</h1>
-    <p style="font-size:16px; color:#555;">Here is your magic link for account with email: {{ email }}</p>
-      <p style="font-size:16px; color:#555;">Login by clicking the button below:</p>
-      <a href="{{ link }}" style="display:block; padding:50px 0px; background-color:#f1f1f1; text-align:center; text-decoration:none; color:#555;">Login</a>
-      <p style="font-size:16px; color:#555;">Or open the following link:</p>
-      <p style="font-size:16px; color:#555;"><a href="{{ link }}">{{ link }}</a></p>
-      <hr style="border:2px solid #555;">
-      <p style="font-size:14px; color:#555;">This link will expire in {{ valid_hours }} hours.</p>
-      <p style="font-size:14px; color:#555;">If you didn't request a magic link you can disregard this email.</p>
-    </div>
-  </body>
+	<head>
+		<title>{{ project_name }} - Magic Link</title>
+		<meta charset="UTF-8" />
+		<style>
+			/* Optional CSS */
+		</style>
+	</head>
+
+	<body style="background-color: #fff">
+		<div style="border: 1px solid #555">
+			<h1 style="font-size: 20px; color: #555; font-family: Helvetica">{{ project_name }} - Magic Link</h1>
+			<p style="font-size: 16px; color: #555">Here is your magic link for account with email: {{ email }}</p>
+			<p style="font-size: 16px; color: #555">Login by clicking the button below:</p>
+			<a
+				href="{{ link }}"
+				style="display: block; padding: 50px 0px; background-color: #f1f1f1; text-align: center; text-decoration: none; color: #555"
+				>Login</a
+			>
+			<p style="font-size: 16px; color: #555">Or open the following link:</p>
+			<p style="font-size: 16px; color: #555"><a href="{{ link }}">{{ link }}</a></p>
+			<hr style="border: 2px solid #555" />
+			<p style="font-size: 14px; color: #555">This link will expire in {{ valid_hours }} hours.</p>
+			<p style="font-size: 14px; color: #555">If you didn't request a magic link you can disregard this email.</p>
+		</div>
+	</body>
 </html>
