@@ -1,7 +1,7 @@
-import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
+import logging
 
 import smtplib
 from email.mime.text import MIMEText
@@ -18,45 +18,37 @@ def send_email(
 ) -> None:
     assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
     msg = MIMEMultipart()
-    # msg["From"] = settings.EMAILS_FROM_EMAIL
-    msg["From"] = "no-reply@peppermint.com"
-    msg["To"] = "nadeemmaida51@gmail.com"
+    msg["From"] = settings.EMAILS_FROM_EMAIL
+    msg["To"] = email_to
     msg["Subject"] = subject_template
     msg.attach(MIMEText(html_content, "html"))
     with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as smtp:
-        smtp.ehlo()
         smtp.starttls()
-        smtp.ehlo()
         smtp.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
         response = smtp.sendmail(msg["From"], msg["To"], msg.as_string())
-        print(response)
-        logging.info(f"send email result: {response}")
+        # ! need to log responses to a file
+        logging.info(response)
 
 
 def send_test_email(email_to: str) -> None:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
-    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "test_email.mjml") as f:
-        template_str = f.read()
-    send_email(
-        email_to=email_to,
-        subject_template=subject,
-        html_template=template_str,
-        environment={"project_name": settings.PROJECT_NAME, "email": email_to},
-    )
+    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "test_email.html") as f:
+        template = Template(f.read())
+
+    html_content = template.render(project_name=project_name, email=email_to)
+    send_email(email_to=email_to, subject_template=subject, html_content=html_content)
 
 
 def send_new_account_email(email: str, password: str) -> None:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {email}"
-    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.mjml") as f:
-        template_str = f.read()
-    link = settings.SERVER_HOST
-    send_email(
-        email_to=email,
-        subject_template=subject,
-        html_content=template_str,
-    )
+    with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.html") as f:
+        template = Template(f.read())
+
+    link = f"{settings.SERVER_HOST}/login"
+    html_content = template.render(project_name=project_name, username=email, password=password, link=link)
+    send_email(email_to=email, subject_template=subject, html_content=html_content)
 
 
 def send_magic_link_email(email: str, token: str) -> None:
