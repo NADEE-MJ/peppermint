@@ -1,11 +1,11 @@
+import logging
+import smtplib
 from datetime import datetime, timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
-import logging
 
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from jinja2 import Template
 from jose import JWTError, jwt
 from src.core.config import settings
