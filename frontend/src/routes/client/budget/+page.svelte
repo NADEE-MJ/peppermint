@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import Chart from 'chart.js/auto';
+	import { Chart } from 'chart.js/auto';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 
 	let categoryData: Array<{ [key: string]: any }>;
@@ -11,16 +11,16 @@
 	let categoryAmountSpent: Array<number> = [];
 	let categoryAmountBudgeted: Array<number> = [];
 
-	let portfolio: any;
-
 	onMount(async () => {
 		await getBudgetData();
 		await getCategoryData();
 		await getTransactionData();
 
 		processTransactionData();
-
-		new Chart(portfolio.getContext('2d'), config);
+		const element = document.getElementById('barChart') as HTMLCanvasElement;
+		if (element) {
+			new Chart(element, config);
+		}
 	});
 
 	const getBudgetData = async () => {
@@ -123,7 +123,7 @@
 		</div>
 
 		<div class="p-6 space-y-4">
-			<canvas bind:this={portfolio} width={400} height={300} />
+			<canvas width={400} height={300} id="barChart" />
 		</div>
 	{:else}
 		<div class="flex justify-center">

@@ -89,7 +89,7 @@
 {#if $modalStore[0]}
 	<div class={cBase}>
 		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
-		<form class="space-y-4">
+		<form class="space-y-4" on:submit={onFormSubmit}>
 			<div class={cForm}>
 				{#each combineHeaders as combineHeader}
 					{#if excludeUpdateHeaders}
@@ -135,7 +135,7 @@
 				{/each}
 			</div>
 			<footer class={parent.regionFooter}>
-				<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
+				<button type="button" class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
 				<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Update Row</button>
 			</footer>
 		</form>

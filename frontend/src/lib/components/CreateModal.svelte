@@ -111,7 +111,7 @@
 				</div>
 			</div>
 			<footer class={parent.regionFooter}>
-				<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
+				<button type="button" class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
 				<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Add Row</button>
 			</footer>
 		</form>
