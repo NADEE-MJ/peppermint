@@ -16,7 +16,9 @@ def send_email(
     subject_template: str = "",
     html_content: str = "",
 ) -> None:
-    assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
+    # ! need to make this return a value so that app can return if email was sent or not
+    if not settings.EMAILS_ENABLED:
+        return
     msg = MIMEMultipart()
     msg["From"] = settings.EMAILS_FROM_EMAIL
     msg["To"] = email_to
