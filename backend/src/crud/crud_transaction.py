@@ -2,7 +2,6 @@ from datetime import datetime
 from math import ceil
 from typing import Any, Dict, Optional
 
-from dateutil.relativedelta import relativedelta  # type: ignore
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -69,8 +68,8 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
 
         return {"paginated_results": paginated_results, "total_pages": total_pages}
 
-    async def get_all_transactions_for_budget_and_num_months(
-        self, db: AsyncSession, *, user_id: int, budget_id: int, num_months: int = 1
+    async def get_all_transactions_for_budget_and_date_range(
+        self, db: AsyncSession, *, user_id: int, budget_id: int, from_date: datetime, to_date: datetime
     ) -> Optional[list[Transaction]]:
         results = (
             (
@@ -78,7 +77,8 @@ class CRUDTransaction(CRUDBase[Transaction, TransactionCreate, TransactionUpdate
                     select(Transaction)
                     .filter(Transaction.user_id == user_id)
                     .filter(Transaction.budget_id == budget_id)
-                    .filter(Transaction.date >= datetime.now() - relativedelta(months=num_months))
+                    .filter(Transaction.date >= from_date)
+                    .filter(Transaction.date <= to_date)
                 )
             )
             .scalars()

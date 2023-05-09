@@ -123,8 +123,8 @@ export class fast {
 		return response;
 	}
 
-	static async getTransactionsByBudgetAndNumMonths(token: string, budgetId: string, numMonths: number): Promise<Response> {
-		const response = await fast.get(`transactions/budget/${budgetId}/months/${numMonths}`, token);
+	static async getTransactionsByBudgetAndDateRange(token: string, budgetId: string, fromDate: string, toDate: string): Promise<Response> {
+		const response = await fast.get(`transactions/budget/${budgetId}/from/${fromDate}/to/${toDate}`, token);
 		return response;
 	}
 

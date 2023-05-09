@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -64,10 +65,11 @@ async def get_all_transactions_by_budget(
         return data
 
 
-@router.get("/budget/{budget_id}/months/{num_months}", response_model=list[TransactionResponse])
-async def get_all_transactions_by_budget_and_months(
+@router.get("/budget/{budget_id}/from/{from_date}/to/{to_date}", response_model=list[TransactionResponse])
+async def get_all_transactions_by_budget_and_date_range(
     budget_id: int,
-    num_months: int,
+    from_date: datetime,
+    to_date: datetime,
     *,
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
@@ -75,6 +77,8 @@ async def get_all_transactions_by_budget_and_months(
     """
     Get all transactions for current user by budget.
     """
+    from_date = datetime.strptime(from_date.isoformat().split("T")[0], "%Y-%m-%d")
+    to_date = datetime.strptime(to_date.isoformat().split("T")[0], "%Y-%m-%d")
     if current_user.id is not None:
         # check if budget belongs to that user
         budget = await crud.budget.get(db, id=budget_id)
@@ -85,8 +89,8 @@ async def get_all_transactions_by_budget_and_months(
         if budget.user_id != current_user.id:
             raise HTTPException(status_code=401, detail="You are unauthorized to add a transaction to this budget")
 
-        data = await crud.transaction.get_all_transactions_for_budget_and_num_months(
-            db, user_id=current_user.id, budget_id=budget_id, num_months=num_months
+        data = await crud.transaction.get_all_transactions_for_budget_and_date_range(
+            db, user_id=current_user.id, budget_id=budget_id, from_date=from_date, to_date=to_date
         )
 
         return data if data else []

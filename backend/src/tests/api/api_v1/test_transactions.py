@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,7 +55,7 @@ async def test_get_all_transactions_by_budget(db: AsyncSession, client: TestClie
 
 
 @pytest.mark.asyncio
-async def test_get_all_transactions_by_budget_and_num_months(
+async def test_get_all_transactions_by_budget_and_date_range(
     db: AsyncSession, client: TestClient, test_user: User
 ) -> None:
     headers = get_auth_header(client)
@@ -63,7 +65,11 @@ async def test_get_all_transactions_by_budget_and_num_months(
     await create_test_transaction(
         db, user_id=test_user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    response = client.get(f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/months/1", headers=headers)
+    response = client.get(
+        f"{settings.API_VERSION_STR}/transactions/budget/{budget.id}/from/"
+        + f"{datetime.now() - timedelta(days=30)}/to/{datetime.now()}",
+        headers=headers,
+    )
     data = response.json()
 
     assert len(data) == 1
