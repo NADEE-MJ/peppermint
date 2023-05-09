@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from src import crud
@@ -75,7 +77,7 @@ async def test_get_all_transactions_for_budget(db: AsyncSession) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_all_transactions_for_budget_and_num_months(db: AsyncSession) -> None:
+async def test_get_all_transactions_for_budget_and_date_range(db: AsyncSession) -> None:
     user = await create_random_user(db)
     budget = await create_test_budget(db, user_id=user.id)
     category = await create_test_category(db, user_id=user.id, budget_id=budget.id)
@@ -83,8 +85,12 @@ async def test_get_all_transactions_for_budget_and_num_months(db: AsyncSession) 
     await create_test_transaction(
         db, user_id=user.id, category_id=category.id, account_id=account.id, budget_id=budget.id
     )
-    data = await crud.transaction.get_all_transactions_for_budget_and_num_months(
-        db, user_id=user.id, budget_id=budget.id
+    data = await crud.transaction.get_all_transactions_for_budget_and_date_range(
+        db,
+        user_id=user.id,
+        budget_id=budget.id,
+        from_date=(datetime.now() - timedelta(days=30)),
+        to_date=datetime.now(),
     )
 
     await crud.user.remove(db, id=user.id)

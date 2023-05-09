@@ -6,14 +6,17 @@ export const GET = (async ({ cookies, params }) => {
 		throw new Error('No budget id provided');
 	}
 
-	let numMonths = 1;
-	if (params.num_months !== undefined) {
-		numMonths = parseInt(params.num_months);
+	if (params.to_date === undefined) {
+		throw new Error('No to date provided');
+	}
+
+	if (params.from_date === undefined) {
+		throw new Error('No from date provided');
 	}
 
 	const token = cookies.get('access_token');
 	if (token) {
-		const response = await fast.getTransactionsByBudgetAndNumMonths(token, params.budget_id, numMonths);
+		const response = await fast.getTransactionsByBudgetAndDateRange(token, params.budget_id, params.from_date, params.to_date);
 		const data = await response.json();
 
 		if (data.length === 0) {

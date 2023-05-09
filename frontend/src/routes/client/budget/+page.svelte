@@ -2,14 +2,20 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Chart } from 'chart.js/auto';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
 
 	let categoryData: Array<{ [key: string]: any }>;
-	let budgetData: { [key: string]: any };
+	let budgetData: { [key: string]: any } = { amount: 0, name: 'Budget Loading' };
 	let transactionData: Array<{ [key: string]: any }> = [];
 	let categoryNames: Array<string> = [];
 	let categoryAmountSpent: Array<number> = [];
 	let categoryAmountBudgeted: Array<number> = [];
+	let currChart: Chart;
+	const currentDate = new Date();
+	let currMonth = currentDate.getMonth();
+	let currYear = currentDate.getFullYear();
+	let fromDate = new Date(currYear, currMonth, 1);
+	let toDate = new Date(currYear, currMonth + 1, 0);
+	let months = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December'];
 
 	onMount(async () => {
 		await getBudgetData();
@@ -19,7 +25,7 @@
 		processTransactionData();
 		const element = document.getElementById('barChart') as HTMLCanvasElement;
 		if (element) {
-			new Chart(element, config);
+			currChart = new Chart(element, config);
 		}
 	});
 
@@ -42,12 +48,32 @@
 	};
 
 	const getTransactionData = async () => {
-		const response = await fetch(`/api/transaction/budget/${budgetData.id}/months/1`, { method: 'GET' });
+		const response = await fetch(`/api/transaction/budget/${budgetData.id}/from/${fromDate.toISOString()}/to/${toDate.toISOString()}`, {
+			method: 'GET'
+		});
 		const data = await response.json();
 		if (data['message']) {
 			return;
 		}
 		transactionData = data['transactions'];
+	};
+
+	const reloadTransactionData = async () => {
+		fromDate = new Date(currYear, currMonth, 1);
+		toDate = new Date(currYear, currMonth + 1, 0);
+		transactionData = [];
+		categoryAmountBudgeted = [];
+		categoryAmountSpent = [];
+		categoryAmountSpent = [];
+		categoryNames = [];
+		await getTransactionData();
+		processTransactionData();
+		currChart.data.datasets[0].data = categoryAmountBudgeted;
+		currChart.data.datasets[1].data = categoryAmountSpent;
+		const element = document.getElementById('barChart') as HTMLCanvasElement;
+		if (element) {
+			currChart.update();
+		}
 	};
 
 	const processTransactionData = () => {
@@ -75,7 +101,7 @@
 		}
 	};
 
-	const data = {
+	let data = {
 		labels: categoryNames,
 		datasets: [
 			{
@@ -108,26 +134,33 @@
 		},
 		indexAxis: 'y'
 	};
-	const config: any = {
+	let config: any = {
 		type: 'bar',
 		data: data,
 		options: options
 	};
 </script>
 
-<div class="p-10 card">
-	{#if transactionData.length > 0}
-		<div class="card-header text-center grid grid-rows-2">
-			<strong class="text-5xl uppercase">{budgetData.name}</strong>
-			<strong class="text-2xl">Total Budgeting Amount: {budgetData.amount}</strong>
-		</div>
+<div class="p-10 card space-y-10">
+	<div class="card-header grid grid-rows-2">
+		<strong class="text-5xl uppercase">{budgetData.name}</strong>
+		<strong class="text-2xl">Total Budgeting Amount: {budgetData.amount}</strong>
+	</div>
 
-		<div class="p-6 space-y-4">
-			<canvas width={400} height={300} id="barChart" />
-		</div>
-	{:else}
-		<div class="flex justify-center">
-			<ProgressRadial width="w-96" />
-		</div>
-	{/if}
+	<div class="p-6 space-y-4">
+		<canvas width={850} height={300} id="barChart" />
+	</div>
+	<div class="grid grid-cols-3 place-items-center">
+		<select class="select w-4/5" size="4" bind:value={currMonth}>
+			{#each months as month, i}
+				<option value={i}>{month}</option>
+			{/each}
+		</select>
+		<select class="select w-4/5" size="4" bind:value={currYear}>
+			{#each [2020, 2021, 2022, 2023, 2024, 2025] as year}
+				<option value={year}>{year}</option>
+			{/each}
+		</select>
+		<button type="button" class="btn btn-xl variant-filled-primary w-1/3 h-1/3" on:click={reloadTransactionData}>Reload</button>
+	</div>
 </div>
